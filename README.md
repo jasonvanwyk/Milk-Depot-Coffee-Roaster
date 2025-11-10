@@ -232,10 +232,29 @@ Jason (jason@precept.co.za)
 
 - [x] Git repository initialized
 - [x] Directory structure created
-- [ ] Artisan installed
-- [ ] Arduino firmware written
-- [ ] Serial communication tested
-- [ ] First successful roast completed
+- [x] Artisan v3.4.0 installed
+- [x] Arduino firmware written and uploaded
+- [x] Serial communication tested ✅ **WORKING PERFECTLY**
+- [x] Arduino CLI configured
+- [x] Helper scripts created
+- [ ] Temperature sensors connected (MAX31855 modules needed)
+- [ ] Sensor calibration
+- [ ] First successful roast
+
+### Latest Test Results (2025-11-10)
+
+**Serial Communication**: ✅ Working flawlessly at 115200 baud
+```
+BT:63.0,DT:63.0
+BT:62.8,DT:62.6
+BT:66.2,DT:66.0
+```
+
+**Arduino Status**: ✅ Fully functional (UNO R3 at /dev/ttyACM0)
+**Current Readings**: ~63-66°C (floating analog pins - no sensors connected yet)
+**Next Step**: Connect MAX31855 thermocouple modules
+
+See `CURRENT_STATUS.md` for detailed system status.
 
 ---
 

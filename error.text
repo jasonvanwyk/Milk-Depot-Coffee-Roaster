@@ -1,0 +1,21 @@
+Arduino: 1.8.19 (Linux), Board: "Arduino Uno"
+
+Warning: platform.txt from core 'Arduino AVR Boards' contains deprecated compiler.path={runtime.tools.avr-gcc.path}/bin/, automatically converted to compiler.path=/usr/bin/. Consider upgrading this core.
+Sketch uses 970 bytes (3%) of program storage space. Maximum is 32256 bytes.
+Global variables use 9 bytes (0%) of dynamic memory, leaving 2039 bytes for local variables. Maximum is 2048 bytes.
+avrdude: stk500_getsync() attempt 1 of 10: not in sync: resp=0x42
+avrdude: stk500_getsync() attempt 2 of 10: not in sync: resp=0x54
+avrdude: stk500_getsync() attempt 3 of 10: not in sync: resp=0x3a
+avrdude: stk500_getsync() attempt 4 of 10: not in sync: resp=0x31
+avrdude: stk500_getsync() attempt 5 of 10: not in sync: resp=0x31
+avrdude: stk500_getsync() attempt 6 of 10: not in sync: resp=0x38
+avrdude: stk500_getsync() attempt 7 of 10: not in sync: resp=0x2e
+avrdude: stk500_getsync() attempt 8 of 10: not in sync: resp=0x33
+avrdude: stk500_getsync() attempt 9 of 10: not in sync: resp=0x2c
+avrdude: stk500_getsync() attempt 10 of 10: not in sync: resp=0x44
+An error occurred while uploading the sketch
+
+
+This report would have more information with
+"Show verbose output during compilation"
+option enabled in File -> Preferences.
