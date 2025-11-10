@@ -2,6 +2,8 @@
 
 A custom coffee roasting system using Artisan roasting software on Raspberry Pi 4, with Arduino-based temperature monitoring.
 
+**GitHub Repository**: [Milk-Depot-Coffee-Roaster](https://github.com/jasonvanwyk/Milk-Depot-Coffee-Roaster)
+
 ## Overview
 
 This project integrates:
@@ -194,9 +196,21 @@ journalctl -xe
 
 ## Version Control
 
-This project uses Git for version control:
-- Arduino firmware is tracked in `arduino-firmware/`
-- Artisan source modifications are tracked in `artisan-source/`
+This project uses Git for version control and is hosted on GitHub.
+
+**Repository**: `git@github.com:jasonvanwyk/Milk-Depot-Coffee-Roaster.git`
+
+### Clone Repository
+```bash
+git clone git@github.com:jasonvanwyk/Milk-Depot-Coffee-Roaster.git
+cd Milk-Depot-Coffee-Roaster
+```
+
+### What's Tracked
+- Arduino firmware in `arduino-firmware/`
+- Artisan source modifications in `artisan-source/`
+- Project documentation
+- Configuration files
 - Roast profiles can be added to version control (currently gitignored)
 
 ### Git Configuration
