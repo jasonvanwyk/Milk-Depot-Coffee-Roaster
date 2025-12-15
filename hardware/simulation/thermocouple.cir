@@ -1,0 +1,97 @@
+* Coffee Roaster Thermocouple Circuit Simulation
+* =============================================
+* This simulates the K-type thermocouple with MAX31855 amplifier
+*
+* K-type thermocouple characteristics:
+* - Seebeck coefficient: ~41 uV/°C at 0°C
+* - Output at 500°C: approximately 20.6 mV
+*
+* MAX31855 characteristics:
+* - Internal gain: converts thermocouple voltage to digital
+* - Cold junction compensation: built-in
+* - Resolution: 0.25°C
+* - Accuracy: ±2°C
+
+.title K-type Thermocouple Signal Analysis
+
+* Parameters
+.param Tcold=25       ; Cold junction temperature (ambient, °C)
+.param Thot=250       ; Hot junction temperature (°C, simulating coffee beans)
+.param Seebeck=41u    ; Seebeck coefficient (V/°C)
+
+* Power supply (Arduino 5V through MAX31855 regulator to 3.3V)
+Vcc vcc 0 DC 3.3
+
+* Thermocouple EMF source
+* Voltage = Seebeck * (Thot - Tcold)
+* At Thot=250°C, Tcold=25°C: V = 41uV * 225 = 9.225mV
+Vtc tc_pos tc_neg DC {Seebeck * (Thot - Tcold)}
+
+* Thermocouple wire resistance (approximately 10 ohms for typical probe)
+Rtc_wire tc_pos tc_measured 10
+
+* MAX31855 input impedance (high impedance differential input)
+Rmax_in_p tc_measured max_inp 1Meg
+Rmax_in_n tc_neg max_inn 1Meg
+
+* Simplified MAX31855 amplifier model
+* Actual device is a sigma-delta ADC, modeled here as ideal amplifier
+* Gain is internal to IC, output is digital (SPI)
+Eamp max_out 0 max_inp max_inn 1
+
+* Cold junction reference (internal to MAX31855)
+* Models the cold junction compensation
+Vcj_ref cj_ref 0 DC {Seebeck * Tcold}
+
+* Compensated output
+Ecomp temp_out 0 VALUE={V(max_out) + V(cj_ref)}
+
+* Analysis
+.control
+  * DC operating point
+  op
+
+  echo "=== K-type Thermocouple Simulation Results ==="
+  echo ""
+  print Thot Tcold
+  echo ""
+  echo "Thermocouple EMF (raw):"
+  print v(tc_pos) - v(tc_neg)
+  echo ""
+  echo "Expected temperature reading:"
+  print (v(tc_pos) - v(tc_neg)) / Seebeck + Tcold
+  echo ""
+
+  * Temperature sweep analysis
+  echo "=== Temperature Sweep Analysis ==="
+
+  * Sweep hot junction from 0°C to 500°C
+  dc Vtc 0 20.5m 0.5m
+
+  * Plot thermocouple voltage vs temperature
+  plot v(tc_pos)-v(tc_neg) title "Thermocouple EMF vs Temperature"
+
+.endc
+
+* Temperature sweep with different hot junction temps
+.step param Thot 50 500 50
+
+.end
+
+* =============================================
+* NOTES:
+*
+* To run this simulation:
+*   ngspice thermocouple.cir
+*
+* Expected outputs:
+* - At 250°C bean temp, 25°C ambient: ~9.2mV EMF
+* - At 500°C exhaust temp, 25°C ambient: ~19.5mV EMF
+*
+* The MAX31855 digitizes this and outputs via SPI:
+* - Resolution: 0.25°C per LSB
+* - 14-bit signed value for temperature
+* - 12-bit signed value for cold junction
+*
+* Arduino reads via SPI and converts to actual temperature.
+* =============================================

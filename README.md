@@ -1,29 +1,44 @@
 # Coffee Roasting System
 
-A custom coffee roasting system using Artisan roasting software on Raspberry Pi 4, with Arduino-based temperature monitoring.
+A custom coffee roasting temperature monitoring system using Artisan roasting software on Raspberry Pi 4, with Arduino Nano-based temperature monitoring and local OLED display.
 
 **GitHub Repository**: [Milk-Depot-Coffee-Roaster](https://github.com/jasonvanwyk/Milk-Depot-Coffee-Roaster)
 
 ## Overview
 
 This project integrates:
-- **Artisan Coffee Roasting Software** - Profile creation, logging, and roast control
-- **Arduino R3** - Temperature probe interface (bean temp + drum temp)
-- **Raspberry Pi 4** - Running Artisan and communicating with Arduino via serial
+- **Artisan Coffee Roasting Software** - Profile creation, logging, and roast control on Raspberry Pi
+- **Arduino Nano** - Temperature probe interface with local OLED display
+- **K-type Thermocouples** - High-temperature probes (rated 500°C+) for bean and exhaust temps
+- **1.3" OLED Display** - Local temperature display with push-button screen cycling
+- **Raspberry Pi 4** - Running Artisan and communicating with Arduino via USB serial
 
 ## Hardware
 
 ### Components
-- Raspberry Pi 4 running Raspberry Pi OS (Debian Trixie)
-- Arduino UNO R3
-- 2x Temperature probes (connected to Arduino)
-  - Bean temperature probe
-  - Drum temperature probe
-- USB cable for Arduino → Raspberry Pi serial communication
+
+| Component | Model/Spec | Purpose |
+|-----------|------------|---------|
+| Raspberry Pi 4 | 4GB RAM, Raspberry Pi OS (Trixie) | Runs Artisan software |
+| Arduino Nano | ATmega328P, CH340 USB | Temperature reading & display |
+| MAX31855 Module x2 | K-type, SPI interface | Thermocouple amplifiers |
+| K-type Thermocouple x2 | 500°C+ rated, 3mm probe | Bean & exhaust temperature |
+| 1.3" OLED Display | 128x64, SH1106, I2C | Local temperature display |
+| Push Button | 6x6mm tactile | Cycle display screens |
+| Project Enclosure | ABS plastic box | House Arduino & display |
+
+### Display Screens (Button Cycling)
+1. **Startup Screen** - "MILK DEPOT Coffee Roaster"
+2. **Runtime Screen** - Shows elapsed roast time (HH:MM:SS)
+3. **Temperature Screen** - Bean temp & exhaust temp readings
 
 ### Connections
-- Arduino connects to Raspberry Pi via USB (appears as `/dev/ttyACM0` or `/dev/ttyUSB0`)
-- Temperature probes connect to Arduino analog/digital pins (documented in firmware)
+- Arduino Nano connects to Raspberry Pi via USB (power + serial data)
+- MAX31855 modules connect via SPI (shared CLK/MISO, separate CS pins)
+- OLED connects via I2C (A4=SDA, A5=SCL)
+- Push button connects to D2 (interrupt pin) with internal pullup
+
+See `HARDWARE.md` for detailed wiring diagrams and pin assignments.
 
 ## Software Stack
 
@@ -33,20 +48,36 @@ This project integrates:
 - **Artisan**: v3.4.0+ (installed via .deb package)
 
 ### Arduino
-- **Platform**: Arduino UNO R3
-- **Firmware**: Custom temperature monitoring (see `arduino-firmware/`)
+- **Platform**: Arduino Nano (ATmega328P)
+- **Firmware**: Custom temperature monitoring with OLED display (see `arduino-firmware/`)
 - **Baud Rate**: 115200
+- **Libraries**: Adafruit_MAX31855, U8g2lib (OLED)
 
 ## Project Structure
 
 ```
-/home/jason/artisan/
+Milk-Depot-Coffee-Roaster/
 ├── README.md                 # This file
+├── HARDWARE.md              # Detailed wiring and component guide
+├── CLAUDE.md                # Development instructions for Claude Code
 ├── .gitignore               # Git ignore rules
-├── arduino-firmware/        # Custom Arduino temperature monitoring code
-│   ├── temp_monitor/        # Main Arduino sketch
-│   └── README.md           # Firmware documentation
-├── artisan-source/          # Artisan source code (for reference/modifications)
+├── arduino-firmware/        # Arduino firmware
+│   ├── temp_monitor/        # Main sketch with OLED display
+│   ├── tc4_emulator/        # TC4 protocol emulator for Artisan
+│   ├── blank/               # Utility sketch (stops serial output)
+│   └── README.md            # Firmware documentation
+├── hardware/                # Hardware design files
+│   ├── coffee-roaster.kicad_sch  # KiCAD schematic
+│   ├── coffee-roaster.kicad_pcb  # KiCAD PCB layout (optional)
+│   ├── enclosure.FCStd      # FreeCAD enclosure design
+│   └── simulation/          # ngspice circuit simulations
+├── scripts/                 # Helper scripts
+│   ├── compile.sh           # Compile Arduino firmware
+│   ├── upload.sh            # Upload to Arduino
+│   ├── detect.sh            # Detect connected Arduino
+│   └── monitor.sh           # Monitor serial output
+├── bin/                     # Local tools
+│   └── arduino-cli          # Arduino CLI v1.3.1
 └── roast-profiles/          # (Future) Saved roast profiles
 ```
 
@@ -230,32 +261,38 @@ Jason (jason@precept.co.za)
 
 ## Status
 
+### Completed
 - [x] Git repository initialized
 - [x] Directory structure created
 - [x] Artisan v3.4.0 installed
-- [x] Arduino firmware written and uploaded
-- [x] Serial communication tested ✅ **WORKING PERFECTLY**
+- [x] Basic Arduino firmware written and tested
+- [x] Serial communication tested (working at 115200 baud)
 - [x] Arduino CLI configured
 - [x] Helper scripts created
-- [ ] Temperature sensors connected (MAX31855 modules needed)
-- [ ] Sensor calibration
+
+### In Progress
+- [ ] Hardware design (KiCAD schematic)
+- [ ] Component ordering (Arduino Nano, MAX31855, OLED, thermocouples)
+- [ ] Updated firmware with OLED display support
+
+### Pending (After Parts Arrive)
+- [ ] Assemble hardware
+- [ ] Temperature sensor calibration
+- [ ] Enclosure assembly
 - [ ] First successful roast
 
-### Latest Test Results (2025-11-10)
+### Hardware Shopping List (~$22-28)
 
-**Serial Communication**: ✅ Working flawlessly at 115200 baud
-```
-BT:63.0,DT:63.0
-BT:62.8,DT:62.6
-BT:66.2,DT:66.0
-```
+| Component | Est. Price | Source |
+|-----------|------------|--------|
+| Arduino Nano V3 Clone | ~$2-3 | AliExpress |
+| MAX31855 Module x2 | ~$8 | AliExpress |
+| K-type Thermocouple x2 (500°C+) | ~$6 | AliExpress |
+| 1.3" OLED Display (SH1106) | ~$3-4 | AliExpress |
+| Push Button + Enclosure | ~$4 | AliExpress |
 
-**Arduino Status**: ✅ Fully functional (UNO R3 at /dev/ttyACM0)
-**Current Readings**: ~63-66°C (floating analog pins - no sensors connected yet)
-**Next Step**: Connect MAX31855 thermocouple modules
-
-See `CURRENT_STATUS.md` for detailed system status.
+See plan file for detailed component links and specifications.
 
 ---
 
-**Last Updated**: 2025-11-10
+**Last Updated**: 2025-12-15

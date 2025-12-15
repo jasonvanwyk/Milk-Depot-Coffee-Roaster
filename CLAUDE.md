@@ -5,20 +5,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Project Overview
 
 This is a coffee roasting control system integrating:
-- **Arduino UNO R3**: Custom firmware for reading two temperature probes
+- **Arduino Nano**: Custom firmware for reading two K-type thermocouples via MAX31855 modules
+- **1.3" OLED Display**: Local temperature display with button-cycled screens
 - **Raspberry Pi 4**: Running Artisan coffee roasting software
 - **Serial Communication**: Arduino sends temperature data to Pi at 115200 baud
 
-**Key Concept**: The Arduino continuously reads analog temperature sensors and transmits formatted data (`BT:xx.x,DT:xx.x`) over USB serial, which Artisan software uses to display real-time temperature curves and control the roast.
+**Key Concept**: The Arduino reads K-type thermocouples (rated 500°C+) via MAX31855 SPI modules, displays temperatures locally on an OLED screen, and transmits formatted data (`BT:xx.x,DT:xx.x`) over USB serial to Artisan on the Raspberry Pi.
 
 ## Development Environment
 
 - **Platform**: Raspberry Pi 4, Raspberry Pi OS (Debian Trixie)
 - **Python**: 3.13.5 with pyserial installed
 - **Arduino CLI**: v1.3.1 installed locally in `bin/arduino-cli`
-- **Arduino Core**: arduino:avr@1.8.6 for Arduino UNO R3
+- **Arduino Core**: arduino:avr@1.8.6 for Arduino Nano (ATmega328P)
 - **Arduino IDE**: v1.8.19 also available for GUI development
 - **Artisan**: v3.4.0 installed system-wide at `/usr/bin/artisan`
+- **KiCAD**: Available for schematic/PCB design (install with `sudo apt install kicad`)
+- **ngspice**: Available for circuit simulation
+- **FreeCAD**: Available for 3D enclosure design
 
 ## Common Arduino Commands
 
@@ -81,11 +85,39 @@ User `jason` is already in the `dialout` group, so no permission changes needed 
 
 ## Architecture
 
+### Arduino Nano Pin Assignments
+
+```
+SPI (Thermocouples):
+  D13 (SCK)  → MAX31855 CLK (both, shared)
+  D12 (MISO) → MAX31855 DO (both, shared)
+  D10        → MAX31855 #1 CS (Bean Temp)
+  D9         → MAX31855 #2 CS (Exhaust Temp)
+
+I2C (OLED Display):
+  A4 (SDA)   → OLED SDA
+  A5 (SCL)   → OLED SCL
+
+Button:
+  D2 (INT0)  → Push button (with internal pullup)
+
+Power:
+  5V         → MAX31855 VCC (both), OLED VCC
+  GND        → All grounds
+  USB        → Raspberry Pi (power + serial data)
+```
+
 ### Arduino Firmware (`arduino-firmware/temp_monitor/`)
-- **Main Loop**: Reads analog pins A0 (bean) and A1 (drum) every 1000ms
-- **Conversion**: Placeholder formula `voltage * 50.0` - needs calibration with actual sensors
-- **Output**: Prints formatted string to Serial at 115200 baud
-- **Future Hardware**: Code has placeholders for MAX31855 thermocouple modules
+- **Temperature Reading**: MAX31855 modules via SPI (Bean on CS D10, Exhaust on CS D9)
+- **OLED Display**: 1.3" 128x64 SH1106 via I2C (address 0x3C)
+- **Button**: D2 with interrupt, cycles through 3 display screens
+- **Serial Output**: Prints `BT:xxx.x,DT:xxx.x` at 115200 baud, 1 Hz
+- **Libraries**: Adafruit_MAX31855, U8g2lib (or Adafruit_SH1106)
+
+### Display Screens (Button Cycling)
+1. **Startup**: "MILK DEPOT Coffee Roaster"
+2. **Runtime**: Elapsed time in HH:MM:SS format
+3. **Temperature**: Bean and Exhaust temps in large font
 
 ### Python Tools
 - `test_serial.py`: Production serial reader with 2-second init delay, displays 20 lines
@@ -142,11 +174,14 @@ SSH authentication is set up with ED25519 key.
 ## Documentation Map
 
 - `README.md`: Project overview and hardware/software stack
+- `HARDWARE.md`: Detailed wiring diagrams, component specs, assembly guide
 - `ARDUINO_CLI.md`: Comprehensive Arduino CLI guide, troubleshooting
 - `SERIAL_PROTOCOL.md`: Detailed serial communication specification
 - `ARTISAN_INTEGRATION.md`: How to connect Arduino data to Artisan
 - `CURRENT_STATUS.md`: Latest system status and test results
-- `arduino-firmware/README.md`: Hardware setup, wiring, calibration procedures
+- `arduino-firmware/README.md`: Firmware documentation
+- `hardware/coffee-roaster.kicad_sch`: KiCAD schematic
+- `hardware/simulation/thermocouple.cir`: ngspice circuit simulation
 
 ## Testing Data Flow
 
@@ -159,9 +194,19 @@ Current readings (no sensors): BT and DT both around 63-71°C from floating anal
 
 ## Next Hardware Integration
 
-When MAX31855 thermocouple modules arrive:
-1. Uncomment library includes in `temp_monitor.ino` (lines 34-36)
-2. Update `readBeanTemperature()` and `readDrumTemperature()` to use `readCelsius()`
-3. Define SPI pins for MAX31855 modules
-4. Recompile and upload
-5. Calibrate with ice water (0°C) and boiling water (100°C)
+### Components to Order (~$22-28 from AliExpress)
+- Arduino Nano V3 Clone (ATmega328P, CH340)
+- MAX31855 K-type Thermocouple Module x2
+- K-type Thermocouple Probes (500°C+ rated) x2
+- 1.3" OLED Display (SH1106, I2C)
+- Tactile Push Button 6x6mm
+- Project Enclosure
+
+### When Parts Arrive
+1. Wire components per `HARDWARE.md` diagram
+2. Install Arduino libraries: `Adafruit_MAX31855`, `U8g2lib`
+3. Update firmware to use MAX31855 SPI reading
+4. Add OLED display code and button handling
+5. Test temperature accuracy with ice water (0°C) and boiling water (100°C)
+6. Calibrate if needed using offset/scale factors
+7. Assemble into enclosure

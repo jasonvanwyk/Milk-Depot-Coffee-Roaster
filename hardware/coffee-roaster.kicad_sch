@@ -1,0 +1,117 @@
+(kicad_sch
+  (version 20231120)
+  (generator "eeschema")
+  (generator_version "8.0")
+  (uuid "e63e39d7-6ac0-4ffd-8aa3-1841a4541b55")
+  (paper "A4")
+  (title_block
+    (title "Coffee Roaster Temperature Monitor")
+    (date "2025-12-15")
+    (rev "1.0")
+    (company "Milk Depot Coffee Roaster")
+    (comment 1 "Arduino Nano + MAX31855 + OLED Display")
+    (comment 2 "Bean & Exhaust Temperature Monitoring")
+  )
+
+  (lib_symbols
+  )
+
+  (text "COFFEE ROASTER TEMPERATURE MONITOR\n================================\n\nThis schematic shows the connections for:\n- Arduino Nano (ATmega328P)\n- 2x MAX31855 Thermocouple Amplifiers\n- 1.3\" OLED Display (SH1106, I2C)\n- Push Button for screen cycling\n\nPOWER:\n- USB from Raspberry Pi provides 5V\n- Arduino 5V pin powers all modules\n\nSPI BUS (Thermocouples):\n- D13 (SCK) -> Both MAX31855 CLK\n- D12 (MISO) -> Both MAX31855 DO\n- D10 -> MAX31855 #1 CS (Bean)\n- D9 -> MAX31855 #2 CS (Exhaust)\n\nI2C BUS (Display):\n- A4 (SDA) -> OLED SDA\n- A5 (SCL) -> OLED SCL\n\nBUTTON:\n- D2 -> Button (other side to GND)\n- Uses internal pullup resistor"
+    (exclude_from_sim no)
+    (at 25.4 25.4 0)
+    (effects
+      (font
+        (size 2.54 2.54)
+      )
+      (justify left top)
+    )
+    (uuid "a1b2c3d4-e5f6-7890-abcd-ef1234567890")
+  )
+
+  (text "ARDUINO NANO PINOUT\n==================\n\n     +-----USB-----+\nD13 -|             |- D12  (MISO)\n3V3 -|             |- D11\nREF -|             |- D10  (CS Bean)\n A0 -|             |- D9   (CS Exhaust)\n A1 -|             |- D8\n A2 -|             |- D7\n A3 -|             |- D6\n A4 -|  (SDA)      |- D5\n A5 -|  (SCL)      |- D4\n A6 -|             |- D3\n A7 -|             |- D2   (Button)\n 5V -|             |- GND\nRST -|             |- RST\nGND -|             |- RX0\nVIN -|             |- TX1\n     +-------------+"
+    (exclude_from_sim no)
+    (at 127 25.4 0)
+    (effects
+      (font
+        (size 2.54 2.54)
+        (face "Monospace")
+      )
+      (justify left top)
+    )
+    (uuid "b2c3d4e5-f6a7-8901-bcde-f23456789012")
+  )
+
+  (text "MAX31855 MODULE #1 (Bean Temp)\n==============================\n\nVCC -----> Arduino 5V\nGND -----> Arduino GND\nCLK -----> Arduino D13 (SCK)\nDO  -----> Arduino D12 (MISO)\nCS  -----> Arduino D10\n\nTC+ -----> K-type Thermocouple (+)\nTC- -----> K-type Thermocouple (-)"
+    (exclude_from_sim no)
+    (at 25.4 127 0)
+    (effects
+      (font
+        (size 2.54 2.54)
+      )
+      (justify left top)
+    )
+    (uuid "c3d4e5f6-a7b8-9012-cdef-345678901234")
+  )
+
+  (text "MAX31855 MODULE #2 (Exhaust Temp)\n=================================\n\nVCC -----> Arduino 5V\nGND -----> Arduino GND\nCLK -----> Arduino D13 (SCK) [shared]\nDO  -----> Arduino D12 (MISO) [shared]\nCS  -----> Arduino D9\n\nTC+ -----> K-type Thermocouple (+)\nTC- -----> K-type Thermocouple (-)"
+    (exclude_from_sim no)
+    (at 25.4 177.8 0)
+    (effects
+      (font
+        (size 2.54 2.54)
+      )
+      (justify left top)
+    )
+    (uuid "d4e5f6a7-b8c9-0123-defa-456789012345")
+  )
+
+  (text "1.3\" OLED DISPLAY (SH1106)\n==========================\n\nVCC -----> Arduino 5V\nGND -----> Arduino GND\nSDA -----> Arduino A4\nSCL -----> Arduino A5\n\nI2C Address: 0x3C"
+    (exclude_from_sim no)
+    (at 127 127 0)
+    (effects
+      (font
+        (size 2.54 2.54)
+      )
+      (justify left top)
+    )
+    (uuid "e5f6a7b8-c9d0-1234-efab-567890123456")
+  )
+
+  (text "PUSH BUTTON\n===========\n\nPin 1 -----> Arduino D2\nPin 2 -----> Arduino GND\n\nNote: Uses internal pullup resistor\n      (INPUT_PULLUP in firmware)"
+    (exclude_from_sim no)
+    (at 127 177.8 0)
+    (effects
+      (font
+        (size 2.54 2.54)
+      )
+      (justify left top)
+    )
+    (uuid "f6a7b8c9-d0e1-2345-fabc-678901234567")
+  )
+
+  (text "POWER DISTRIBUTION\n==================\n\n            USB from Raspberry Pi\n                    |\n                    v\n            +-------+-------+\n            |  Arduino Nano |\n            |      5V       |\n            +---+---+---+---+\n                |   |   |\n    +-----------+   |   +-----------+\n    |               |               |\n    v               v               v\nMAX31855 #1    MAX31855 #2    OLED Display\n (Bean)        (Exhaust)      (SH1106)"
+    (exclude_from_sim no)
+    (at 25.4 228.6 0)
+    (effects
+      (font
+        (size 2.54 2.54)
+        (face "Monospace")
+      )
+      (justify left top)
+    )
+    (uuid "a7b8c9d0-e1f2-3456-abcd-789012345678")
+  )
+
+  (text "SERIAL OUTPUT TO RASPBERRY PI\n==============================\n\nFormat: BT:xxx.x,DT:xxx.x\\n\n\nBT = Bean Temperature (Celsius)\nDT = Drum/Exhaust Temperature (Celsius)\n\nBaud Rate: 115200\nUpdate Rate: 1 Hz (1000ms interval)"
+    (exclude_from_sim no)
+    (at 127 228.6 0)
+    (effects
+      (font
+        (size 2.54 2.54)
+      )
+      (justify left top)
+    )
+    (uuid "b8c9d0e1-f2a3-4567-bcde-890123456789")
+  )
+
+)
