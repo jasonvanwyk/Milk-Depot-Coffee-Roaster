@@ -125,21 +125,39 @@
 | Spec | Value |
 |------|-------|
 | Material | ABS plastic |
-| Min Size | 100mm x 60mm x 25mm (internal) |
+| Size | 100mm x 60mm x 25mm (minimum internal) |
 | Features | Space for display cutout |
-| Quantity | 1 |
-| Est. Price | $2-4 |
+| Quantity | 1-2 (extra for mistakes) |
+| Est. Price | $1-3 |
+
+**Recommended Products:**
+
+| Product | Price | Link |
+|---------|-------|------|
+| ABS DIY Plastic Project Box 100x60x25mm | ~$1.34 | [AliExpress](https://www.aliexpress.com/item/32816989679.html) |
+| Screwless Electronic Enclosure 100x60x25mm | ~$2.95 | [AliExpress](https://www.aliexpress.com/item/32777782150.html) |
 
 **Search terms:**
-- AliExpress: `Arduino project box enclosure`
-- AliExpress: `ABS plastic enclosure 100x60`
-- AliExpress: `electronic project box with window`
+- AliExpress: `100x60x25 project box`
+- AliExpress: `ABS enclosure 100x60`
+- AliExpress: `arduino nano case`
+- AliExpress: `electronic enclosure LCD window`
 - Temu: `Arduino enclosure box`
 
 **What to look for:**
-- Size to fit Arduino Nano + OLED (at least 100x60x25mm)
+- Size to fit Arduino Nano + OLED (at least 100x60x25mm internal)
 - Easy to drill/cut for display window and button
 - Screw-on lid (not snap-fit, harder to modify)
+- Consider buying 2 in case of cutting mistakes
+
+**Cutouts you'll need to make:**
+
+| Cutout | Size | Tool |
+|--------|------|------|
+| OLED window | ~32 x 20mm | Drill corners + hobby knife |
+| Button hole | 6-7mm diameter | Drill bit |
+| USB port | ~10 x 8mm slot | Drill + file |
+| Thermocouple cables x2 | 5-6mm holes | Drill bit |
 
 ---
 
@@ -182,7 +200,8 @@
 - [K-type Thermocouple Probe](https://www.aliexpress.com/w/wholesale-k-type-thermocouple-500c-stainless.html)
 - [1.3" OLED SH1106](https://www.aliexpress.com/w/wholesale-1.3-inch-oled-i2c-sh1106.html)
 - [Tactile Button 6x6mm](https://www.aliexpress.com/w/wholesale-tactile-push-button-6x6mm.html)
-- [Project Enclosure](https://www.aliexpress.com/w/wholesale-arduino-project-enclosure.html)
+- [Project Enclosure 100x60x25](https://www.aliexpress.com/w/wholesale-100x60x25-project-box.html)
+- [Specific Enclosure Option ($1.34)](https://www.aliexpress.com/item/32816989679.html)
 
 ### Temu
 - Search: `Arduino Nano V3`
