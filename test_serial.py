@@ -7,7 +7,7 @@ import time
 import sys
 
 PORT = '/dev/ttyACM0'
-BAUD = 115200
+BAUD = 9600
 
 try:
     print(f"Opening serial port {PORT} at {BAUD} baud...")

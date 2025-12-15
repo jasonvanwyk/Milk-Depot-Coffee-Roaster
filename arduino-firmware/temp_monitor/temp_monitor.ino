@@ -13,7 +13,7 @@
  */
 
 // Configuration
-const unsigned long BAUD_RATE = 115200;
+const unsigned long BAUD_RATE = 9600;
 const unsigned long SAMPLE_INTERVAL_MS = 1000;  // Send data every 1 second
 
 // Temperature probe pins
