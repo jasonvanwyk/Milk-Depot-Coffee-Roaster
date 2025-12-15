@@ -46,35 +46,45 @@ Vcj_ref cj_ref 0 DC {Seebeck * Tcold}
 * Compensated output
 Ecomp temp_out 0 VALUE={V(max_out) + V(cj_ref)}
 
-* Analysis
+* Analysis - Batch mode compatible
 .control
-  * DC operating point
+  * Run DC operating point analysis
   op
 
-  echo "=== K-type Thermocouple Simulation Results ==="
   echo ""
-  print Thot Tcold
+  echo "=========================================="
+  echo "K-type Thermocouple Simulation Results"
+  echo "=========================================="
   echo ""
-  echo "Thermocouple EMF (raw):"
-  print v(tc_pos) - v(tc_neg)
+  echo "Configuration:"
+  echo "  Cold junction (ambient): 25 C"
+  echo "  Hot junction (bean temp): 250 C"
+  echo "  Seebeck coefficient: 41 uV/C"
   echo ""
-  echo "Expected temperature reading:"
-  print (v(tc_pos) - v(tc_neg)) / Seebeck + Tcold
+  echo "Calculated values:"
+  print v(tc_pos) v(tc_neg)
+  print v(tc_measured)
+  print v(max_out)
+  print v(temp_out)
+  echo ""
+  echo "Thermocouple EMF (should be ~9.225mV for 250C):"
+  print v(tc_pos)-v(tc_neg)
+  echo ""
+  echo "=========================================="
   echo ""
 
-  * Temperature sweep analysis
-  echo "=== Temperature Sweep Analysis ==="
+  * DC sweep of thermocouple voltage (simulates temperature change)
+  * Sweep from 0mV to 20mV (0C to ~500C)
+  dc Vtc 0 20m 1m
 
-  * Sweep hot junction from 0°C to 500°C
-  dc Vtc 0 20.5m 0.5m
+  * Print sweep results to file for analysis
+  wrdata thermocouple_sweep.txt v(tc_measured) v(max_out)
 
-  * Plot thermocouple voltage vs temperature
-  plot v(tc_pos)-v(tc_neg) title "Thermocouple EMF vs Temperature"
+  echo "Sweep data written to thermocouple_sweep.txt"
+  echo ""
 
+  quit
 .endc
-
-* Temperature sweep with different hot junction temps
-.step param Thot 50 500 50
 
 .end
 
