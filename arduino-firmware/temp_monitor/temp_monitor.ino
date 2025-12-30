@@ -1,158 +1,192 @@
 /*
- * Milk Depot Coffee Roaster - Temperature Monitor
+ * Milk Depot Coffee Roaster - Temperature Monitor (3-Channel)
  *
- * Arduino firmware for reading two temperature probes:
- * - Bean Temperature (BT)
- * - Drum Temperature (DT)
+ * Continuous output firmware for reading three temperature probes:
+ *   - ET (Exhaust/Environment Temperature)
+ *   - BT (Bean Temperature)
+ *   - FT (Flame Temperature)
  *
- * Sends temperature data over serial to Artisan software running on Raspberry Pi
+ * Sends temperature data over serial in a simple comma-separated format.
+ * For use with External Program device type in Artisan or custom parsers.
+ *
+ * For TC4 protocol compatibility (ArduinoTC4 device type), use tc4_emulator instead.
+ *
+ * Hardware:
+ *   - 3x MAX31855 thermocouple amplifier modules (SPI)
+ *   - 3x Olimex TC-K-TYPE-1.5M K-type thermocouples
  *
  * Author: Jason
  * Repository: https://github.com/jasonvanwyk/Milk-Depot-Coffee-Roaster
- * License: MIT
  */
 
-// Configuration
-const unsigned long BAUD_RATE = 9600;
+#include <SPI.h>
+
+// Uncomment when MAX31855 library is installed:
+// #include <Adafruit_MAX31855.h>
+
+// ============================================================================
+// CONFIGURATION
+// ============================================================================
+
+const unsigned long BAUD_RATE = 115200;
 const unsigned long SAMPLE_INTERVAL_MS = 1000;  // Send data every 1 second
 
-// Temperature probe pins
-// NOTE: Adjust these based on your actual hardware connections
-const int BEAN_TEMP_PIN = A0;    // Bean temperature probe (analog pin)
-const int DRUM_TEMP_PIN = A1;    // Drum temperature probe (analog pin)
+// SPI Pin Definitions (shared bus)
+const int PIN_SCK  = 13;   // SPI Clock (shared)
+const int PIN_MISO = 12;   // SPI Data Out (shared)
 
-// Calibration constants (adjust based on your probes)
-// For K-type thermocouples with amplifier modules (like MAX6675 or MAX31855)
-// These are placeholder values - you'll need to calibrate
-const float BEAN_TEMP_OFFSET = 0.0;   // Offset in degrees Celsius
-const float BEAN_TEMP_SCALE = 1.0;    // Scale factor
-const float DRUM_TEMP_OFFSET = 0.0;   // Offset in degrees Celsius
-const float DRUM_TEMP_SCALE = 1.0;    // Scale factor
+// Chip Select pins (directly controlled, active low)
+const int PIN_CS_ET = 10;  // CS for Exhaust Temperature
+const int PIN_CS_BT = 9;   // CS for Bean Temperature
+const int PIN_CS_FT = 8;   // CS for Flame Temperature
 
-// If using MAX6675 or MAX31855 thermocouple amplifier modules:
-// Uncomment the appropriate library and update the pin definitions
-// #include <max6675.h>
-// MAX6675 beanThermocouple(thermoDO, thermoCS_bean, thermoCLK);
-// MAX6675 drumThermocouple(thermoDO, thermoCS_drum, thermoCLK);
+// Temperature offset calibration (adjust after calibration)
+float calibOffset_ET = 0.0;
+float calibOffset_BT = 0.0;
+float calibOffset_FT = 0.0;
 
-// Timing
+// ============================================================================
+// MAX31855 OBJECTS (uncomment when library installed)
+// ============================================================================
+
+// Adafruit_MAX31855 thermoET(PIN_SCK, PIN_CS_ET, PIN_MISO);
+// Adafruit_MAX31855 thermoBT(PIN_SCK, PIN_CS_BT, PIN_MISO);
+// Adafruit_MAX31855 thermoFT(PIN_SCK, PIN_CS_FT, PIN_MISO);
+
+// ============================================================================
+// GLOBAL VARIABLES
+// ============================================================================
+
 unsigned long lastSampleTime = 0;
 
+// Last good readings (returned on error)
+float lastTemp_ET = 0.0;
+float lastTemp_BT = 0.0;
+float lastTemp_FT = 0.0;
+
+// ============================================================================
+// SETUP
+// ============================================================================
+
 void setup() {
-  // Initialize serial communication
   Serial.begin(BAUD_RATE);
 
   // Wait for serial port to connect (needed for some boards)
   while (!Serial) {
-    ; // Wait for serial port to connect
+    ;
   }
 
-  // Initialize analog pins (if using direct analog readings)
-  pinMode(BEAN_TEMP_PIN, INPUT);
-  pinMode(DRUM_TEMP_PIN, INPUT);
+  // Configure CS pins as outputs
+  pinMode(PIN_CS_ET, OUTPUT);
+  pinMode(PIN_CS_BT, OUTPUT);
+  pinMode(PIN_CS_FT, OUTPUT);
+
+  // Deselect all MAX31855 modules
+  digitalWrite(PIN_CS_ET, HIGH);
+  digitalWrite(PIN_CS_BT, HIGH);
+  digitalWrite(PIN_CS_FT, HIGH);
+
+  // Initialize SPI
+  SPI.begin();
 
   // Send startup message
-  Serial.println("# Milk Depot Coffee Roaster - Temperature Monitor");
-  Serial.println("# Ready to send temperature data");
-  Serial.println("# Format: BT:xxx.x,DT:xxx.x");
+  Serial.println(F("# Milk Depot Coffee Roaster - 3 Channel Temperature Monitor"));
+  Serial.println(F("# Format: ET:xxx.x,BT:xxx.x,FT:xxx.x"));
+  Serial.println(F("# Baud: 115200, Interval: 1000ms"));
 }
+
+// ============================================================================
+// MAIN LOOP
+// ============================================================================
 
 void loop() {
   unsigned long currentTime = millis();
 
-  // Check if it's time to take a sample
   if (currentTime - lastSampleTime >= SAMPLE_INTERVAL_MS) {
     lastSampleTime = currentTime;
 
-    // Read temperatures
-    float beanTemp = readBeanTemperature();
-    float drumTemp = readDrumTemperature();
+    // Read all temperatures
+    float tempET = readTemperature_ET();
+    float tempBT = readTemperature_BT();
+    float tempFT = readTemperature_FT();
 
-    // Send data in Artisan-compatible format
-    // Format: BT:xxx.x,DT:xxx.x\n
-    Serial.print("BT:");
-    Serial.print(beanTemp, 1);  // 1 decimal place
-    Serial.print(",DT:");
-    Serial.print(drumTemp, 1);  // 1 decimal place
-    Serial.println();
+    // Store last good readings
+    lastTemp_ET = tempET;
+    lastTemp_BT = tempBT;
+    lastTemp_FT = tempFT;
+
+    // Output format: ET:xxx.x,BT:xxx.x,FT:xxx.x
+    Serial.print(F("ET:"));
+    Serial.print(tempET, 1);
+    Serial.print(F(",BT:"));
+    Serial.print(tempBT, 1);
+    Serial.print(F(",FT:"));
+    Serial.println(tempFT, 1);
   }
 }
 
-// Read bean temperature probe
-float readBeanTemperature() {
-  // OPTION 1: Using MAX6675/MAX31855 library
-  // Uncomment if using thermocouple amplifier module
-  // return beanThermocouple.readCelsius();
+// ============================================================================
+// TEMPERATURE READING FUNCTIONS
+// ============================================================================
 
-  // OPTION 2: Direct analog reading (for basic thermistors or voltage output sensors)
-  int rawValue = analogRead(BEAN_TEMP_PIN);
+float readTemperature_ET() {
+  // WITH MAX31855 LIBRARY (uncomment when hardware connected):
+  // float temp = thermoET.readCelsius();
+  // if (isnan(temp)) return lastTemp_ET;
+  // return temp + calibOffset_ET;
 
-  // Convert analog reading to temperature
-  // This conversion depends on your specific sensor
-  // Example for 10-bit ADC (0-1023) with 5V reference and linear sensor:
-  float voltage = rawValue * (5.0 / 1023.0);
-
-  // Example conversion (adjust for your sensor):
-  // Many analog temp sensors output 10mV per degree Celsius
-  // float tempC = voltage * 100.0;
-
-  // Placeholder: Replace with your actual conversion formula
-  float tempC = voltage * 50.0;  // Example scaling
-
-  // Apply calibration
-  tempC = (tempC * BEAN_TEMP_SCALE) + BEAN_TEMP_OFFSET;
-
-  return tempC;
+  // SIMULATION MODE:
+  return readAnalogSimulated(A0);
 }
 
-// Read drum temperature probe
-float readDrumTemperature() {
-  // OPTION 1: Using MAX6675/MAX31855 library
-  // Uncomment if using thermocouple amplifier module
-  // return drumThermocouple.readCelsius();
+float readTemperature_BT() {
+  // WITH MAX31855 LIBRARY:
+  // float temp = thermoBT.readCelsius();
+  // if (isnan(temp)) return lastTemp_BT;
+  // return temp + calibOffset_BT;
 
-  // OPTION 2: Direct analog reading (for basic thermistors or voltage output sensors)
-  int rawValue = analogRead(DRUM_TEMP_PIN);
-
-  // Convert analog reading to temperature
-  float voltage = rawValue * (5.0 / 1023.0);
-
-  // Placeholder: Replace with your actual conversion formula
-  float tempC = voltage * 50.0;  // Example scaling
-
-  // Apply calibration
-  tempC = (tempC * DRUM_TEMP_SCALE) + DRUM_TEMP_OFFSET;
-
-  return tempC;
+  // SIMULATION MODE:
+  return readAnalogSimulated(A1);
 }
+
+float readTemperature_FT() {
+  // WITH MAX31855 LIBRARY:
+  // float temp = thermoFT.readCelsius();
+  // if (isnan(temp)) return lastTemp_FT;
+  // return temp + calibOffset_FT;
+
+  // SIMULATION MODE:
+  return readAnalogSimulated(A2);
+}
+
+// Simulated reading from analog noise (for testing without hardware)
+float readAnalogSimulated(int analogPin) {
+  int raw = analogRead(analogPin);
+  float voltage = raw * (5.0 / 1023.0);
+  return voltage * 50.0;  // ~0-250C range
+}
+
+// ============================================================================
+// HARDWARE ACTIVATION INSTRUCTIONS
+// ============================================================================
 
 /*
- * HARDWARE SETUP NOTES:
+ * TO ENABLE MAX31855 THERMOCOUPLES:
  *
- * For K-type thermocouples with MAX6675 or MAX31855 modules:
- * 1. Install the appropriate library via Arduino IDE Library Manager:
- *    - Search for "MAX6675" or "MAX31855"
- *    - Install the Adafruit library
+ * 1. Install Adafruit MAX31855 library via Arduino IDE Library Manager
  *
- * 2. Wiring for MAX6675/MAX31855 (SPI interface):
- *    - VCC -> 5V (or 3.3V depending on module)
- *    - GND -> GND
- *    - SCK (Clock) -> Digital pin (e.g., D13 on Uno)
- *    - SO (Data Out) -> Digital pin (e.g., D12 on Uno)
- *    - CS (Chip Select) -> Digital pin (unique for each sensor)
+ * 2. Uncomment: #include <Adafruit_MAX31855.h>
  *
- * 3. Update the code to use thermocouple libraries (see commented sections)
+ * 3. Uncomment the thermocouple object declarations
  *
- * For analog thermistors or voltage-output sensors:
- * 1. Connect sensor output to analog pins (A0, A1)
- * 2. Update the conversion formulas based on sensor datasheet
- * 3. Calibrate using known temperature references (ice water, boiling water)
+ * 4. In each readTemperature_XX function:
+ *    - Uncomment the MAX31855 code block
+ *    - Comment out/delete the readAnalogSimulated() call
  *
- * CALIBRATION PROCEDURE:
- * 1. Place both probes in ice water (0°C) and note the readings
- * 2. Place both probes in boiling water (100°C) and note the readings
- * 3. Calculate offset and scale factors:
- *    offset = 0 - reading_at_0C
- *    scale = 100 / (reading_at_100C - reading_at_0C)
- * 4. Update BEAN_TEMP_OFFSET, BEAN_TEMP_SCALE, etc.
+ * 5. Compile and upload
+ *
+ * WIRING:
+ *   MAX31855 modules share SCK (D13) and MISO (D12)
+ *   Each has unique CS: ET->D10, BT->D9, FT->D8
+ *   All powered from 5V and GND
  */

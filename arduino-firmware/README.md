@@ -1,160 +1,152 @@
 # Arduino Temperature Monitor Firmware
 
-Custom Arduino firmware for the Milk Depot Coffee Roaster to read two temperature probes and communicate with Artisan software.
+Custom Arduino firmware for the Milk Depot Coffee Roaster - 3-channel thermocouple interface for Artisan software.
 
 ## Overview
 
-This firmware reads temperature from two probes:
-- **Bean Temperature (BT)** - Measures the coffee bean temperature during roasting
-- **Drum Temperature (DT)** - Measures the roasting drum temperature
+This firmware reads temperature from three K-type thermocouples via MAX31855 amplifier modules:
 
-Temperature data is sent over USB serial connection to the Raspberry Pi running Artisan software.
+| Channel | Name | Description |
+|---------|------|-------------|
+| 1 | ET | Exhaust/Environment Temperature - air leaving the drum |
+| 2 | BT | Bean Temperature - probe in bean mass |
+| 3 | FT | Flame Temperature - near the burner |
+
+Temperature data is sent over USB serial to Raspberry Pi running Artisan software.
+
+## Firmware Variants
+
+| Sketch | Protocol | Use Case |
+|--------|----------|----------|
+| `tc4_emulator/` | TC4 command/response | **Production** - Use with ArduinoTC4 device |
+| `temp_monitor/` | Continuous output | Alternative - Use with External Program |
+| `serial_test/` | Basic serial | Testing only |
+| `blank/` | None | For easy uploads when main firmware blocks |
 
 ## Hardware Requirements
 
 ### Required Components
-- Arduino UNO R3 (or compatible)
-- 2x Temperature probes (K-type thermocouples recommended)
-- 2x Thermocouple amplifier modules (MAX6675 or MAX31855)
-- USB cable for Arduino → Raspberry Pi connection
-- Jumper wires for connections
+- Arduino UNO R3
+- 3x MAX31855 thermocouple amplifier modules
+- 3x K-type thermocouples (Olimex TC-K-TYPE-1.5M recommended)
+- USB cable for Arduino → Raspberry Pi
 
-### Recommended: MAX31855 Thermocouple Modules
+### Optional
+- SSD1306 OLED display (128x64, I2C) for local readout
 
-The MAX31855 is recommended over MAX6675 because:
-- Wider temperature range (-200°C to +1350°C vs 0°C to +1024°C)
-- Better accuracy (±2°C vs ±4°C)
-- Cold-junction compensation
-- 14-bit resolution
+## Wiring
 
-## Wiring Diagram
-
-### Using MAX31855 Modules (SPI Interface)
-
+### SPI Bus (Shared)
 ```
-Arduino UNO          MAX31855 Module #1 (Bean Temp)
------------          ---------------------------
-5V         --------> VCC
-GND        --------> GND
-Pin 13(SCK)--------> CLK
-Pin 12(MISO)-------> SO
-Pin 10(SS) --------> CS
+Arduino D13 (SCK)  ────┬──── MAX31855 #1 SCK
+                       ├──── MAX31855 #2 SCK
+                       └──── MAX31855 #3 SCK
 
-Arduino UNO          MAX31855 Module #2 (Drum Temp)
------------          ---------------------------
-5V         --------> VCC (shared with module #1)
-GND        --------> GND (shared with module #1)
-Pin 13(SCK)--------> CLK (shared with module #1)
-Pin 12(MISO)-------> SO (shared with module #1)
-Pin 9(SS)  --------> CS (unique pin for module #2)
+Arduino D12 (MISO) ────┬──── MAX31855 #1 DO
+                       ├──── MAX31855 #2 DO
+                       └──── MAX31855 #3 DO
 ```
 
-**Note**: Both modules share the SPI bus (CLK and SO/MISO), but each needs a unique Chip Select (CS) pin.
-
-### Alternative: Analog Temperature Sensors
-
-If using analog sensors (thermistors, LM35, TMP36, etc.):
+### Chip Select (Individual)
 ```
-Sensor Output -> Arduino A0 (Bean Temp)
-Sensor Output -> Arduino A1 (Drum Temp)
+Arduino D10 ──── MAX31855 #1 CS (ET - Exhaust)
+Arduino D9  ──── MAX31855 #2 CS (BT - Bean)
+Arduino D8  ──── MAX31855 #3 CS (FT - Flame)
 ```
 
-You'll need to modify the conversion formulas in the code based on your sensor's datasheet.
+### Power (Shared)
+```
+Arduino 5V  ────┬──── All MAX31855 VCC
+                └──── OLED VCC (optional)
+
+Arduino GND ────┬──── All MAX31855 GND
+                └──── OLED GND (optional)
+```
+
+### I2C for OLED (Optional)
+```
+Arduino A4 (SDA) ──── OLED SDA
+Arduino A5 (SCL) ──── OLED SCL
+```
 
 ## Installation
 
 ### 1. Install Required Libraries
 
-If using MAX6675 or MAX31855 modules:
+Open Arduino IDE → Sketch → Include Library → Manage Libraries:
 
-1. Open Arduino IDE
-2. Go to **Sketch** → **Include Library** → **Manage Libraries**
-3. Search for "MAX31855" (or "MAX6675")
-4. Install "Adafruit MAX31855" library
+- **Adafruit MAX31855** (required)
+- **Adafruit BusIO** (dependency)
+- **Adafruit SSD1306** (optional, for OLED)
+- **Adafruit GFX Library** (optional, for OLED)
 
-### 2. Modify the Code for Your Hardware
+### 2. Enable Hardware Support
 
-Edit `temp_monitor.ino`:
-
-#### For MAX31855 Modules:
-
-Uncomment and modify the library includes and pin definitions:
+Edit `tc4_emulator.ino` (or `temp_monitor.ino`):
 
 ```cpp
+// Uncomment this line:
 #include <Adafruit_MAX31855.h>
 
-// Pin definitions
-#define MAXDO   12  // Data Out (MISO)
-#define MAXCS_BEAN 10  // Chip Select for bean temp
-#define MAXCS_DRUM 9   // Chip Select for drum temp
-#define MAXCLK  13  // Clock (SCK)
-
-// Initialize thermocouples
-Adafruit_MAX31855 beanThermocouple(MAXCLK, MAXCS_BEAN, MAXDO);
-Adafruit_MAX31855 drumThermocouple(MAXCLK, MAXCS_DRUM, MAXDO);
+// Uncomment thermocouple objects:
+Adafruit_MAX31855 thermoET(PIN_SCK, PIN_CS_ET, PIN_MISO);
+Adafruit_MAX31855 thermoBT(PIN_SCK, PIN_CS_BT, PIN_MISO);
+Adafruit_MAX31855 thermoFT(PIN_SCK, PIN_CS_FT, PIN_MISO);
 ```
 
-Then update the temperature reading functions:
-```cpp
-float readBeanTemperature() {
-  return beanThermocouple.readCelsius();
-}
+In each `readTemperature_XX()` function:
+- Uncomment the MAX31855 library code block
+- Delete/comment the `readAnalogSimulated()` line
 
-float readDrumTemperature() {
-  return drumThermocouple.readCelsius();
-}
+### 3. Compile and Upload
+
+From project root:
+```bash
+./scripts/compile.sh arduino-firmware/tc4_emulator
+./scripts/upload.sh arduino-firmware/tc4_emulator
 ```
 
-#### For Analog Sensors:
+If upload fails (firmware blocking bootloader):
+- Press Arduino RESET button immediately after starting upload
+- Or upload `blank/blank.ino` first
 
-Update the conversion formulas based on your sensor's datasheet. See comments in the code.
+### 4. Test
 
-### 3. Upload Firmware to Arduino
+```bash
+# Monitor serial output
+python3 test_serial.py
 
-1. Connect Arduino to your computer via USB
-2. Open Arduino IDE
-3. Open `temp_monitor/temp_monitor.ino`
-4. Select **Tools** → **Board** → **Arduino UNO**
-5. Select **Tools** → **Port** → (your Arduino's COM port)
-6. Click **Upload** button (→)
-7. Wait for "Done uploading" message
-
-### 4. Test the Firmware
-
-1. Open **Tools** → **Serial Monitor**
-2. Set baud rate to **115200**
-3. You should see output like:
-   ```
-   # Milk Depot Coffee Roaster - Temperature Monitor
-   # Ready to send temperature data
-   # Format: BT:xxx.x,DT:xxx.x
-   BT:23.5,DT:24.1
-   BT:23.6,DT:24.1
-   BT:23.5,DT:24.2
-   ```
-
-## Serial Communication Protocol
-
-### Data Format
-
-Temperature data is sent as comma-separated values:
-```
-BT:xxx.x,DT:xxx.x\n
+# Or test TC4 protocol manually
+screen /dev/ttyACM0 115200
+# Type: READ
+# Should see: 25.00,xxx.xx,xxx.xx,xxx.xx,0.00
 ```
 
-- **BT**: Bean Temperature in Celsius (1 decimal place)
-- **DT**: Drum Temperature in Celsius (1 decimal place)
-- Data sent every 1000ms (1 Hz)
-- Each line terminated with newline (`\n`)
+## Serial Protocol
 
-### Example Output
+### TC4 Protocol (tc4_emulator)
+
+**Command/Response format:**
 ```
-BT:205.3,DT:187.2
-BT:206.1,DT:188.5
-BT:207.5,DT:190.3
+Artisan sends:  READ
+Arduino sends:  25.00,180.50,195.20,350.00,0.00
+                 │     │      │      │      └── Chan4 (unused)
+                 │     │      │      └── Chan3 (FT)
+                 │     │      └── Chan2 (BT)
+                 │     └── Chan1 (ET)
+                 └── Ambient temp
 ```
 
-### Serial Settings
+**Supported commands:** `READ`, `CHAN`, `UNITS`, `FILT`, `OT1`, `OT2`, `PID`
+
+### Continuous Output (temp_monitor)
+
+```
+ET:180.5,BT:195.2,FT:350.0
+```
+Sent every 1000ms.
+
+### Settings
 - **Baud Rate**: 115200
 - **Data Bits**: 8
 - **Parity**: None
@@ -162,151 +154,87 @@ BT:207.5,DT:190.3
 
 ## Calibration
 
-Temperature probes need calibration for accurate readings.
-
-### Calibration Procedure
+### Procedure
 
 1. **Ice Water Test (0°C)**:
-   - Fill a container with ice water
-   - Stir well and wait for temperature to stabilize
-   - Insert both probes and record readings
-   - Expected: 0°C ± 1°C
+   - Place all probes in ice water slurry
+   - Wait for readings to stabilize
+   - Note offset from 0°C
 
-2. **Boiling Water Test (100°C)**:
-   - Boil water (at sea level)
-   - Insert both probes (be careful!)
-   - Record readings
-   - Expected: 100°C ± 2°C
-
-3. **Calculate Calibration Values**:
-   ```
-   offset = 0 - reading_at_0C
-   scale = (100 - 0) / (reading_at_100C - reading_at_0C)
-   ```
-
-4. **Update Code**:
-   Edit these constants in `temp_monitor.ino`:
+2. **Update Firmware**:
    ```cpp
-   const float BEAN_TEMP_OFFSET = 0.0;   // Your calculated offset
-   const float BEAN_TEMP_SCALE = 1.0;    // Your calculated scale
-   const float DRUM_TEMP_OFFSET = 0.0;
-   const float DRUM_TEMP_SCALE = 1.0;
+   float calibOffset_ET = 0.0 - reading;  // e.g., -2.3
+   float calibOffset_BT = 0.0 - reading;
+   float calibOffset_FT = 0.0 - reading;
    ```
 
-5. **Upload and Re-test**: Upload the updated firmware and verify accuracy
+3. **Verify with Boiling Water** (~96°C at Johannesburg altitude)
 
-### Example Calibration Calculation
-
-If your bean probe reads:
-- 2.5°C in ice water (should be 0°C)
-- 98.0°C in boiling water (should be 100°C)
-
-```
-offset = 0 - 2.5 = -2.5
-scale = (100 - 0) / (98.0 - 2.5) = 100 / 95.5 = 1.047
-```
-
-Update the code:
+### Example
+If ET reads 2.3°C in ice water:
 ```cpp
-const float BEAN_TEMP_OFFSET = -2.5;
-const float BEAN_TEMP_SCALE = 1.047;
+float calibOffset_ET = -2.3;
 ```
 
-## Configuration Options
+## Configuration
 
-Edit these constants in `temp_monitor.ino` to customize behavior:
+Edit constants in firmware source:
 
 | Constant | Default | Description |
 |----------|---------|-------------|
-| `BAUD_RATE` | 115200 | Serial communication speed |
-| `SAMPLE_INTERVAL_MS` | 1000 | Time between readings (milliseconds) |
-| `BEAN_TEMP_PIN` | A0 | Analog pin for bean temp (if using analog) |
-| `DRUM_TEMP_PIN` | A1 | Analog pin for drum temp (if using analog) |
-| `BEAN_TEMP_OFFSET` | 0.0 | Calibration offset for bean probe |
-| `BEAN_TEMP_SCALE` | 1.0 | Calibration scale for bean probe |
-| `DRUM_TEMP_OFFSET` | 0.0 | Calibration offset for drum probe |
-| `DRUM_TEMP_SCALE` | 1.0 | Calibration scale for drum probe |
+| `BAUD_RATE` | 115200 | Serial speed |
+| `PIN_CS_ET` | 10 | Chip select for ET |
+| `PIN_CS_BT` | 9 | Chip select for BT |
+| `PIN_CS_FT` | 8 | Chip select for FT |
+| `calibOffset_ET` | 0.0 | ET calibration offset |
+| `calibOffset_BT` | 0.0 | BT calibration offset |
+| `calibOffset_FT` | 0.0 | FT calibration offset |
 
 ## Troubleshooting
 
-### No Data in Serial Monitor
+### No Data / No Response to READ
+- Check baud rate (115200)
+- Verify USB connection
+- Check Arduino power LED
+- Re-upload firmware
 
-- Check baud rate is set to 115200
-- Verify Arduino is powered (LED should be on)
-- Check USB cable connection
-- Try uploading firmware again
+### "NaN" or Missing Readings
+- Thermocouple not connected
+- Wrong CS pin wiring
+- Module not powered
+- Check thermocouple polarity (red = negative for K-type)
 
-### Temperature Readings are Wrong
+### Noisy/Jumping Readings
+- Add 0.1µF capacitor across thermocouple input
+- Keep thermocouple wires away from power cables
+- Use shielded cable
+- Ensure good grounding
 
-- Verify probe connections (check for loose wires)
-- Check thermocouple polarity (+ and -)
-- Perform calibration procedure
-- Test probes individually
-- Check for electromagnetic interference
+### Upload Fails
+Firmware sending data blocks bootloader:
+1. Start upload command
+2. Immediately press Arduino RESET button
+3. Bootloader has ~2 second window
 
-### "NaN" or "-127" Readings
+Or upload `blank.ino` first.
 
-Common with MAX31855/MAX6675 modules:
-- Check thermocouple connections
-- Verify correct CS (Chip Select) pins
-- Check if thermocouple is actually connected to module
-- Verify module is powered (VCC and GND)
+## Safety
 
-### Readings are Noisy or Jumping
-
-- Add capacitor across sensor pins (0.1µF)
-- Keep wires away from high voltage/current lines
-- Use shielded cable for thermocouples
-- Increase `SAMPLE_INTERVAL_MS` and average multiple readings
-
-## Development
-
-### Modifying the Firmware
-
-1. Make changes to `temp_monitor.ino`
-2. Test thoroughly with Serial Monitor
-3. Verify data format is correct
-4. Test with actual roasting temperatures
-5. Commit changes to git
-
-### Adding Features
-
-Ideas for enhancements:
-- Moving average filter for smoother readings
-- Error detection and reporting
-- Multiple baud rate support
-- Temperature alarms/warnings
-- Rate of rise (RoR) calculation
-- Support for additional sensors (ambient temp, humidity)
-
-## Safety Notes
-
-- K-type thermocouples can measure very high temperatures (up to 1350°C)
-- Ensure probes are rated for coffee roasting temperatures (typically 200-250°C)
-- Keep electronics away from heat sources
-- Use heat-resistant wiring for probes
-- Double-check connections before powering on
-- Never touch thermocouples during roasting
-
-## Resources
-
-- [MAX31855 Datasheet](https://datasheets.maximintegrated.com/en/ds/MAX31855.pdf)
-- [Adafruit MAX31855 Library](https://github.com/adafruit/Adafruit_MAX31855)
-- [Arduino Serial Reference](https://www.arduino.cc/reference/en/language/functions/communication/serial/)
-- [K-type Thermocouple Guide](https://learn.adafruit.com/thermocouples)
+- K-type thermocouples rated to 700°C (well above coffee roasting temps)
+- Keep electronics away from heat
+- Use heat-resistant probe sheathing
+- Ensure probes are food-safe (stainless steel)
 
 ## Version History
 
-- **v1.0** (2025-11-10): Initial release
-  - Basic two-probe temperature monitoring
-  - Serial communication at 115200 baud
-  - Calibration support
+| Version | Date | Changes |
+|---------|------|---------|
+| 2.0 | 2024-12-30 | 3-channel support, MAX31855, TC4 protocol |
+| 1.0 | 2024-11-10 | Initial 2-channel analog version |
 
-## License
+## Resources
 
-MIT License - See main repository for details
-
-## Support
-
-For issues or questions, open an issue on GitHub:
-https://github.com/jasonvanwyk/Milk-Depot-Coffee-Roaster/issues
+- [MAX31855 Datasheet](https://www.analog.com/media/en/technical-documentation/data-sheets/MAX31855.pdf)
+- [Adafruit MAX31855 Library](https://github.com/adafruit/Adafruit_MAX31855)
+- [Artisan TC4 Protocol](https://artisan-scope.org/devices/arduino/)
+- [K-type Thermocouple Guide](https://learn.adafruit.com/thermocouples)

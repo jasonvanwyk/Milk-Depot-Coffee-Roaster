@@ -1,301 +1,320 @@
-# Artisan Integration Guide
+# Artisan Integration Guide - 3-Channel Setup
 
-How to connect your Arduino temperature data to Artisan coffee roasting software.
+How to configure Artisan coffee roasting software for the Milk Depot 3-channel thermocouple system.
 
-## Quick Test: Pi Output (No Arduino Needed)
+## System Overview
 
-Before connecting the Arduino, test Artisan's external program feature:
+```
+┌─────────────────┐     USB Serial      ┌──────────────────┐
+│   Arduino UNO   │◄──────────────────►│   Raspberry Pi   │
+│                 │     115200 baud     │                  │
+│  3x MAX31855    │                     │     Artisan      │
+│  thermocouples  │                     │     v3.4.0       │
+└─────────────────┘                     └──────────────────┘
 
-### 1. Run Test Script
+Temperature Channels:
+  Channel 1 (ET) ─── Exhaust Temperature
+  Channel 2 (BT) ─── Bean Temperature
+  Channel 3 (FT) ─── Flame Temperature
+```
+
+## Quick Setup (ArduinoTC4)
+
+This is the recommended configuration using the TC4 protocol.
+
+### Step 1: Verify Arduino Connection
+
 ```bash
-cd /home/jason/artisan
-python3 test_output.py
+# Check Arduino is connected
+ls -la /dev/ttyACM*
+
+# Test serial communication
+python3 test_serial.py
 ```
 
-You should see:
-```
-# Test output from Pi starting...
-# Outputting message every 2 seconds
-# Press Ctrl+C to stop
-output from pi #1
-output from pi #2
-output from pi #3
-```
+### Step 2: Configure Primary Device
 
-### 2. Configure Artisan for External Program
-
-1. **Launch Artisan**:
-   ```bash
-   artisan
-   ```
+1. **Launch Artisan**: `artisan`
 
 2. **Open Device Configuration**:
-   - Go to **Config** → **Device**
+   - Menu: **Config** → **Device**
 
-3. **Select External Program**:
-   - Device: **External Program**
-   - Click on the **Program** field
-
-4. **Enter Command**:
-   ```
-   /usr/bin/python3 /home/jason/artisan/test_output.py
-   ```
-
-5. **Click ON Button**:
-   - The green **ON** button should turn to **OFF** (meaning it's active)
-   - You should see "output from pi" messages in Artisan's message log
-
-6. **View Messages**:
-   - Go to **Help** → **Messages** to see the output
-   - Or check the bottom status bar
-
-## Arduino Temperature Data Integration
-
-Once you've tested with the Pi script, connect the real Arduino data:
-
-### Option 1: Direct Serial Port (Simplest)
-
-1. **Make sure Arduino is connected and running** temp_monitor firmware:
-   ```bash
-   python3 test_serial.py
-   # Should show: BT:xx.x,DT:xx.x
-   ```
-
-2. **Launch Artisan**
-
-3. **Configure Serial Device**:
-   - Config → Device
-   - Device: **Fuji PXR** (accepts custom serial format)
+3. **Set Primary Device**:
+   - Device: **ArduinoTC4**
    - Port: `/dev/ttyACM0`
-   - Baud: `115200`
-   - Click **ON**
+   - Baud Rate: **115200**
 
-4. **Map Channels**:
-   - Config → Device Assignment
-   - Map your channels to ET (Environment Temp) and BT (Bean Temp)
+4. **Click OK** to save
 
-### Option 2: External Program with Python Parser
+### Step 3: Add Extra Device for Flame Temperature
 
-Create a parser script to format Arduino data for Artisan:
+1. **Open Device Configuration**:
+   - Menu: **Config** → **Device**
 
-**File**: `/home/jason/artisan/arduino_to_artisan.py`
+2. **Go to Extra Devices Tab**
+
+3. **Click Add (+)**:
+   - Device: **ArduinoTC4_34**
+   - Leave other settings default
+
+4. **Click OK** to save
+
+### Step 4: Configure Curve Labels (Optional)
+
+1. **Menu**: **Config** → **Curves**
+
+2. **Rename curves for clarity**:
+   - Extra 1: "FT" or "Flame"
+   - Extra 2: (unused, can hide)
+
+3. **Adjust colors** if desired:
+   - ET: Blue
+   - BT: Red/Brown
+   - FT: Orange
+
+### Step 5: Start Monitoring
+
+1. **Click the ON button** (green button in toolbar)
+2. You should see three temperature curves:
+   - ET (Channel 1) - Exhaust
+   - BT (Channel 2) - Bean
+   - FT (Channel 3) - Flame
+
+## Alternative: External Program Method
+
+If you prefer continuous output (using `temp_monitor` firmware):
+
+### Step 1: Create Parser Script
+
+The Arduino outputs: `ET:xxx.x,BT:xxx.x,FT:xxx.x`
+
+Artisan External Program expects: `temp1,temp2,temp3,...`
+
+Create `/home/jason/artisan/artisan_3ch_read.py`:
 
 ```python
 #!/usr/bin/env python3
 """
-Read Arduino serial data and format for Artisan
+Parse 3-channel Arduino output for Artisan External Program
 """
 import serial
-import time
 import sys
-import re
 
 PORT = '/dev/ttyACM0'
 BAUD = 115200
 
 try:
-    ser = serial.Serial(PORT, BAUD, timeout=1)
-    time.sleep(2)  # Wait for Arduino to initialize
-    ser.reset_input_buffer()
+    ser = serial.Serial(PORT, BAUD, timeout=2)
 
-    while True:
+    # Read lines until we get valid data
+    for _ in range(5):
         line = ser.readline().decode('utf-8', errors='replace').strip()
 
         # Skip comments
         if line.startswith('#') or not line:
             continue
 
-        # Parse: BT:205.3,DT:187.2
-        match = re.match(r'BT:([\d.]+),DT:([\d.]+)', line)
-        if match:
-            bt = match.group(1)
-            dt = match.group(2)
+        # Parse: ET:xx.x,BT:xx.x,FT:xx.x
+        if 'ET:' in line and 'BT:' in line and 'FT:' in line:
+            parts = line.split(',')
+            et = parts[0].split(':')[1]
+            bt = parts[1].split(':')[1]
+            ft = parts[2].split(':')[1]
 
-            # Output in Artisan format
-            # Format: ET,BT (comma separated)
-            print(f"{bt},{dt}", flush=True)
+            # Output for Artisan: ET,BT,extra1
+            print(f"{et},{bt},{ft}")
+            break
+    else:
+        print("0,0,0")
 
-except serial.SerialException as e:
-    print(f"# Serial error: {e}", file=sys.stderr)
-    sys.exit(1)
-except KeyboardInterrupt:
+    ser.close()
+
+except Exception as e:
+    print("0,0,0")
     sys.exit(0)
 ```
 
-Then in Artisan:
-- Device: **External Program**
-- Program: `/usr/bin/python3 /home/jason/artisan/arduino_to_artisan.py`
-
-### Option 3: Use Artisan's TC4 Device Type
-
-The TC4 (thermocouple) device type expects a specific format. You can modify the Arduino firmware to output TC4-compatible data:
-
-**Arduino Output Format for TC4**:
-```
-# timestamp,channel1,channel2,channel3,channel4
-0.0,205.3,187.2,0.0,0.0
-1.0,206.1,188.5,0.0,0.0
-2.0,207.5,190.3,0.0,0.0
+Make it executable:
+```bash
+chmod +x /home/jason/artisan/artisan_3ch_read.py
 ```
 
-Then in Artisan:
-- Device: **ArduinoTC4**
-- Configure channels accordingly
+### Step 2: Configure Artisan
+
+1. **Config** → **Device**
+2. Device: **External Program**
+3. Program: `/usr/bin/python3 /home/jason/artisan/artisan_3ch_read.py`
+4. **OK**
+
+## Channel Mapping Reference
+
+| Artisan Device | Channels Provided | Notes |
+|----------------|-------------------|-------|
+| ArduinoTC4 | ET (Ch1), BT (Ch2) | Primary device |
+| ArduinoTC4_34 | Extra1 (Ch3), Extra2 (Ch4) | Extra device for additional channels |
+| ArduinoTC4_56 | Heater duty, Fan duty | For output control logging |
+| ArduinoTC4_78 | PID SV, Internal temp | For PID control logging |
 
 ## Troubleshooting
 
-### Artisan Shows "Not Connected"
+### No Connection / "Not Connected"
 
-1. **Check Arduino is sending data**:
+1. **Verify port**:
    ```bash
-   python3 test_serial.py
+   ls /dev/ttyACM*
+   # If not found, try:
+   ls /dev/ttyUSB*
    ```
 
-2. **Verify port**:
-   ```bash
-   ls -la /dev/ttyACM*
-   ```
-
-3. **Check permissions**:
+2. **Check permissions**:
    ```bash
    groups  # Should include 'dialout'
    ```
 
-4. **Close other programs** using the serial port:
+3. **Verify Arduino is responding**:
    ```bash
-   lsof /dev/ttyACM0
+   # Open serial monitor
+   screen /dev/ttyACM0 115200
+   # Type: READ
+   # Should see: 25.00,xxx.xx,xxx.xx,xxx.xx,0.00
+   # Exit with Ctrl-A, K, Y
    ```
 
-### Data Not Appearing in Artisan
+### Temperatures Not Updating
 
-1. **Check Artisan's Messages window**:
+1. **Check sampling**:
+   - Config → Device → Sampling should be 1.0s
+
+2. **Verify data format**:
+   ```bash
+   python3 test_serial.py
+   ```
+
+3. **Check Artisan messages**:
    - Help → Messages
    - Look for error messages
 
-2. **Verify data format**:
-   - Artisan expects specific formats for each device type
-   - Use External Program with custom parser for flexibility
+### Extra Device Not Showing
 
-3. **Enable Artisan debug mode**:
-   - Help → Debug → ON
-   - Check debug output
+1. Ensure **ArduinoTC4_34** is added in Extra Devices tab
+2. Check Config → Curves to ensure Extra 1 curve is enabled/visible
+3. Restart Artisan after adding extra device
 
-### Temperature Curves Not Updating
+### Flame Temperature (FT) Reads Zero
 
-1. **Click the ON button** in Device menu
+1. Verify Channel 3 is connected in firmware
+2. Check MAX31855 #3 wiring (CS → D8)
+3. Test thermocouple with multimeter (should show ~0-40mV at room temp)
 
-2. **Check sampling rate**:
-   - Config → Device
-   - Sampling interval should be 1-5 seconds
+## Curve Display Configuration
 
-3. **Verify channels are mapped**:
-   - Config → Device Assignment
-   - Make sure ET and BT channels are assigned
+### Recommended Setup
+
+1. **Config** → **Curves**
+
+2. **Labels**:
+   | Curve | Label | Color |
+   |-------|-------|-------|
+   | ET | "Exhaust" | Blue (#0000FF) |
+   | BT | "Bean" | Brown (#8B4513) |
+   | Extra 1 | "Flame" | Orange (#FF8C00) |
+
+3. **Rate of Rise (RoR)**:
+   - Enable for BT (most useful for roasting)
+   - Optionally enable for ET
+
+4. **Hide Unused**:
+   - Extra 2 (Channel 4) can be hidden
 
 ## Testing Without Roasting
 
-You can test the complete system without actual roasting:
+### Simulate Temperature Ramp
 
-### 1. Simulate Temperature Changes
-
-Modify `test_output.py` to simulate temperature ramp:
+Use this Python script to simulate a roast:
 
 ```python
 #!/usr/bin/env python3
+"""Simulate a coffee roast temperature profile"""
 import time
 import sys
 
-temp = 25.0  # Start at room temp
+# Starting temps (room temperature)
+et = 25.0
+bt = 25.0
+ft = 150.0  # Burner on
 
-print("# Simulated roast data", flush=True)
+print("# Simulated roast starting...", flush=True)
 
 try:
-    while temp < 250:
-        # Simulate temperature rising
-        temp += 0.5  # +0.5°C per second
+    while bt < 220:  # End at typical dark roast temp
+        # Simulate temperature rise
+        et += 0.8
+        bt += 0.5
+        ft = 350 + (50 * (0.5 - (time.time() % 1)))  # Fluctuating flame
 
-        # Output in Arduino format
-        bt = temp + (2 * (0.5 - (time.time() % 1)))  # Add noise
-        dt = temp - 5  # Drum slightly cooler
+        # Simulate first crack plateau around 195-200°C
+        if 195 <= bt <= 205:
+            bt += 0.2  # Slower rise during crack
 
-        print(f"BT:{bt:.1f},DT:{dt:.1f}", flush=True)
+        print(f"ET:{et:.1f},BT:{bt:.1f},FT:{ft:.1f}", flush=True)
         time.sleep(1)
 
-    print("# Simulation complete", flush=True)
+    print("# Roast complete", flush=True)
 
 except KeyboardInterrupt:
     sys.exit(0)
 ```
 
-### 2. Record a Test Roast
+Save as `simulate_roast.py` and run to generate test data.
 
-1. Start the simulation script
-2. In Artisan, click **ON** to start recording
-3. Click **Start** when ready
-4. Let it run for 10-15 minutes
-5. Click **Drop** to end the roast
-6. **File** → **Save** to save the profile
+## Recording a Roast
 
-### 3. Analyze the Data
+### Standard Workflow
 
-- **Roast** → **Analyzer** to review the roast
-- Check temperature curves
-- Verify rate-of-rise calculations
-- Export data if needed
+1. **Before roasting**:
+   - Click **ON** to start monitoring
+   - Verify all three curves are updating
+   - Preheat roaster to target charge temperature
 
-## Advanced: Real-Time Roast Control
+2. **During roast**:
+   - Click **CHARGE** when beans enter drum
+   - Mark **DRY END** (~160°C, color change)
+   - Mark **FCs** (First Crack Start, ~196°C)
+   - Mark **FCe** (First Crack End)
+   - Mark **SCs** if going darker
+   - Click **DROP** when beans exit
 
-Once you have sensors working, you can:
+3. **After roast**:
+   - Click **OFF** to stop recording
+   - File → Save to store profile
 
-### 1. Monitor Rate of Rise (RoR)
+### Keyboard Shortcuts
 
-Artisan automatically calculates RoR from your temperature data:
-- View → Rate of Rise
-- Shows how fast temperature is increasing
+| Key | Action |
+|-----|--------|
+| Space | Start/Stop recording |
+| C | Charge |
+| D | Drop |
+| 1 | First Crack Start |
+| 2 | First Crack End |
+| 3 | Second Crack Start |
 
-### 2. Follow a Profile
+## Advanced: PID Control (Future)
 
-1. Create a target profile:
-   - Roast → Designer
-   - Draw your target temperature curve
+If you add heater/fan control via relays:
 
-2. During roasting:
-   - Load the profile
-   - Artisan shows target vs. actual in real-time
-
-### 3. Log Events
-
-Mark important events during roasting:
-- **Charge**: Beans added
-- **Dry End**: Drying phase complete
-- **First Crack**: Beans start cracking
-- **Second Crack**: Deeper roast
-- **Drop**: Remove beans
-
-Use buttons in Artisan interface or keyboard shortcuts.
-
-### 4. PID Control (Advanced)
-
-If your roaster has electronic heater/fan control:
-- Connect Arduino outputs to relays
-- Configure PID in Artisan
-- Artisan can automatically adjust heat to follow profile
-
-## Next Steps
-
-1. ✅ **Test with Pi script** (`test_output.py`)
-2. ✅ **Test with Arduino** serial data
-3. ⏳ **Connect MAX31855 sensors** (once hardware arrives)
-4. ⏳ **Calibrate sensors**
-5. ⏳ **First test roast** with real beans!
+1. Wire relay control to Arduino digital outputs
+2. Update firmware to handle `OT1` and `OT2` commands
+3. Configure Artisan PID with appropriate tuning
+4. Enable ArduinoTC4_56 extra device for duty logging
 
 ## Resources
 
 - [Artisan Documentation](https://artisan-scope.org/docs/)
-- [Artisan Device Configuration](https://artisan-scope.org/devices/index)
-- [Artisan Tutorials](https://artisan-scope.org/docs/started/)
+- [Artisan Arduino/TC4 Setup](https://artisan-scope.org/devices/arduino/)
+- [TC4 Protocol Reference](https://github.com/greencardigan/TC4-shield)
 - [Home Roasters Forum](https://homeroasters.org)
 
 ---
 
-**Last Updated**: 2025-11-10
+**Last Updated**: 2024-12-30

@@ -5,11 +5,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Project Overview
 
 This is a coffee roasting control system integrating:
-- **Arduino UNO R3**: Custom firmware for reading two temperature probes
+- **Arduino UNO R3**: Custom firmware for reading three temperature probes via MAX31855 modules
 - **Raspberry Pi 4**: Running Artisan coffee roasting software
-- **Serial Communication**: Arduino sends temperature data to Pi at 115200 baud
+- **Serial Communication**: Arduino sends temperature data to Pi at 115200 baud using TC4 protocol
 
-**Key Concept**: The Arduino continuously reads analog temperature sensors and transmits formatted data (`BT:xx.x,DT:xx.x`) over USB serial, which Artisan software uses to display real-time temperature curves and control the roast.
+**Temperature Channels:**
+- **ET (Channel 1)**: Exhaust/Environment Temperature - air leaving the drum
+- **BT (Channel 2)**: Bean Temperature - probe in the bean mass
+- **FT (Channel 3)**: Flame Temperature - near the burner
+
+**Key Concept**: The Arduino reads 3 K-type thermocouples via MAX31855 SPI amplifiers. Artisan sends `READ` commands, Arduino responds with comma-separated temperatures. Artisan displays real-time temperature curves and calculates rate-of-rise.
 
 ## Development Environment
 
@@ -17,10 +22,10 @@ This is a coffee roasting control system integrating:
 - **Python**: 3.13.5 with pyserial installed
 - **Arduino CLI**: v1.3.1 installed locally in `bin/arduino-cli`
 - **Arduino Core**: arduino:avr@1.8.6 for Arduino UNO R3
-- **Arduino IDE**: v1.8.19 also available for GUI development
+- **Arduino Libraries**: Adafruit MAX31855, Adafruit SSD1306 (optional)
 - **Artisan**: v3.4.0 installed system-wide at `/usr/bin/artisan`
 
-**Note**: The repo may be cloned to different paths on different machines (e.g., `/home/jason/artisan/` on the Pi dev server, or elsewhere on desktop). All scripts use relative paths from the project root.
+**Note**: The repo may be cloned to different paths on different machines. All scripts use relative paths from the project root.
 
 ## Common Arduino Commands
 
@@ -29,14 +34,14 @@ All commands should be run from the project root:
 ### Compile Arduino Firmware
 ```bash
 ./scripts/compile.sh [sketch_path]
-# Default: arduino-firmware/temp_monitor
-# Example: ./scripts/compile.sh arduino-firmware/serial_test
+# Default: arduino-firmware/tc4_emulator (production firmware)
+# Example: ./scripts/compile.sh arduino-firmware/temp_monitor
 ```
 
 ### Upload to Arduino
 ```bash
 ./scripts/upload.sh [sketch_path] [port]
-# Default sketch: arduino-firmware/temp_monitor
+# Default sketch: arduino-firmware/tc4_emulator
 # Default port: /dev/ttyACM0
 # Note: If firmware is continuously sending data, press RESET button immediately after starting upload
 ```
@@ -54,7 +59,6 @@ All commands should be run from the project root:
 
 # Or read at specific baud rate:
 python3 read_arduino.py [baudrate]
-# Example: python3 read_arduino.py 9600
 ```
 
 ### Manual Arduino CLI Usage
@@ -65,21 +69,49 @@ arduino-cli upload -p /dev/ttyACM0 --fqbn arduino:avr:uno <sketch_dir>
 arduino-cli board list
 ```
 
+## Hardware Architecture
+
+### Pin Assignments
+
+| Arduino Pin | Function | Connected To |
+|-------------|----------|--------------|
+| D13 | SPI SCK | All MAX31855 SCK (shared) |
+| D12 | SPI MISO | All MAX31855 DO (shared) |
+| D10 | CS_ET | MAX31855 #1 (Exhaust Temp) |
+| D9 | CS_BT | MAX31855 #2 (Bean Temp) |
+| D8 | CS_FT | MAX31855 #3 (Flame Temp) |
+| A4 | I2C SDA | OLED Display (optional) |
+| A5 | I2C SCL | OLED Display (optional) |
+| 5V | Power | All modules VCC |
+| GND | Ground | All modules GND |
+
+### SPI Bus Configuration
+
+All three MAX31855 modules share the SPI bus (SCK, MISO) but have individual Chip Select (CS) lines. The Adafruit library uses software SPI, allowing flexible pin assignment.
+
 ## Serial Communication Protocol
 
-**Critical Format**: Arduino sends temperature data as:
+### TC4 Protocol (Production - tc4_emulator)
+
+**Command/Response format for Artisan ArduinoTC4 device:**
+
 ```
-BT:xxx.x,DT:xxx.x\n
+Artisan sends:  READ
+Arduino sends:  25.00,180.50,195.20,350.00,0.00\n
+                 │     │      │      │      └── Channel 4 (unused)
+                 │     │      │      └── Channel 3 (FT - Flame)
+                 │     │      └── Channel 2 (BT - Bean)
+                 │     └── Channel 1 (ET - Exhaust)
+                 └── Ambient temperature
 ```
 
-- `BT`: Bean Temperature (°C, 1 decimal place)
-- `DT`: Drum Temperature (°C, 1 decimal place)
-- **Baud Rate**: 115200 (for temp_monitor), 9600 (for test sketches)
-- **Update Interval**: 1000ms (1 Hz)
-- **Device Path**: `/dev/ttyACM0` or `/dev/ttyUSB0`
-- Lines starting with `#` are comments/headers
+**Other supported commands:** `CHAN`, `UNITS`, `FILT`, `OT1`, `OT2`, `PID`
 
-User `jason` is already in the `dialout` group, so no permission changes needed for serial access.
+### Continuous Output (temp_monitor)
+
+```
+ET:xxx.x,BT:xxx.x,FT:xxx.x\n
+```
 
 ## Architecture
 
@@ -87,14 +119,14 @@ User `jason` is already in the `dialout` group, so no permission changes needed 
 
 | Sketch | Purpose | Baud | Protocol |
 |--------|---------|------|----------|
-| `temp_monitor/` | Main firmware, continuous output | 115200 | `BT:xx.x,DT:xx.x` |
-| `tc4_emulator/` | TC4 protocol emulator for ArduinoTC4 device | 115200 | Command/response (READ → temps) |
+| `tc4_emulator/` | Production firmware, TC4 protocol | 115200 | Command/response |
+| `temp_monitor/` | Continuous output mode | 115200 | `ET:xx.x,BT:xx.x,FT:xx.x` |
 | `serial_test/` | Simple test output | 9600 | Basic serial |
 | `blank/` | Empty sketch for easy uploads | - | None |
 
-**temp_monitor**: Reads analog pins A0 (BT) and A1 (DT) every 1000ms, outputs `BT:xx.x,DT:xx.x`. Has placeholders for MAX31855 thermocouple modules.
+**tc4_emulator**: Responds to Artisan TC4 commands. Reads 3x MAX31855 via SPI. Output: `ambient,chan1,chan2,chan3,chan4`. Use with Artisan ArduinoTC4 + ArduinoTC4_34 (extra device).
 
-**tc4_emulator**: Responds to Artisan's TC4 commands (`READ`, `CHAN`, `UNITS`, etc.). Use with Artisan's ArduinoTC4 device type. Outputs: `ambient,chan1,chan2,chan3,chan4`.
+**temp_monitor**: Continuous output every 1000ms. Reads 3x MAX31855. Use with Artisan External Program device type.
 
 ### Python Tools
 - `test_serial.py`: Production serial reader with 2-second init delay, displays 20 lines
@@ -108,36 +140,78 @@ All scripts use `SCRIPT_DIR` to locate project root and `arduino-cli` in `bin/`:
 - Default FQBN: `arduino:avr:uno`
 - Scripts handle success/failure with clear messages
 
+### Documentation Files
+- `BOM.md`: Complete Bill of Materials with pricing
+- `WIRING.md`: Detailed wiring diagrams and enclosure layout
+- `ARTISAN_INTEGRATION.md`: Artisan configuration guide
+
 ## Artisan Integration
 
 **Launch**: `artisan` (system-wide installation)
 
-**Configuration Approaches** (in order of preference):
+**Configuration for 3-Channel Setup:**
 
-1. **ArduinoTC4** (requires `tc4_emulator` firmware):
+1. **Primary Device (ArduinoTC4)**:
    - Config → Device → ArduinoTC4
    - Port: `/dev/ttyACM0`, Baud: `115200`
-   - Best integration - uses native Artisan protocol
+   - This provides ET (Chan1) and BT (Chan2)
 
-2. **External Program** (works with `temp_monitor` firmware):
-   - Config → Device → External Program
-   - Command: `python3 /path/to/project/artisan_read.py`
-   - Script parses `BT:xx.x,DT:xx.x` and outputs `ET,BT`
+2. **Extra Device for Flame Temp**:
+   - Config → Device → Extra Devices tab
+   - Add: **ArduinoTC4_34**
+   - This provides FT (Chan3) as extra curve
 
-3. **Direct Serial**: Config → Device → Fuji PXR → Port `/dev/ttyACM0`, Baud `115200`
+3. **Channel Labels**:
+   - Config → Curves → rename extra channel to "FT" or "Flame"
 
 ## Important Caveats
 
 ### Upload Blocking Issue
-When `temp_monitor` firmware is running and continuously sending data, it blocks the bootloader from syncing during upload. **Solution**: Press the Arduino RESET button immediately after starting the upload command. The bootloader runs for ~2 seconds after reset, providing a window for upload to succeed.
+When firmware is continuously sending data, it blocks the bootloader from syncing during upload. **Solution**: Press the Arduino RESET button immediately after starting the upload command. The bootloader runs for ~2 seconds after reset.
 
-Alternatively, upload the `blank.ino` sketch first (which sends no data) to make subsequent uploads easier.
+Alternatively, upload the `blank.ino` sketch first.
+
+### Enabling MAX31855 Hardware
+
+The firmware ships in simulation mode (reads analog noise). To enable real thermocouples:
+
+1. Install Adafruit MAX31855 library via Arduino IDE Library Manager
+2. In `tc4_emulator.ino`:
+   - Uncomment `#include <Adafruit_MAX31855.h>`
+   - Uncomment thermocouple object declarations
+   - In each `readTemperature_XX()` function, uncomment library code and remove simulation code
+3. Recompile and upload
+
+### Thermocouple Polarity
+
+K-type thermocouples have polarity. The red wire is **negative** (opposite of typical conventions). Reversing polarity causes readings to go negative as temperature increases.
 
 ### Temperature Readings Without Sensors
-Analog pins A0/A1 are "floating" when no sensors are connected, picking up electrical noise. This produces readings typically in the 60-70°C range. This is normal and expected. Real temperature readings require connecting MAX31855 thermocouple amplifier modules.
 
-### Artisan Source Code
-The `artisan-source/` directory contains Artisan v3.4.0 source code cloned for reference. This is NOT used to run Artisan (the system-wide .deb installation is used). It's included for understanding Artisan's serial protocols and potential custom modifications.
+When MAX31855 modules have no thermocouple connected, they report NaN. The firmware returns the last good reading on error to prevent Artisan graph glitches.
+
+## Hardware Sourcing
+
+The `parts-specs/` directory contains component research (CSV exports from DigiKey ZA). See `BOM.md` for complete parts list with pricing.
+
+**Key Components:**
+- 3x Olimex TC-K-TYPE-1.5M thermocouples (DigiKey ZA)
+- 3x MAX31855 modules (AliExpress/Communica)
+- SSD1306 OLED display (optional)
+- ABS enclosure ~150x100x50mm
+
+## Calibration Procedure
+
+1. Place all probes in ice water bath (0°C)
+2. Note the reading for each channel
+3. Set calibration offsets in firmware:
+   ```cpp
+   float calibOffset_ET = 0.0 - reading;  // e.g., -2.3 if it reads 2.3°C
+   float calibOffset_BT = 0.0 - reading;
+   float calibOffset_FT = 0.0 - reading;
+   ```
+4. Recompile and upload
+5. Verify with boiling water (100°C at sea level, ~96°C at Johannesburg altitude)
 
 ## Git Workflow
 
@@ -146,7 +220,7 @@ The `artisan-source/` directory contains Artisan v3.4.0 source code cloned for r
 
 All commits include the footer:
 ```
-Generated with Claude Code
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
 Co-Authored-By: Claude <noreply@anthropic.com>
 ```
@@ -160,16 +234,33 @@ SSH authentication is set up with ED25519 key.
 ## Testing Data Flow
 
 To verify the complete pipeline:
-1. **Test Arduino Output**: `python3 test_serial.py` should show `BT:xx.x,DT:xx.x` lines
-2. **Test with Artisan**: Launch Artisan, configure device, click ON button to see curves
 
-Current readings (no sensors): BT and DT around 63-71°C from floating analog pins.
+1. **Test Arduino Output**:
+   ```bash
+   python3 test_serial.py
+   ```
+   Should show temperature readings (simulated or real)
 
-## Next Hardware Integration
+2. **Test TC4 Protocol**:
+   ```bash
+   # In one terminal, start serial monitor
+   screen /dev/ttyACM0 115200
+   # Type: READ
+   # Should get: 25.00,xx.xx,xx.xx,xx.xx,0.00
+   ```
 
-When MAX31855 thermocouple modules arrive:
-1. Uncomment library includes in `temp_monitor.ino` (lines 34-36)
-2. Update `readBeanTemperature()` and `readDrumTemperature()` to use `readCelsius()`
-3. Define SPI pins for MAX31855 modules
-4. Recompile and upload
-5. Calibrate with ice water (0°C) and boiling water (100°C)
+3. **Test with Artisan**:
+   - Launch Artisan
+   - Configure ArduinoTC4 device
+   - Add ArduinoTC4_34 extra device
+   - Click ON button
+   - Should see 3 temperature curves
+
+## Next Steps
+
+1. Purchase components (see `BOM.md` for shopping list)
+2. Assemble electronics in enclosure (see `WIRING.md`)
+3. Enable MAX31855 code in firmware
+4. Calibrate thermocouples
+5. Install probes in roaster
+6. First test roast
