@@ -13,16 +13,18 @@ This is a coffee roasting control system integrating:
 
 ## Development Environment
 
-- **Platform**: Raspberry Pi 4, Raspberry Pi OS (Debian Trixie)
+- **Target Platform**: Raspberry Pi 4, Raspberry Pi OS (Debian Trixie)
 - **Python**: 3.13.5 with pyserial installed
 - **Arduino CLI**: v1.3.1 installed locally in `bin/arduino-cli`
 - **Arduino Core**: arduino:avr@1.8.6 for Arduino UNO R3
 - **Arduino IDE**: v1.8.19 also available for GUI development
 - **Artisan**: v3.4.0 installed system-wide at `/usr/bin/artisan`
 
+**Note**: The repo may be cloned to different paths on different machines (e.g., `/home/jason/artisan/` on the Pi dev server, or elsewhere on desktop). All scripts use relative paths from the project root.
+
 ## Common Arduino Commands
 
-All commands should be run from `/home/jason/artisan/`:
+All commands should be run from the project root:
 
 ### Compile Arduino Firmware
 ```bash
@@ -57,7 +59,7 @@ python3 read_arduino.py [baudrate]
 
 ### Manual Arduino CLI Usage
 ```bash
-export PATH="/home/jason/artisan/bin:$PATH"
+export PATH="$(pwd)/bin:$PATH"
 arduino-cli compile --fqbn arduino:avr:uno <sketch_dir>
 arduino-cli upload -p /dev/ttyACM0 --fqbn arduino:avr:uno <sketch_dir>
 arduino-cli board list
@@ -81,15 +83,23 @@ User `jason` is already in the `dialout` group, so no permission changes needed 
 
 ## Architecture
 
-### Arduino Firmware (`arduino-firmware/temp_monitor/`)
-- **Main Loop**: Reads analog pins A0 (bean) and A1 (drum) every 1000ms
-- **Conversion**: Placeholder formula `voltage * 50.0` - needs calibration with actual sensors
-- **Output**: Prints formatted string to Serial at 115200 baud
-- **Future Hardware**: Code has placeholders for MAX31855 thermocouple modules
+### Arduino Firmware (`arduino-firmware/`)
+
+| Sketch | Purpose | Baud | Protocol |
+|--------|---------|------|----------|
+| `temp_monitor/` | Main firmware, continuous output | 115200 | `BT:xx.x,DT:xx.x` |
+| `tc4_emulator/` | TC4 protocol emulator for ArduinoTC4 device | 115200 | Command/response (READ → temps) |
+| `serial_test/` | Simple test output | 9600 | Basic serial |
+| `blank/` | Empty sketch for easy uploads | - | None |
+
+**temp_monitor**: Reads analog pins A0 (BT) and A1 (DT) every 1000ms, outputs `BT:xx.x,DT:xx.x`. Has placeholders for MAX31855 thermocouple modules.
+
+**tc4_emulator**: Responds to Artisan's TC4 commands (`READ`, `CHAN`, `UNITS`, etc.). Use with Artisan's ArduinoTC4 device type. Outputs: `ambient,chan1,chan2,chan3,chan4`.
 
 ### Python Tools
 - `test_serial.py`: Production serial reader with 2-second init delay, displays 20 lines
 - `read_arduino.py`: Flexible reader accepting baud rate as argument
+- `artisan_read.py`: External Program script for Artisan (outputs `ET,BT` format)
 - `test_output.py`: Simulates data output for testing Artisan without Arduino
 
 ### Helper Scripts (`scripts/`)
@@ -102,11 +112,19 @@ All scripts use `SCRIPT_DIR` to locate project root and `arduino-cli` in `bin/`:
 
 **Launch**: `artisan` (system-wide installation)
 
-**Configuration Approaches**:
-1. **Direct Serial**: Config → Device → Fuji PXR → Port `/dev/ttyACM0`, Baud `115200`
-2. **External Program**: Config → Device → External Program → `/usr/bin/python3 /home/jason/artisan/test_serial.py`
+**Configuration Approaches** (in order of preference):
 
-The data format `BT:xx.x,DT:xx.x` is designed to be compatible with Artisan's serial input parsing.
+1. **ArduinoTC4** (requires `tc4_emulator` firmware):
+   - Config → Device → ArduinoTC4
+   - Port: `/dev/ttyACM0`, Baud: `115200`
+   - Best integration - uses native Artisan protocol
+
+2. **External Program** (works with `temp_monitor` firmware):
+   - Config → Device → External Program
+   - Command: `python3 /path/to/project/artisan_read.py`
+   - Script parses `BT:xx.x,DT:xx.x` and outputs `ET,BT`
+
+3. **Direct Serial**: Config → Device → Fuji PXR → Port `/dev/ttyACM0`, Baud `115200`
 
 ## Important Caveats
 
@@ -139,23 +157,13 @@ Git is configured with:
 
 SSH authentication is set up with ED25519 key.
 
-## Documentation Map
-
-- `README.md`: Project overview and hardware/software stack
-- `ARDUINO_CLI.md`: Comprehensive Arduino CLI guide, troubleshooting
-- `SERIAL_PROTOCOL.md`: Detailed serial communication specification
-- `ARTISAN_INTEGRATION.md`: How to connect Arduino data to Artisan
-- `CURRENT_STATUS.md`: Latest system status and test results
-- `arduino-firmware/README.md`: Hardware setup, wiring, calibration procedures
-
 ## Testing Data Flow
 
 To verify the complete pipeline:
 1. **Test Arduino Output**: `python3 test_serial.py` should show `BT:xx.x,DT:xx.x` lines
-2. **Test Pi Output**: `python3 test_output.py` outputs "output from pi #N" every 2s
-3. **Test with Artisan**: Launch Artisan, configure device, click ON button to see curves
+2. **Test with Artisan**: Launch Artisan, configure device, click ON button to see curves
 
-Current readings (no sensors): BT and DT both around 63-71°C from floating analog pins.
+Current readings (no sensors): BT and DT around 63-71°C from floating analog pins.
 
 ## Next Hardware Integration
 
