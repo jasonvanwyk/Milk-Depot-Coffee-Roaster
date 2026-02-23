@@ -33,7 +33,7 @@ Software stack is 100% complete and tested. Custom thermocouple probes ordered f
 
 | Task | Status | Notes |
 |------|--------|-------|
-| Thermocouple delivery | WAITING | Sam (GPA Trading) to invoice on arrival, 5-7 day lead time |
+| Thermocouple delivery | IN TRANSIT | Sam receiving stock today (Feb 23), Courier Guy collecting same day |
 | Arrange Courier Guy collection | DONE | Courier Guy dispatched to collect from Sam (Feb 23) |
 | Remaining BOM procurement | PENDING | MAX31855 modules, enclosure, wiring - awaiting 3rd party quotes |
 
