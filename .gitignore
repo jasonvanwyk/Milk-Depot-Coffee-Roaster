@@ -61,6 +61,9 @@ artisan-wheels.wg
 # roasts/
 # profiles/
 
+# Credentials
+credentials.txt
+
 # System files
 .Trash-*
 Thumbs.db

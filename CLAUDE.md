@@ -140,10 +140,41 @@ All scripts use `SCRIPT_DIR` to locate project root and `arduino-cli` in `bin/`:
 - Default FQBN: `arduino:avr:uno`
 - Scripts handle success/failure with clear messages
 
-### Documentation Files
+### Project Structure
+
+```
+├── CLAUDE.md                 # AI assistant instructions (this file)
+├── README.md                 # Project overview
+├── RESUME.md                 # Quick session resume context
+├── STATUS.md                 # Project status and task tracking
+├── assets/                   # Precept branding and company details
+├── correspondence/           # Supplier/client correspondence
+├── docs/                     # Technical documentation
+│   ├── BOM.md                # Bill of Materials
+│   ├── WIRING.md             # Wiring diagrams
+│   ├── ARTISAN_INTEGRATION.md # Artisan configuration guide
+│   ├── SERIAL_PROTOCOL.md    # Serial communication details
+│   ├── ARDUINO_CLI.md        # Arduino CLI workflow
+│   ├── THERMOCOUPLE_SPEC.md  # Thermocouple technical spec
+│   ├── CUSTOM_TC_ORDER_SPEC.md # Custom order spec for GPA Trading
+│   ├── SHOPPING_LIST.md      # Printable shopping list
+│   └── parts-specs/          # Component research (DigiKey CSV exports)
+├── arduino-firmware/         # Arduino sketches
+├── scripts/                  # Helper scripts
+├── bin/                      # Local binaries (arduino-cli)
+├── pics/                     # Photos and screenshots
+└── *.py                      # Python utility scripts
+```
+
+### Documentation Files (`docs/`)
 - `BOM.md`: Complete Bill of Materials with pricing
 - `WIRING.md`: Detailed wiring diagrams and enclosure layout
 - `ARTISAN_INTEGRATION.md`: Artisan configuration guide
+- `SERIAL_PROTOCOL.md`: Serial communication protocol details
+- `ARDUINO_CLI.md`: Arduino CLI workflow guide
+- `THERMOCOUPLE_SPEC.md`: Thermocouple technical specification
+- `CUSTOM_TC_ORDER_SPEC.md`: Custom order spec sent to GPA Trading
+- `SHOPPING_LIST.md`: Printable shopping list with SA suppliers
 
 ## Artisan Integration
 
@@ -192,11 +223,11 @@ When MAX31855 modules have no thermocouple connected, they report NaN. The firmw
 
 ## Hardware Sourcing
 
-The `parts-specs/` directory contains component research (CSV exports from DigiKey ZA). See `BOM.md` for complete parts list with pricing.
+The `docs/parts-specs/` directory contains component research (CSV exports from DigiKey ZA). See `docs/BOM.md` for complete parts list with pricing.
 
 **Key Components:**
-- 3x Olimex TC-K-TYPE-1.5M thermocouples (DigiKey ZA)
-- 3x MAX31855 modules (AliExpress/Communica)
+- 6x Custom K-type thermocouple probes (ordered from GPA Trading, PO P00041)
+- 3x MAX31855 modules (to be procured)
 - SSD1306 OLED display (optional)
 - ABS enclosure ~150x100x50mm
 
@@ -258,9 +289,10 @@ To verify the complete pipeline:
 
 ## Next Steps
 
-1. Purchase components (see `BOM.md` for shopping list)
-2. Assemble electronics in enclosure (see `WIRING.md`)
-3. Enable MAX31855 code in firmware
-4. Calibrate thermocouples
-5. Install probes in roaster
-6. First test roast
+1. Follow up on GPA Trading thermocouple delivery (PO P00041)
+2. Procure remaining components (see `docs/BOM.md` and `docs/SHOPPING_LIST.md`)
+3. Assemble electronics in enclosure (see `docs/WIRING.md`)
+4. Enable MAX31855 code in firmware
+5. Calibrate thermocouples
+6. Install probes in roaster
+7. First test roast

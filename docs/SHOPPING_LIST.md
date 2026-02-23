@@ -254,5 +254,5 @@ Thicker probes cause "thermal lag" which:
 
 **Next Steps After Shopping:**
 1. Assembly → See [WIRING.md](WIRING.md)
-2. Firmware setup → See [arduino-firmware/README.md](arduino-firmware/README.md)
+2. Firmware setup → See [arduino-firmware/README.md](../arduino-firmware/README.md)
 3. Artisan config → See [ARTISAN_INTEGRATION.md](ARTISAN_INTEGRATION.md)
