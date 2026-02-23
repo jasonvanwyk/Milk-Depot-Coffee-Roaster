@@ -3,8 +3,8 @@
 ## Right Now
 **Phase:** Hardware Procurement
 **Last:** Reminded Sam (GPA Trading) about invoice + banking details (Feb 9, 2026)
-**Next:** Follow up on thermocouple delivery, procure remaining BOM items (MAX31855 modules, enclosure, wiring)
-**Blocked:** Waiting on GPA Trading delivery + invoice
+**Next:** Follow up on thermocouple delivery, arrange Courier Guy collection from Sam, procure remaining BOM items
+**Blocked:** Waiting on GPA Trading delivery + invoice + pickup address for Courier Guy
 
 ## Quick Context
 - Client: Quenton (Milk Depot) - coffee roaster temperature monitoring system
@@ -25,6 +25,7 @@
 
 ## Open Items
 - [ ] Follow up on GPA Trading delivery and invoice
+- [ ] Get pickup address from Sam, book Courier Guy to collect
 - [ ] Procure MAX31855 modules (3x)
 - [ ] Procure enclosure and wiring components
 - [ ] Send remaining BOM items to Sam for quoting
