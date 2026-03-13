@@ -2,8 +2,8 @@
 
 ## Right Now
 **Phase:** Development — Hardware Assembly & Integration
-**Last (13 Mar 2026):** Connected RPi via SSH, created KiCad schematic for actual components (Arduino Nano, 2x MAX31855, OLED, 2x 100nF caps), designed OLED snap-fit bezel in OpenSCAD, installed WireViz.
-**Next:** Test/render OLED bezel, create WireViz wiring diagram, clone repo to RPi, hardware assembly
+**Last (13 Mar 2026):** Rendered OpenSCAD bezel (STL + PNG previews). Redesigned OLED bezel from scratch in FreeCAD with real caliper measurements. Completed: PCB outline sketch (35.5×33.6mm + 4 mounting holes for Essentra 27PIF0045B push-in fasteners), bezel face (41.5×39.6mm), 1.6mm pad, window cutout (35×19mm positioned from actual screen measurements).
+**Next:** Complete FreeCAD bezel (pocket window, PCB shelf walls, snap tabs), create WireViz wiring diagram, clone repo to RPi, hardware assembly
 **Blocked:** None
 
 ## Quick Context
@@ -16,30 +16,33 @@
 ## Development Plan
 1. ~~Connect RPi 4 to network~~ ✓ SSH at 10.0.10.102
 2. ~~Create KiCad schematic~~ ✓ `kicad/milk-depot-coffee-roaster.kicad_sch`
-3. ~~Design OLED bezel~~ ✓ Draft in `3d-prints/oled-bezel.scad`
-4. Test/render OLED bezel in OpenSCAD or FreeCAD
-5. Create WireViz wiring diagram YAML
-6. Clone repo to RPi properly
-7. Update firmware for Arduino Nano (board type + 2-channel)
-8. Hardware assembly — wire on veroboard (50×70mm)
-9. Enable MAX31855 hardware code in firmware
-10. Calibrate thermocouples (ice water + boiling water)
-11. Mount probes in roaster (BT + ET positions)
-12. First test roast with Artisan
+3. ~~Design OLED bezel~~ ✓ OpenSCAD draft → FreeCAD redesign
+4. ~~Render/test OLED bezel~~ ✓ OpenSCAD STL + PNG renders
+5. Complete FreeCAD bezel — pocket window, PCB shelf walls, snap tabs
+6. Create WireViz wiring diagram YAML
+7. Clone repo to RPi properly
+8. Update firmware for Arduino Nano (board type + 2-channel)
+9. Hardware assembly — wire on veroboard (50×70mm)
+10. Enable MAX31855 hardware code in firmware
+11. Calibrate thermocouples (ice water + boiling water)
+12. Mount probes in roaster (BT + ET positions)
+13. First test roast with Artisan
 
 ## Key Files
+- `FreeCad/oled-1.3inch-holder.FCStd` - FreeCAD OLED bezel (active design, WIP)
+- `FreeCad/draw_bezel.py` - FreeCAD console script for PCB outline rectangle
+- `3d-prints/oled-bezel.scad` - OpenSCAD bezel (superseded by FreeCAD version)
+- `3d-prints/oled-bezel.stl` - Exported STL from OpenSCAD render
 - `kicad/generate_schematic.py` - Programmatic KiCad schematic generator
 - `kicad/milk-depot-coffee-roaster.kicad_sch` - Circuit schematic
-- `3d-prints/oled-bezel.scad` - OpenSCAD snap-fit OLED bezel design
 - `docs/WIRING.md` - Wiring diagrams (needs update for 2-channel Nano)
 - `docs/BOM.md` - Bill of Materials (all procured)
 - `arduino-firmware/tc4_emulator/` - Production firmware (needs Nano + 2-channel update)
-- `docs/ARTISAN_INTEGRATION.md` - Artisan configuration guide
 
 ## Session Notes
-- **KiCad symbol gotcha**: `extends` keyword doesn't work in embedded `lib_symbols` within .kicad_sch files — use the parent symbol directly
-- **Capacitor codes**: 101 = 100pF (wrong for decoupling), 104 = 100nF (correct)
-- **Thermocouple selection**: 35mm/2.5mm for BT, 50mm/3.0mm for ET
-- **Power**: USB from RPi sufficient (~48mA total draw), no barrel jack needed
-- **WireViz**: Installed v0.4.1, generates diagrams from YAML
-- **OLED bezel**: Based on Thingiverse thing:4680559, custom snap-fit front panel mount only
+- **OLED actual measurements** (caliper-verified): screen 35×19.5mm, 6mm from PCB top, 8mm from PCB bottom. Screen center ~1mm above PCB center — datasheet offset was wrong.
+- **FreeCAD bezel state**: PCB outline sketch → bezel face sketch → Pad 1.6mm → window sketch (35×19mm at BL -17.5, -8.45). Pocket not yet applied. Still needs: PCB shelf walls, snap tabs.
+- **FreeCAD Sketcher tip**: Use Constrain Lock (K, L) for positioning — more reliable than scripted DistanceX/Y constraints
+- **Push-in fasteners**: Essentra 27PIF0045B for OLED PCB mounting, 3mm holes
+- **3D printing**: Recommend Tough PLA Black (A1 slot), modified Strong preset, print face-down for snap-tab strength
+- **OLED bezel**: Based on Thingiverse thing:4680559, snap-fit front panel mount only

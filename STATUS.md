@@ -9,7 +9,7 @@
 
 ## Current Phase: Development
 
-All components procured. RPi networked via SSH. KiCad schematic created for actual components (Arduino Nano, 2x MAX31855, OLED, decoupling caps). OLED snap-fit bezel designed. Ready for hardware assembly.
+All components procured. RPi networked via SSH. KiCad schematic created for actual components (Arduino Nano, 2x MAX31855, OLED, decoupling caps). OLED bezel redesigned in FreeCAD with caliper-verified measurements. Ready for hardware assembly.
 
 ---
 
@@ -35,21 +35,23 @@ All components procured. RPi networked via SSH. KiCad schematic created for actu
 | RPi SSH access | 2026-03-13 | 10.0.10.102, user jason, key-based auth |
 | KiCad schematic created | 2026-03-13 | Arduino Nano, 2x MAX31855, OLED, 100nF caps |
 | OLED bezel designed | 2026-03-13 | OpenSCAD snap-fit bezel (`3d-prints/oled-bezel.scad`) |
+| OpenSCAD bezel rendered | 2026-03-13 | STL exported (25KB), PNG previews from 4 angles |
+| FreeCAD bezel redesign | 2026-03-13 | Manual design with real caliper measurements (WIP) |
 | WireViz installed | 2026-03-13 | v0.4.1, for wiring diagram generation |
 
 ### Session Completed Items
-- [x] ~~Connected RPi 4 via SSH (10.0.10.102, key-based auth)~~
-- [x] ~~Created KiCad schematic for actual components (Nano + 2x MAX31855 + OLED)~~
-- [x] ~~Designed snap-fit OLED bezel in OpenSCAD~~
-- [x] ~~Installed WireViz v0.4.1 for wiring diagrams~~
-- [x] ~~Identified correct capacitors (104 = 100nF for decoupling)~~
-- [x] ~~Confirmed USB power sufficient (no barrel jack needed)~~
+- [x] ~~Rendered OpenSCAD bezel — STL export + 4-angle PNG previews~~
+- [x] ~~Reviewed 3D print settings for bezel (Tough PLA, modified Strong preset)~~
+- [x] ~~Started FreeCAD bezel redesign with real caliper measurements~~
+- [x] ~~PCB outline sketch: 35.5×33.6mm rect + 4× 3mm mounting holes (Essentra 27PIF0045B)~~
+- [x] ~~Bezel face sketch: 41.5×39.6mm (3mm border), padded 1.6mm~~
+- [x] ~~Window cutout sketch: 35×19mm, positioned from actual OLED screen measurements~~
 
 ### In Progress
 
 | Task | Status | Notes |
 |------|--------|-------|
-| Test/render OLED bezel | TODO | Verify in OpenSCAD or FreeCAD |
+| Complete FreeCAD bezel | In Progress | Pocket window, PCB shelf walls, snap tabs remaining |
 | Create WireViz wiring diagram | TODO | YAML definition for build instructions |
 | Clone repo to RPi | TODO | Old ~/artisan/ dir exists, needs proper clone |
 | Update firmware for Nano | TODO | Change board type, 2-channel config |
@@ -128,4 +130,5 @@ All components procured. RPi networked via SSH. KiCad schematic created for actu
 - `correspondence/` - Supplier correspondence
 - `docs/` - Technical documentation
 - `kicad/` - KiCad schematic project + generator script
-- `3d-prints/` - 3D printable parts (OLED bezel)
+- `3d-prints/` - 3D printable parts (OLED bezel — OpenSCAD + STL)
+- `FreeCad/` - FreeCAD bezel project (active design, WIP)
