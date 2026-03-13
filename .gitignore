@@ -29,6 +29,12 @@ ENV/
 env.bak/
 venv.bak/
 
+# KiCad
+*.lck
+*-backups/
+fp-info-cache
+_autosave-*
+
 # Arduino
 *.hex
 *.elf

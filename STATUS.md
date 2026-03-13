@@ -9,7 +9,7 @@
 
 ## Current Phase: Development
 
-All components procured. Ready for hardware assembly, firmware enablement, and calibration. RPi needs to be connected to network for remote development and firmware/software review.
+All components procured. RPi networked via SSH. KiCad schematic created for actual components (Arduino Nano, 2x MAX31855, OLED, decoupling caps). OLED snap-fit bezel designed. Ready for hardware assembly.
 
 ---
 
@@ -32,17 +32,31 @@ All components procured. Ready for hardware assembly, firmware enablement, and c
 | Invoice + payment | 2026-02-24 | Invoice received, POP sent same day |
 | All BOM components procured | 2026-03-13 | Thermocouples from GPA, rest locally |
 | KiCad tooling installed | 2026-03-13 | MCP servers + skills for schematic/PCB design |
+| RPi SSH access | 2026-03-13 | 10.0.10.102, user jason, key-based auth |
+| KiCad schematic created | 2026-03-13 | Arduino Nano, 2x MAX31855, OLED, 100nF caps |
+| OLED bezel designed | 2026-03-13 | OpenSCAD snap-fit bezel (`3d-prints/oled-bezel.scad`) |
+| WireViz installed | 2026-03-13 | v0.4.1, for wiring diagram generation |
+
+### Session Completed Items
+- [x] ~~Connected RPi 4 via SSH (10.0.10.102, key-based auth)~~
+- [x] ~~Created KiCad schematic for actual components (Nano + 2x MAX31855 + OLED)~~
+- [x] ~~Designed snap-fit OLED bezel in OpenSCAD~~
+- [x] ~~Installed WireViz v0.4.1 for wiring diagrams~~
+- [x] ~~Identified correct capacitors (104 = 100nF for decoupling)~~
+- [x] ~~Confirmed USB power sufficient (no barrel jack needed)~~
 
 ### In Progress
 
 | Task | Status | Notes |
 |------|--------|-------|
-| Connect RPi to network | TODO | Currently offline, needed for remote dev |
-| Hardware assembly | TODO | All components on hand |
+| Test/render OLED bezel | TODO | Verify in OpenSCAD or FreeCAD |
+| Create WireViz wiring diagram | TODO | YAML definition for build instructions |
+| Clone repo to RPi | TODO | Old ~/artisan/ dir exists, needs proper clone |
+| Update firmware for Nano | TODO | Change board type, 2-channel config |
+| Hardware assembly | TODO | 50×70mm veroboard, all components on hand |
 | Enable MAX31855 in firmware | TODO | Uncomment library code, recompile |
-| Review firmware + software on RPi | TODO | Direct on-device work once networked |
 | Sensor calibration | TODO | Ice water + boiling water tests |
-| Mount probes in roaster | TODO | BT, ET, FT positions |
+| Mount probes in roaster | TODO | BT + ET positions |
 | First test roast | TODO | Full integration test |
 
 ---
@@ -77,9 +91,14 @@ All components procured. Ready for hardware assembly, firmware enablement, and c
 
 1. Custom K-type probes from GPA Trading instead of off-the-shelf Olimex (better specs, compression fittings, food-grade 316L SS)
 2. TC4 protocol for Artisan integration (command/response, not continuous output)
-3. 3-channel system: ET, BT, FT via shared SPI bus with individual CS lines
-4. Bare tinned wire termination (direct to MAX31855 screw terminals, no connectors)
-5. 6 probes ordered (2 of each size) for positioning flexibility and spares
+3. **2-channel system** (revised from 3): BT + ET via shared SPI bus with individual CS lines
+4. **Arduino Nano** (revised from UNO R3) — smaller footprint, USB-C
+5. Bare tinned wire termination (direct to MAX31855 screw terminals, no connectors)
+6. 6 probes ordered (2 of each size) for positioning flexibility and spares
+7. USB power from RPi sufficient (~48mA total), no barrel jack needed
+8. 100nF ceramic decoupling caps on each MAX31855 VCC/GND
+9. 50×70mm veroboard selected (fits enclosure 61×80×23mm better than 60×40mm)
+10. Thermocouple assignment: 35mm/2.5mm for BT, 50mm/3.0mm for ET
 
 ---
 
@@ -108,3 +127,5 @@ All components procured. Ready for hardware assembly, firmware enablement, and c
 - `CLAUDE.md` - AI assistant instructions
 - `correspondence/` - Supplier correspondence
 - `docs/` - Technical documentation
+- `kicad/` - KiCad schematic project + generator script
+- `3d-prints/` - 3D printable parts (OLED bezel)
