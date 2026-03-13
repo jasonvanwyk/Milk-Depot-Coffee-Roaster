@@ -1,15 +1,15 @@
 # Project Status - Milk Depot Coffee Roaster
 
-**Last Updated:** 2026-02-23
+**Last Updated:** 2026-03-13
 **Quote Ref:** PO P00041 (thermocouples)
-**Status:** Hardware Procurement
+**Status:** Development
 **Payment Terms:** Invoice on delivery (GPA Trading)
 
 ---
 
-## Current Phase: Hardware Procurement
+## Current Phase: Development
 
-Software stack is 100% complete and tested. Custom thermocouple probes ordered from GPA Trading (PO P00041, Feb 2 2026). Awaiting delivery and invoice. Remaining BOM items (MAX31855 modules, enclosure, wiring) still to be ordered.
+All components procured. Ready for hardware assembly, firmware enablement, and calibration. RPi needs to be connected to network for remote development and firmware/software review.
 
 ---
 
@@ -28,30 +28,22 @@ Software stack is 100% complete and tested. Custom thermocouple probes ordered f
 | Thermocouple specification | 2026-01-12 | Custom probe specs finalized |
 | Quote from GPA Trading | 2026-01-23 | 6 probes quoted, pricing accepted |
 | PO P00041 placed | 2026-02-02 | Thermocouples ordered |
+| Thermocouple delivery | 2026-03-13 | 6x custom K-type probes received |
+| Invoice + payment | 2026-02-24 | Invoice received, POP sent same day |
+| All BOM components procured | 2026-03-13 | Thermocouples from GPA, rest locally |
+| KiCad tooling installed | 2026-03-13 | MCP servers + skills for schematic/PCB design |
 
 ### In Progress
 
 | Task | Status | Notes |
 |------|--------|-------|
-| Thermocouple delivery | IN TRANSIT | Sam receiving stock today (Feb 23), Courier Guy collecting same day |
-| Arrange Courier Guy collection | DONE | Courier Guy dispatched to collect from Sam (Feb 23) |
-| Remaining BOM procurement | PENDING | MAX31855 modules, enclosure, wiring - awaiting 3rd party quotes |
-
-### Awaiting Supplier
-
-| Task | Status | Notes |
-|------|--------|-------|
-| Invoice + banking details from GPA Trading | WAITING | Reminded Sam on Feb 9 |
-
-### Future Work
-
-| Task | Status | Notes |
-|------|--------|-------|
-| Hardware assembly | TBC | After all components arrive |
-| Enable MAX31855 in firmware | TBC | Uncomment library code, recompile |
-| Sensor calibration | TBC | Ice water + boiling water tests |
-| Mount probes in roaster | TBC | BT, ET, FT positions |
-| First test roast | TBC | Full integration test |
+| Connect RPi to network | TODO | Currently offline, needed for remote dev |
+| Hardware assembly | TODO | All components on hand |
+| Enable MAX31855 in firmware | TODO | Uncomment library code, recompile |
+| Review firmware + software on RPi | TODO | Direct on-device work once networked |
+| Sensor calibration | TODO | Ice water + boiling water tests |
+| Mount probes in roaster | TODO | BT, ET, FT positions |
+| First test roast | TODO | Full integration test |
 
 ---
 
@@ -61,10 +53,10 @@ Software stack is 100% complete and tested. Custom thermocouple probes ordered f
 
 | Item | Qty | Unit Price | Total | Status |
 |------|-----|-----------|-------|--------|
-| 35mm/2.5mm K-type probe | 2 | R370 | R740 | Ordered |
-| 50mm/3.0mm K-type probe | 2 | R395 | R790 | Ordered |
-| 70mm/3.0mm K-type probe | 2 | R415 | R830 | Ordered |
-| 1/8" SS compression fitting | 6 | R550 | R3,300 | Ordered |
+| 35mm/2.5mm K-type probe | 2 | R370 | R740 | Delivered |
+| 50mm/3.0mm K-type probe | 2 | R395 | R790 | Delivered |
+| 70mm/3.0mm K-type probe | 2 | R415 | R830 | Delivered |
+| 1/8" SS compression fitting | 6 | R550 | R3,300 | Delivered |
 | **Subtotal** | | | **R5,660** | Nett, Ex VAT |
 | **VAT (15%)** | | | **R849** | |
 | **Total incl. VAT** | | | **R6,509** | |
@@ -101,6 +93,11 @@ Software stack is 100% complete and tested. Custom thermocouple probes ordered f
 | 2026-02-02 | Email | Sam confirmed order |
 | 2026-02-09 | Email | Jason reminded Sam about invoice + banking details |
 | 2026-02-09 | Email | Sam said he'll invoice once goods arrive |
+| 2026-02-23 | Email | Jason sent waybill GTRCLK, Courier Guy collecting 24 Feb |
+| 2026-02-24 | Email | Sam confirmed courier collected, sent invoice (attached) |
+| 2026-02-24 | Email | Jason sent proof of payment |
+| 2026-03-04 | Email | Jason sent RFQ for remaining BOM items |
+| 2026-03-13 | Email | Sam and Jason agreed remaining BOM not worth supplying via GPA |
 
 ---
 
