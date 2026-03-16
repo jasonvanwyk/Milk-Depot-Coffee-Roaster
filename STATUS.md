@@ -1,6 +1,6 @@
 # Project Status - Milk Depot Coffee Roaster
 
-**Last Updated:** 2026-03-13
+**Last Updated:** 2026-03-16
 **Quote Ref:** PO P00041 (thermocouples)
 **Status:** Development
 **Payment Terms:** Invoice on delivery (GPA Trading)
@@ -9,7 +9,7 @@
 
 ## Current Phase: Development
 
-All components procured. RPi networked via SSH. KiCad schematic created for actual components (Arduino Nano, 2x MAX31855, OLED, decoupling caps). OLED bezel redesigned in FreeCAD with caliper-verified measurements. Ready for hardware assembly.
+All components procured. RPi networked via SSH. KiCad schematic created for actual components (Arduino Nano, 2x MAX31855, OLED, decoupling caps). OLED bezel front piece complete in FreeCAD. Back piece (frame with fastener holes) designed. Evaluating Printables mounting frame as alternative — test print in progress.
 
 ---
 
@@ -39,19 +39,17 @@ All components procured. RPi networked via SSH. KiCad schematic created for actu
 | FreeCAD bezel redesign | 2026-03-13 | Manual design with real caliper measurements (WIP) |
 | WireViz installed | 2026-03-13 | v0.4.1, for wiring diagram generation |
 
-### Session Completed Items
-- [x] ~~Rendered OpenSCAD bezel — STL export + 4-angle PNG previews~~
-- [x] ~~Reviewed 3D print settings for bezel (Tough PLA, modified Strong preset)~~
-- [x] ~~Started FreeCAD bezel redesign with real caliper measurements~~
-- [x] ~~PCB outline sketch: 35.5×33.6mm rect + 4× 3mm mounting holes (Essentra 27PIF0045B)~~
-- [x] ~~Bezel face sketch: 41.5×39.6mm (3mm border), padded 1.6mm~~
-- [x] ~~Window cutout sketch: 35×19mm, positioned from actual OLED screen measurements~~
+### Session Completed Items (16 Mar 2026)
+- [x] ~~Designed OLED back piece in FreeCAD (frame 45.5×43.5mm, corner bosses, 3.2mm holes)~~
+- [x] ~~Exported FreeCAD bezel front piece to STL + 3MF~~
+- [x] ~~Downloaded Printables OLED mounting frame (werner_rh, model 1338552) as alternative~~
+- [x] ~~Configured PETG-CF print settings and sent test print to Bambu X1~~
 
 ### In Progress
 
 | Task | Status | Notes |
 |------|--------|-------|
-| Complete FreeCAD bezel | In Progress | Pocket window, PCB shelf walls, snap tabs remaining |
+| OLED mounting solution | In Progress | Test printing Printables frame; custom FreeCAD back piece also WIP |
 | Create WireViz wiring diagram | TODO | YAML definition for build instructions |
 | Clone repo to RPi | TODO | Old ~/artisan/ dir exists, needs proper clone |
 | Update firmware for Nano | TODO | Change board type, 2-channel config |
@@ -130,5 +128,5 @@ All components procured. RPi networked via SSH. KiCad schematic created for actu
 - `correspondence/` - Supplier correspondence
 - `docs/` - Technical documentation
 - `kicad/` - KiCad schematic project + generator script
-- `3d-prints/` - 3D printable parts (OLED bezel — OpenSCAD + STL)
-- `FreeCad/` - FreeCAD bezel project (active design, WIP)
+- `3d-prints/` - 3D printable parts (OLED bezel + Printables mounting frame)
+- `FreeCad/` - FreeCAD bezel front + back piece projects
