@@ -1,0 +1,273 @@
+# Milk Depot Coffee Roaster - Wiring Harness
+# 2-Channel Thermocouple System
+# Arduino Nano + 2x MAX31855 (SPI) + 1.3" OLED (I2C)
+#
+# Generate: wireviz docs/wiring.yml
+# Output:   docs/wiring.png, docs/wiring.svg, docs/wiring.html
+
+connectors:
+  Nano:
+    type: Arduino Nano (USB-C)
+    subtype: male
+    pinlabels: [D13, D12, D10, D9, A4, A5, 5V, GND, USB-C]
+    notes: Powered via USB from RPi 4
+
+  BT:
+    type: MAX31855 Module
+    subtype: female
+    pinlabels: [VCC, GND, SCK, DO, CS, TC+, TC-]
+    notes: Bean Temperature
+
+  ET:
+    type: MAX31855 Module
+    subtype: female
+    pinlabels: [VCC, GND, SCK, DO, CS, TC+, TC-]
+    notes: Exhaust Temperature
+
+  OLED:
+    type: 1.3" SH1106 OLED
+    subtype: female
+    pinlabels: [VCC, GND, SDA, SCL]
+    notes: 128x64 I2C display
+
+  TC_BT:
+    type: K-Type Thermocouple
+    subtype: male
+    pinlabels: ["+", "-"]
+    notes: "35mm/2.5mm probe, bare tinned wire, red=negative"
+
+  TC_ET:
+    type: K-Type Thermocouple
+    subtype: male
+    pinlabels: ["+", "-"]
+    notes: "50mm/3.0mm probe, bare tinned wire, red=negative"
+
+  C1:
+    type: Ceramic Capacitor
+    subtype: male
+    pinlabels: ["1", "2"]
+    notes: 100nF (104) decoupling, across BT VCC/GND
+
+  C2:
+    type: Ceramic Capacitor
+    subtype: male
+    pinlabels: ["1", "2"]
+    notes: 100nF (104) decoupling, across ET VCC/GND
+
+  RPi:
+    type: Raspberry Pi 4
+    subtype: female
+    pinlabels: [USB]
+    notes: Artisan software, 10.0.10.102
+
+cables:
+  W1:
+    wirecount: 1
+    colors: [YE]
+    notes: SPI Clock to BT
+
+  W2:
+    wirecount: 1
+    colors: [YE]
+    notes: SPI Clock to ET
+
+  W3:
+    wirecount: 1
+    colors: [GN]
+    notes: SPI Data from BT
+
+  W4:
+    wirecount: 1
+    colors: [GN]
+    notes: SPI Data from ET
+
+  W5:
+    wirecount: 1
+    colors: [BU]
+    notes: CS Bean Temp (D10)
+
+  W6:
+    wirecount: 1
+    colors: [VT]
+    notes: CS Exhaust Temp (D9)
+
+  W7:
+    wirecount: 1
+    colors: [WH]
+    notes: I2C SDA
+
+  W8:
+    wirecount: 1
+    colors: [OG]
+    notes: I2C SCL
+
+  W9:
+    wirecount: 1
+    colors: [RD]
+    notes: 5V to BT module
+
+  W10:
+    wirecount: 1
+    colors: [RD]
+    notes: 5V to ET module
+
+  W11:
+    wirecount: 1
+    colors: [RD]
+    notes: 5V to OLED
+
+  W12:
+    wirecount: 1
+    colors: [BK]
+    notes: GND to BT module
+
+  W13:
+    wirecount: 1
+    colors: [BK]
+    notes: GND to ET module
+
+  W14:
+    wirecount: 1
+    colors: [BK]
+    notes: GND to OLED
+
+  W15:
+    wirecount: 2
+    colors: [YE, RD]
+    length: 1.5 m
+    notes: "BT thermocouple lead (red=negative!)"
+
+  W16:
+    wirecount: 2
+    colors: [YE, RD]
+    length: 1.5 m
+    notes: "ET thermocouple lead (red=negative!)"
+
+  C1a:
+    wirecount: 1
+    colors: [RD]
+    notes: Cap C1 to BT VCC
+
+  C1b:
+    wirecount: 1
+    colors: [BK]
+    notes: Cap C1 to BT GND
+
+  C2a:
+    wirecount: 1
+    colors: [RD]
+    notes: Cap C2 to ET VCC
+
+  C2b:
+    wirecount: 1
+    colors: [BK]
+    notes: Cap C2 to ET GND
+
+  USB:
+    wirecount: 1
+    colors: [BK]
+    length: 2 m
+    notes: USB-C cable to RPi
+
+connections:
+  # SPI Clock
+  -
+    - Nano: D13
+    - W1: 1
+    - BT: SCK
+  -
+    - Nano: D13
+    - W2: 1
+    - ET: SCK
+
+  # SPI Data
+  -
+    - Nano: D12
+    - W3: 1
+    - BT: DO
+  -
+    - Nano: D12
+    - W4: 1
+    - ET: DO
+
+  # Chip Selects
+  -
+    - Nano: D10
+    - W5: 1
+    - BT: CS
+  -
+    - Nano: D9
+    - W6: 1
+    - ET: CS
+
+  # I2C
+  -
+    - Nano: A4
+    - W7: 1
+    - OLED: SDA
+  -
+    - Nano: A5
+    - W8: 1
+    - OLED: SCL
+
+  # 5V Power
+  -
+    - Nano: 5V
+    - W9: 1
+    - BT: VCC
+  -
+    - Nano: 5V
+    - W10: 1
+    - ET: VCC
+  -
+    - Nano: 5V
+    - W11: 1
+    - OLED: VCC
+
+  # Ground
+  -
+    - Nano: GND
+    - W12: 1
+    - BT: GND
+  -
+    - Nano: GND
+    - W13: 1
+    - ET: GND
+  -
+    - Nano: GND
+    - W14: 1
+    - OLED: GND
+
+  # Thermocouples
+  -
+    - TC_BT: ["+", "-"]
+    - W15: [1, 2]
+    - BT: [TC+, TC-]
+  -
+    - TC_ET: ["+", "-"]
+    - W16: [1, 2]
+    - ET: [TC+, TC-]
+
+  # Decoupling caps (100nF across VCC/GND on each MAX31855)
+  -
+    - BT: VCC
+    - C1a: 1
+    - C1: "1"
+  -
+    - BT: GND
+    - C1b: 1
+    - C1: "2"
+  -
+    - ET: VCC
+    - C2a: 1
+    - C2: "1"
+  -
+    - ET: GND
+    - C2b: 1
+    - C2: "2"
+
+  # USB to RPi
+  -
+    - RPi: USB
+    - USB: 1
+    - Nano: USB-C

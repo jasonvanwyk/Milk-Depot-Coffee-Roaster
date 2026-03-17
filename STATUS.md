@@ -1,6 +1,6 @@
 # Project Status - Milk Depot Coffee Roaster
 
-**Last Updated:** 2026-03-16
+**Last Updated:** 2026-03-17
 **Quote Ref:** PO P00041 (thermocouples)
 **Status:** Development
 **Payment Terms:** Invoice on delivery (GPA Trading)
@@ -9,7 +9,7 @@
 
 ## Current Phase: Development
 
-All components procured. RPi networked via SSH. KiCad schematic created for actual components (Arduino Nano, 2x MAX31855, OLED, decoupling caps). OLED bezel front piece complete in FreeCAD. Back piece (frame with fastener holes) designed. Evaluating Printables mounting frame as alternative — test print in progress.
+All components procured. RPi networked via SSH. KiCad schematic created for actual components (Arduino Nano, 2x MAX31855, OLED, decoupling caps). OLED bezel front piece complete in FreeCAD (exported STL). Complete wiring documentation: WireViz diagram, Fritzing breadboard layout, rewritten WIRING.md. Evaluating Printables OLED mounting frame — test print in progress.
 
 ---
 
@@ -38,19 +38,26 @@ All components procured. RPi networked via SSH. KiCad schematic created for actu
 | OpenSCAD bezel rendered | 2026-03-13 | STL exported (25KB), PNG previews from 4 angles |
 | FreeCAD bezel redesign | 2026-03-13 | Manual design with real caliper measurements (WIP) |
 | WireViz installed | 2026-03-13 | v0.4.1, for wiring diagram generation |
+| WireViz wiring diagram | 2026-03-17 | YAML source + PNG/SVG/HTML output with BOM |
+| Fritzing breadboard layout | 2026-03-17 | Nano + 2x MAX31855 + OLED + caps, verified |
+| WIRING.md rewrite | 2026-03-17 | Updated from 3-channel UNO to 2-channel Nano |
+| OLED 5V confirmed | 2026-03-17 | Onboard voltage regulator visible on PCB back |
 
-### Session Completed Items (16 Mar 2026)
-- [x] ~~Designed OLED back piece in FreeCAD (frame 45.5×43.5mm, corner bosses, 3.2mm holes)~~
-- [x] ~~Exported FreeCAD bezel front piece to STL + 3MF~~
-- [x] ~~Downloaded Printables OLED mounting frame (werner_rh, model 1338552) as alternative~~
-- [x] ~~Configured PETG-CF print settings and sent test print to Bambu X1~~
+### Session Completed Items (17 Mar 2026)
+- [x] ~~Created WireViz YAML wiring diagram (`docs/wiring.yml`) with all connections + decoupling caps~~
+- [x] ~~Generated WireViz output: PNG, SVG, HTML with embedded BOM~~
+- [x] ~~Rewrote `docs/WIRING.md` for 2-channel Nano design (was 3-channel UNO R3)~~
+- [x] ~~Downloaded Adafruit Fritzing parts: MAX31855 (#269) + 1.3" OLED (#938)~~
+- [x] ~~Built and verified Fritzing breadboard layout with all components wired~~
+- [x] ~~Exported FreeCAD bezel front piece to STL for OrcaSlicer~~
+- [x] ~~Confirmed OLED module accepts 5V (onboard voltage regulator on PCB back)~~
 
 ### In Progress
 
 | Task | Status | Notes |
 |------|--------|-------|
 | OLED mounting solution | In Progress | Test printing Printables frame; custom FreeCAD back piece also WIP |
-| Create WireViz wiring diagram | TODO | YAML definition for build instructions |
+| Create WireViz wiring diagram | Done | `docs/wiring.yml` → PNG/SVG/HTML |
 | Clone repo to RPi | TODO | Old ~/artisan/ dir exists, needs proper clone |
 | Update firmware for Nano | TODO | Change board type, 2-channel config |
 | Hardware assembly | TODO | 50×70mm veroboard, all components on hand |
@@ -130,3 +137,4 @@ All components procured. RPi networked via SSH. KiCad schematic created for actu
 - `kicad/` - KiCad schematic project + generator script
 - `3d-prints/` - 3D printable parts (OLED bezel + Printables mounting frame)
 - `FreeCad/` - FreeCAD bezel front + back piece projects
+- `fritzing/` - Fritzing breadboard layout + imported parts (.fzpz)

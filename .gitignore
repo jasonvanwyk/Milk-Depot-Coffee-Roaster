@@ -13,6 +13,7 @@ eggs/
 lib/
 lib64/
 parts/
+!fritzing/parts/
 sdist/
 var/
 wheels/

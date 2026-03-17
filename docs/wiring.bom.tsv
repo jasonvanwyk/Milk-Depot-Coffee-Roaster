@@ -1,0 +1,9 @@
+Id	Description	Qty	Unit	Designators
+1	Cable, 1 wires	2	m	C1a, C1b, C2a, C2b, USB, W1, W10, W11, W12, W13, W14, W2, W3, W4, W5, W6, W7, W8, W9
+2	Cable, 2 wires	3	m	W15, W16
+3	Connector, 1.3" SH1106 OLED, female, 4 pins	1		OLED
+4	Connector, Arduino Nano (USB-C), male, 9 pins	1		Nano
+5	Connector, Ceramic Capacitor, male, 2 pins	2		C1, C2
+6	Connector, K-Type Thermocouple, male, 2 pins	2		TC_BT, TC_ET
+7	Connector, MAX31855 Module, female, 7 pins	2		BT, ET
+8	Connector, Raspberry Pi 4, female, 1 pins	1		RPi
