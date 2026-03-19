@@ -1,53 +1,50 @@
 # Project Resume
 
 ## Right Now
-**Phase:** Development — Hardware Assembly & Integration
-**Last (17 Mar 2026):** Created complete wiring documentation suite: WireViz YAML diagram (`docs/wiring.yml` → PNG/SVG/HTML), rewrote `docs/WIRING.md` for 2-channel Nano design with veroboard layout, built Fritzing breadboard layout with all components wired and verified. Downloaded Adafruit Fritzing parts for MAX31855 and 1.3" OLED. Exported FreeCAD bezel front piece to STL. Confirmed OLED module accepts 5V (has onboard voltage regulator).
-**Previous (16 Mar 2026):** Designed OLED back piece in FreeCAD. Pivoted from custom snap hooks to Printables mounting frame. Test print sent to Bambu X1 in PETG-CF.
-**Next:** Evaluate OLED test print fit, clone repo to RPi, update firmware for Nano (2-channel), hardware assembly on veroboard
-**Blocked:** None
+**Phase:** Development — Hardware Redesign (ESP32 + Custom PCB)
+**Last (18-19 Mar 2026):** Major pivot session. Updated firmware for Arduino Nano 2-channel, installed arduino-cli AVR core + libraries (Adafruit MAX31855, SH110X, GFX) on Arch workstation. Flashed firmware via Arduino IDE (CLI had port issues — FTDI chip, stty left port in bad state). Firmware working: TC4 protocol responding, OLED displaying (garbled top line — SH1106 init issue, partially fixed). One MAX31855 knockoff module smoked on first power-up (BT channel, near decoupling cap). Decision: **rebuild with quality components** — ESP32-WROOM-32E replaces Arduino Nano, genuine MAX31855KASA+ ICs on custom PCB replaces knockoff modules, 2.42" OLED replaces 1.3". Sourced components from DigiKey ZA + Mantech. Decided to keep coffee roaster PCB separate from Fairfield project PCB.
+**Previous (17 Mar 2026):** Created complete wiring documentation suite: WireViz, Fritzing, WIRING.md rewrite.
+**Next:** Finalise DigiKey order (MAX31855KASA+ × 5 + passives), buy ESP32 KS5019 from Mantech, design custom coffee roaster PCB in KiCad, update firmware for ESP32
+**Blocked:** Waiting on component orders (DigiKey + Mantech)
 
 ## Quick Context
 - Client: Quenton (Milk Depot) - coffee roaster temperature monitoring system
-- All hardware components on hand — ready to build
-- **Updated design**: Arduino Nano (not UNO), 2x MAX31855 (BT + ET only, no FT), 1.3" OLED display
-- Firmware needs updating for Nano + 2-channel config
+- **REDESIGN in progress**: Switching from Arduino Nano + knockoff modules to ESP32 + genuine parts + custom PCB
+- **New platform**: ESP32-WROOM-32E (3.3V native, WiFi, more RAM)
+- **MAX31855 knockoff smoked** — one BT module released smoke near cap on first power-up. Don't trust cheap MAX31855 modules.
+- **Custom PCB**: MAX31855KASA+ (SOIC-8) directly on PCB, no breakout boards needed. ESP32 is 3.3V so no level shifters required.
+- DigiKey order pending — combining with Fairfield project order for free shipping (R2,000 threshold)
 - RPi 4 accessible via SSH at 10.0.10.102 (user: jason, key-based auth)
 
 ## Development Plan
 1. ~~Connect RPi 4 to network~~ ✓ SSH at 10.0.10.102
-2. ~~Create KiCad schematic~~ ✓ `kicad/milk-depot-coffee-roaster.kicad_sch`
-3. ~~Design OLED bezel~~ ✓ OpenSCAD draft → FreeCAD redesign
-4. ~~Render/test OLED bezel~~ ✓ OpenSCAD STL + PNG renders
-5. ~~FreeCAD back piece~~ ✓ Frame with corner bosses + 3.2mm holes
-6. ~~Create wiring documentation~~ ✓ WireViz + Fritzing + WIRING.md rewrite
-7. OLED mounting solution — evaluate test print fit
-8. Clone repo to RPi properly
-9. Update firmware for Arduino Nano (board type + 2-channel)
-10. Hardware assembly — wire on veroboard (50×70mm)
-11. Enable MAX31855 hardware code in firmware
-12. Calibrate thermocouples (ice water + boiling water)
-13. Mount probes in roaster (BT + ET positions)
-14. First test roast with Artisan
+2. ~~Create KiCad schematic~~ ✓ (needs redesign for ESP32)
+3. ~~Design OLED bezel~~ ✓ (needs redesign for 2.42" OLED)
+4. ~~Create wiring documentation~~ ✓ (needs update for ESP32)
+5. ~~Update firmware for 2-channel~~ ✓ Done (but for Nano — needs ESP32 port)
+6. ~~First power-up test~~ ✓ Firmware works, OLED works (garbled), MAX31855 knockoff smoked
+7. Order components — DigiKey (MAX31855KASA+ ICs, caps, screw terminals) + Mantech (ESP32 KS5019)
+8. Design custom PCB in KiCad — ESP32 + 2× MAX31855 + OLED header + button
+9. Order PCBs from JLCPCB
+10. Hand-assemble PCBs (SOIC-8 MAX31855, passives, headers)
+11. Port firmware to ESP32 (pin reassignment, ESP32 Arduino core)
+12. Clone repo to RPi properly
+13. Calibrate thermocouples (ice water + boiling water)
+14. Mount probes in roaster (BT + ET positions)
+15. First test roast with Artisan
 
 ## Key Files
-- `FreeCad/oled-1.3inch-holder-bezel.FCStd` - FreeCAD OLED bezel (front piece, exported to STL)
-- `FreeCad/oled-1.3inch-holder2.FCStd` - FreeCAD OLED back piece (frame + bosses + holes)
-- `docs/wiring.yml` - WireViz YAML source (generates PNG/SVG/HTML)
-- `docs/wiring.png` - WireViz harness-style wiring diagram
-- `docs/WIRING.md` - Complete wiring & assembly guide (updated for 2-channel Nano)
-- `fritzing/parts/` - Adafruit MAX31855 + OLED 1.3" Fritzing parts (.fzpz)
-- `fritzing/milk-depot-coffee-roaster.fzz` - Fritzing breadboard layout (user saves)
-- `kicad/milk-depot-coffee-roaster.kicad_sch` - Circuit schematic
-- `3d-prints/display-testpanel.stl` - Printables OLED test panel (fit check)
-- `3d-prints/displayframe-oled-1_3inch-sh1106.stl` - Printables OLED mounting frame
-- `docs/BOM.md` - Bill of Materials (all procured)
-- `arduino-firmware/tc4_emulator/` - Production firmware (needs Nano + 2-channel update)
+- `arduino-firmware/tc4_emulator/tc4_emulator.ino` - Production firmware (updated: 2-channel, SH1106 OLED, MAX31855 hardware enabled, DIAG command)
+- `kicad/milk-depot-coffee-roaster.kicad_sch` - Circuit schematic (needs ESP32 redesign)
+- `docs/BOM.md` - Bill of Materials (needs update for new components)
+- `docs/WIRING.md` - Wiring guide (needs update for ESP32)
 
-## Session Notes
-- **OLED accepts 5V**: Back of PCB shows onboard voltage regulator (SOT-23 package). Safe to power from Nano 5V pin.
-- **OLED pin mapping**: Physical pins VDD/GND/SCK/SDA → Nano 5V/GND/A5(SCL)/A4(SDA). "SCK" on OLED = I2C clock.
-- **Fritzing parts**: Adafruit MAX31855 (#269) and OLED 1.3" (#938) from GitHub. Arduino Nano 3.0 in core library. Import .fzpz via File → Open.
-- **Tactile switch planned**: 6×6mm DIP 4-pin, connect to D2 + GND (internal pull-up), for paging OLED display screens. Not yet in wiring docs.
-- **6×6mm tactile switch pinout**: Pairs connected across top/bottom (1-2 always connected, 3-4 always connected). Use multimeter to verify which pair.
-- **Fritzing workflow**: Breadboard view is primary. Schematic/PCB auto-generate from connections. Click a pin to highlight all connected pins for verification.
+## Component Orders (Pending)
+### DigiKey ZA
+- MAX31855KASA+-ND × 5 (2 per board × 2 boards + 1 spare)
+- 10nF ceramic caps × 5 (thermocouple input filter)
+- 2-pin screw terminals × 5 (thermocouple connections)
+- (Plus Fairfield project components to hit R2,000 free shipping)
+
+### Mantech
+- KS5019 ESP32-WROOM-32 USB-C 38-pin — R238.20 ex-VAT (stock code ME106299)
