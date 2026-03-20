@@ -40,11 +40,15 @@
 - `docs/WIRING.md` - Wiring guide (needs update for ESP32)
 
 ## Component Orders (Pending)
-### DigiKey ZA
-- MAX31855KASA+-ND × 5 (2 per board × 2 boards + 1 spare)
-- 10nF ceramic caps × 5 (thermocouple input filter)
-- 2-pin screw terminals × 5 (thermocouple connections)
-- (Plus Fairfield project components to hit R2,000 free shipping)
+### DigiKey ZA (combined with Fairfield project for R2,000 free shipping)
+**Coffee roaster parts:**
+- MAX31855KASA+-ND × 5 — genuine K-type thermocouple-to-digital IC (SOIC-8)
+- ESP32-WROOM-32E-N4CT-ND × 2 — bare modules for custom PCB (Cut Tape)
+- 10nF ceramic caps × 5 — thermocouple input filter
+- 2-pin screw terminals × 5 — thermocouple connections
+
+**Fairfield project parts (already in cart):**
+- ESP32-WROOM-32E-N4 × 3, NCP1117 LDO × 5, W5500, resistors, caps, TVS diodes, buttons, connectors, etc.
 
 ### Mantech
-- KS5019 ESP32-WROOM-32 USB-C 38-pin — R238.20 ex-VAT (stock code ME106299)
+- KS5019 ESP32-WROOM-32 USB-C 38-pin — R238.20 ex-VAT (stock code ME106299) — for prototyping before custom PCB arrives
