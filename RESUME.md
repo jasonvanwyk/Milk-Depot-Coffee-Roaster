@@ -2,53 +2,50 @@
 
 ## Right Now
 **Phase:** Development — Hardware Redesign (ESP32 + Custom PCB)
-**Last (18-19 Mar 2026):** Major pivot session. Updated firmware for Arduino Nano 2-channel, installed arduino-cli AVR core + libraries (Adafruit MAX31855, SH110X, GFX) on Arch workstation. Flashed firmware via Arduino IDE (CLI had port issues — FTDI chip, stty left port in bad state). Firmware working: TC4 protocol responding, OLED displaying (garbled top line — SH1106 init issue, partially fixed). One MAX31855 knockoff module smoked on first power-up (BT channel, near decoupling cap). Decision: **rebuild with quality components** — ESP32-WROOM-32E replaces Arduino Nano, genuine MAX31855KASA+ ICs on custom PCB replaces knockoff modules, 2.42" OLED replaces 1.3". Sourced components from DigiKey ZA + Mantech. Decided to keep coffee roaster PCB separate from Fairfield project PCB.
-**Previous (17 Mar 2026):** Created complete wiring documentation suite: WireViz, Fritzing, WIRING.md rewrite.
-**Next:** Finalise DigiKey order (MAX31855KASA+ × 5 + passives), buy ESP32 KS5019 from Mantech, design custom coffee roaster PCB in KiCad, update firmware for ESP32
+**Last (20 Mar 2026):** BOM session. Rewrote docs/BOM.md v2.0 for ESP32 redesign — specific 0805 part numbers, DigiKey order checklist, ESP32 GPIO pin assignments. Cross-referenced against actual DigiKey cart (downloaded CSV). Confirmed all 0805 passives (100nF, 10nF, 10µF caps + 10K resistors) already in Fairfield combined order. Selected Adafruit 2719 OLED (SSD1305, 2.42", DigiKey 1528-1591-ND) over Waveshare SSD1309 — premium quality, standard 2.54mm header, avoids driver confusion. Only 2 items still need adding to cart: screw terminals + OLED.
+**Previous (18-19 Mar 2026):** Major pivot session — firmware tested on Nano, knockoff MAX31855 smoked, decided on ESP32 + genuine parts redesign.
+**Next:** Add screw terminals (277-1247-ND × 6) + Adafruit OLED (1528-1591-ND × 1) to DigiKey cart, place order, buy Mantech KS5019 dev board, design custom PCB in KiCad for ESP32
 **Blocked:** Waiting on component orders (DigiKey + Mantech)
 
 ## Quick Context
 - Client: Quenton (Milk Depot) - coffee roaster temperature monitoring system
-- **REDESIGN in progress**: Switching from Arduino Nano + knockoff modules to ESP32 + genuine parts + custom PCB
-- **New platform**: ESP32-WROOM-32E (3.3V native, WiFi, more RAM)
-- **MAX31855 knockoff smoked** — one BT module released smoke near cap on first power-up. Don't trust cheap MAX31855 modules.
-- **Custom PCB**: MAX31855KASA+ (SOIC-8) directly on PCB, no breakout boards needed. ESP32 is 3.3V so no level shifters required.
-- DigiKey order pending — combining with Fairfield project order for free shipping (R2,000 threshold)
+- **REDESIGN in progress**: ESP32-WROOM-32E + genuine MAX31855KASA+ on custom PCB
+- **DigiKey cart nearly complete** — all shared components in cart, just need screw terminals + OLED added
+- **0805 for all passives** — confirmed, matches Fairfield order. Not 0603.
+- **OLED**: Adafruit 2719 (SSD1305 controller, uses `Adafruit_SSD1305` library, NOT SSD1306)
+- **Custom PCB uses bare ESP32-WROOM-32E-N4** module — needs full support circuitry (LDO, auto-reset, etc.), all covered by Fairfield order components
 - RPi 4 accessible via SSH at 10.0.10.102 (user: jason, key-based auth)
 
 ## Development Plan
 1. ~~Connect RPi 4 to network~~ ✓ SSH at 10.0.10.102
 2. ~~Create KiCad schematic~~ ✓ (needs redesign for ESP32)
-3. ~~Design OLED bezel~~ ✓ (needs redesign for 2.42" OLED)
+3. ~~Design OLED bezel~~ ✓ (needs redesign for 2.42" Adafruit OLED)
 4. ~~Create wiring documentation~~ ✓ (needs update for ESP32)
 5. ~~Update firmware for 2-channel~~ ✓ Done (but for Nano — needs ESP32 port)
 6. ~~First power-up test~~ ✓ Firmware works, OLED works (garbled), MAX31855 knockoff smoked
-7. Order components — DigiKey (MAX31855KASA+ ICs, caps, screw terminals) + Mantech (ESP32 KS5019)
-8. Design custom PCB in KiCad — ESP32 + 2× MAX31855 + OLED header + button
-9. Order PCBs from JLCPCB
-10. Hand-assemble PCBs (SOIC-8 MAX31855, passives, headers)
-11. Port firmware to ESP32 (pin reassignment, ESP32 Arduino core)
-12. Clone repo to RPi properly
-13. Calibrate thermocouples (ice water + boiling water)
-14. Mount probes in roaster (BT + ET positions)
-15. First test roast with Artisan
+7. ~~Update BOM for ESP32 redesign~~ ✓ v2.0 with specific part numbers, DigiKey checklist
+8. Add 2 remaining items to DigiKey cart and place order
+9. Buy KS5019 ESP32 dev board from Mantech (R238.20 ex-VAT)
+10. Design custom PCB in KiCad — bare ESP32 + 2× MAX31855 + OLED header + button + support circuitry
+11. Order PCBs from JLCPCB
+12. Hand-assemble PCBs (SOIC-8 MAX31855, 0805 passives, headers)
+13. Port firmware to ESP32 (pin reassignment, ESP32 Arduino core, SSD1305 library)
+14. Clone repo to RPi properly
+15. Calibrate thermocouples (ice water + boiling water)
+16. Mount probes in roaster (BT + ET positions)
+17. First test roast with Artisan
 
 ## Key Files
-- `arduino-firmware/tc4_emulator/tc4_emulator.ino` - Production firmware (updated: 2-channel, SH1106 OLED, MAX31855 hardware enabled, DIAG command)
+- `docs/BOM.md` - Bill of Materials v2.0 (updated 20 Mar — ESP32 redesign, specific part numbers)
+- `arduino-firmware/tc4_emulator/tc4_emulator.ino` - Production firmware (Nano version — needs ESP32 port)
 - `kicad/milk-depot-coffee-roaster.kicad_sch` - Circuit schematic (needs ESP32 redesign)
-- `docs/BOM.md` - Bill of Materials (needs update for new components)
 - `docs/WIRING.md` - Wiring guide (needs update for ESP32)
 
-## Component Orders (Pending)
-### DigiKey ZA (combined with Fairfield project for R2,000 free shipping)
-**Coffee roaster parts:**
-- MAX31855KASA+-ND × 5 — genuine K-type thermocouple-to-digital IC (SOIC-8)
-- ESP32-WROOM-32E-N4CT-ND × 2 — bare modules for custom PCB (Cut Tape)
-- 10nF ceramic caps × 5 — thermocouple input filter
-- 2-pin screw terminals × 5 — thermocouple connections
-
-**Fairfield project parts (already in cart):**
-- ESP32-WROOM-32E-N4 × 3, NCP1117 LDO × 5, W5500, resistors, caps, TVS diodes, buttons, connectors, etc.
+## DigiKey Order Status
+**Cart file**: `~/Downloads/2026-03-20T095833.csv` (20 items, combined with Fairfield)
+**Still need to add:**
+- 277-1247-ND × 6 — 2-pin 5mm screw terminal (Phoenix Contact 1725656)
+- 1528-1591-ND × 1 — Adafruit 2.42" OLED module 2719
 
 ### Mantech
-- KS5019 ESP32-WROOM-32 USB-C 38-pin — R238.20 ex-VAT (stock code ME106299) — for prototyping before custom PCB arrives
+- KS5019 ESP32-WROOM-32 USB-C 38-pin — R238.20 ex-VAT (stock code ME106299)
