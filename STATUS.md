@@ -1,6 +1,6 @@
 # Project Status - Milk Depot Coffee Roaster
 
-**Last Updated:** 2026-03-20
+**Last Updated:** 2026-03-23
 **Quote Ref:** PO P00041 (thermocouples)
 **Status:** Development
 **Payment Terms:** Invoice on delivery (GPA Trading)
@@ -9,7 +9,7 @@
 
 ## Current Phase: Development
 
-**REDESIGN IN PROGRESS.** First hardware build revealed knockoff MAX31855 module failure (smoke on power-up). Pivoting to ESP32-WROOM-32E + genuine MAX31855KASA+ ICs on custom PCB + 2.42" Adafruit OLED (SSD1305). BOM v2.0 complete with specific 0805 part numbers. DigiKey cart nearly complete — all passives and ICs in shared Fairfield order, only screw terminals + OLED still to add. Awaiting order placement.
+**REDESIGN IN PROGRESS.** First hardware build revealed knockoff MAX31855 module failure (smoke on power-up). Pivoting to ESP32-WROOM-32E + genuine MAX31855KASA+ ICs on custom PCB + 20×4 I2C LCD (Keyestudio MD0074, HD44780). BOM v2.0 complete with specific 0805 part numbers. DigiKey cart nearly complete — screw terminals + BSS138 level shifters still to add. LCD ordered from Mantech with ESP32 dev board (R486.07 incl. VAT). PCB strategy: MAX31855 breakout board first to validate thermocouples, then full system PCB.
 
 ---
 
@@ -48,7 +48,17 @@
 | Component sourcing | 2026-03-18 | DigiKey ZA (MAX31855KASA+) + Mantech (ESP32 KS5019) |
 | BOM v2.0 rewrite | 2026-03-20 | ESP32 redesign, specific 0805 MPNs, DigiKey order checklist |
 | DigiKey cart cross-reference | 2026-03-20 | All passives confirmed in Fairfield combined order |
-| OLED display selected | 2026-03-20 | Adafruit 2719 (SSD1305), DigiKey 1528-1591-ND |
+| OLED display selected | 2026-03-20 | Adafruit 2719 (SSD1305), DigiKey 1528-1591-ND — superseded by LCD |
+| Display switched to LCD | 2026-03-23 | Keyestudio MD0074 20×4 I2C LCD (Mantech 15M8244, R184.47 ex-VAT) |
+| BSS138 level shifters added | 2026-03-23 | BSS138CT-ND × 4, for 3.3V↔5V I2C on custom PCB |
+| PCB strategy decided | 2026-03-23 | MAX31855 breakout board first, then full system PCB |
+
+### Session Completed Items (23 Mar 2026)
+- [x] ~~Switched display from OLED to 20×4 I2C LCD (Keyestudio MD0074) — HD44780, no driver issues, no burn-in~~
+- [x] ~~Evaluated and rejected Adafruit OLED (unavailable/expensive), SSD1309 OLED, and Newhaven premium LCD~~
+- [x] ~~Added BSS138 N-MOSFET level shifters to BOM for 3.3V ESP32 ↔ 5V LCD I2C~~
+- [x] ~~Updated Mantech order: KS5019 ESP32 + MD0074 LCD = R486.07 incl. VAT~~
+- [x] ~~Decided PCB strategy: MAX31855 breakout board first to validate thermocouples with dev board~~
 
 ### Session Completed Items (20 Mar 2026)
 - [x] ~~Rewrote docs/BOM.md v2.0 for ESP32 redesign with specific 0805 part numbers~~
@@ -62,9 +72,10 @@
 
 | Task | Status | Notes |
 |------|--------|-------|
-| Add 2 items to DigiKey cart + place order | TODO | 277-1247-ND (screw terminals) + 1528-1591-ND (Adafruit OLED) |
-| Buy ESP32 dev board from Mantech | TODO | KS5019, R238.20 ex-VAT, stock ME106299 |
-| Design custom PCB | TODO | KiCad: bare ESP32 + 2× MAX31855 + OLED header + button + support circuitry |
+| Add 2 items to DigiKey cart + place order | TODO | 277-1247-ND (screw terminals) + BSS138CT-ND (level shifters) |
+| Buy ESP32 + LCD from Mantech | TODO | KS5019 + MD0074, R486.07 incl. VAT |
+| Design MAX31855 breakout board | TODO | KiCad: SOIC-8 MAX31855 + 100nF + 10nF + screw terminal |
+| Design full system PCB | TODO | KiCad: bare ESP32 + 2× MAX31855 + LCD header + button + BSS138 level shifters |
 | Order PCBs | TODO | JLCPCB, after KiCad design complete |
 | Port firmware to ESP32 | TODO | Pin reassignment, ESP32 Arduino core |
 | Hand-assemble PCBs | TODO | SOIC-8 MAX31855, passives, headers |
@@ -95,11 +106,12 @@
 |------|-----|-----------|--------|-------|
 | MAX31855KASA+ IC | 5 | ~R900 | DigiKey ZA | 2/board × 2 boards + spare |
 | ESP32-WROOM-32 USB-C (KS5019) | 1 | R238.20 | Mantech | Dev board for prototyping |
-| Adafruit 2719 OLED 2.42" (SSD1305) | 1 | ~R460-550 | DigiKey ZA | Premium, standard header |
+| Keyestudio 20×4 I2C LCD (MD0074) | 1 | R184.47 | Mantech | HD44780 + PCF8574 backpack |
+| BSS138 N-MOSFET (SOT-23) | 4 | ~R4 | DigiKey | I2C level shifting (3.3V↔5V) |
 | 10nF ceramic caps | 5 | ~R10 | DigiKey | Thermocouple input filter |
-| 2-pin screw terminals | 5 | ~R50 | DigiKey | Thermocouple connections |
+| 2-pin screw terminals | 6 | ~R50 | DigiKey | Thermocouple connections |
 | Custom PCB | 5 | ~R80-100 | JLCPCB | Bundle with Fairfield order |
-| **Estimated Total** | | **~R1,830-1,960** | | |
+| **Estimated Total** | | **~R1,470-1,510** | | |
 
 ---
 
@@ -117,11 +129,14 @@
 10. Thermocouple assignment: 35mm/2.5mm for BT, 50mm/3.0mm for ET
 11. **ESP32-WROOM-32E** replaces Arduino Nano — 3.3V native, WiFi, more GPIO/RAM
 12. **Genuine MAX31855KASA+** on custom PCB — knockoff modules unreliable (one smoked)
-13. **2.42" OLED** — Adafruit 2719 (SSD1305) replaces 1.3" SH1106 — premium quality, standard header, `Adafruit_SSD1305` library
+13. ~~**2.42" OLED** — Adafruit 2719 (SSD1305)~~ **SUPERSEDED** by decision 18
 14. **Custom PCB** instead of veroboard — ESP32 + MAX31855 ICs directly on board
 15. **Separate PCB** from Fairfield project — different purpose, only 2 boards needed
 16. **0805 for all SMD passives** — optimal for hand soldering, matches Fairfield order
 17. **5mm pitch screw terminals** for thermocouple connections — easier hand assembly than 3.5mm
+18. **20×4 I2C LCD** — Keyestudio MD0074 (HD44780 + PCF8574) replaces OLED — no driver issues, no burn-in, better readability, cheaper
+19. **BSS138 level shifters** for 3.3V ESP32 ↔ 5V LCD I2C on custom PCB (direct connection OK for prototype)
+20. **MAX31855 breakout board first** — validate thermocouples with dev board before designing full system PCB
 
 ---
 
