@@ -9,7 +9,7 @@
 
 ## Current Phase: Development
 
-**SCHEMATIC CAPTURE IN PROGRESS.** New KiCad 10 project scaffolded with JLCPCB design rules. Old Nano schematic archived. ESP32 + MAX31855 + BSS138 symbols placed and validated against datasheets. DigiKey unified order placed via Fairfield project — all roaster parts included except BSS138 (sourcing from Mantech). Screw terminals ordered as OSTTC020162 (5.08mm) not Phoenix Contact. LCD connector ordered as JST PH 4-pin. Next: complete schematic wiring, then PCB layout.
+**SCHEMATIC CAPTURE IN PROGRESS.** All procurement verified — DigiKey #122880837 (37-item unified order) shipped with all roaster parts. All datasheets downloaded and footprints verified. TL3342 tactile switch needs custom footprint. Placing components with BOM fields (R1-R6, C1 done). Next: finish placing, wire up, ERC.
 
 ---
 
@@ -57,18 +57,19 @@
 | Schematic symbols placed | 2026-03-30 | ESP32, 2× MAX31855, 2× BSS138 — validated against datasheets |
 | BSS138 sourced from Mantech | 2026-03-30 | Stock 35M3468, R1.20 each (ON Semi, SOT-23) |
 
+### Session Completed Items (30 Mar 2026)
+- [x] ~~Full procurement audit: read ALL invoices across 5 suppliers (DigiKey ×3, Mantech ×3, Communica, DIY, Micro Robotics)~~
+- [x] ~~Corrected stale BOM: DigiKey #122017091 was fully returned, #122880837 is the real order (37 items)~~
+- [x] ~~Confirmed all roaster parts on hand: NCP1117 SOT-223, MMBT2222A, 10nF/1µF/100nF/10µF 0805, TL3342, JST PH 4-pin, OSTTC020162~~
+- [x] ~~Built complete component grid with MPNs, manufacturers, supplier PNs for all 20 schematic components~~
+- [x] ~~Downloaded all datasheets to kicad/datasheets/ (NCP1117, MMBT2222A, TL3342, OSTTC020162, DG127, B4B-PH-K-S, CL21B103, TMK212BJ105KD)~~
+- [x] ~~Verified all KiCad footprints against datasheets — TL3342 needs custom footprint (4.80×2.80mm pad pattern)~~
+- [x] ~~Screw terminal decision: using Degson DG127-5.08-02P (Mantech 15M0713), 5.08mm pitch compatible~~
+- [x] ~~Started placing components with BOM fields: R1-R6 (10K 0805), C1 (100nF 0805)~~
+
 ### Session Completed Items (28-30 Mar 2026)
-- [x] ~~Archived old KiCad schematic (Arduino Nano) to kicad/archive/v1-nano/~~
-- [x] ~~Scaffolded new KiCad 10 project with JLCPCB design rules, net classes, A3 page~~
-- [x] ~~Created project-local symbol and footprint libraries~~
-- [x] ~~Updated .gitignore for KiCad 10~~
-- [x] ~~Validated ESP32-WROOM-32E symbol pin-for-pin against datasheet (footprint override 32D→32E)~~
-- [x] ~~Validated MAX31855KASA symbol pin-for-pin against datasheet~~
-- [x] ~~Validated BSS138 pinout (GSD) against Fairchild datasheet~~
-- [x] ~~Placed U1 (ESP32), U2+U3 (MAX31855), Q1+Q2 (BSS138) with BOM fields~~
-- [x] ~~Discovered DigiKey order was placed via Fairfield unified order — roaster parts included~~
-- [x] ~~Identified BSS138 not in DigiKey order — found at Mantech (35M3468, R1.20 each)~~
-- [x] ~~Identified screw terminal part difference: ED2600-ND (5.08mm) ordered, not Phoenix Contact 277-1247-ND~~
+- [x] ~~Archived old KiCad schematic, scaffolded new KiCad 10 project with JLCPCB design rules~~
+- [x] ~~Validated and placed U1 (ESP32), U2+U3 (MAX31855), Q1+Q2 (BSS138) with BOM fields~~
 
 ### Session Completed Items (23 Mar 2026)
 - [x] ~~Switched display from OLED to 20×4 I2C LCD (Keyestudio MD0074) — HD44780, no driver issues, no burn-in~~
@@ -89,9 +90,11 @@
 
 | Task | Status | Notes |
 |------|--------|-------|
-| DigiKey unified order placed | DONE | Via Fairfield project, all roaster parts included except BSS138 |
-| Buy BSS138 + ESP32 + LCD from Mantech | TODO | 35M3468 (BSS138) + KS5019 + MD0074, ~R491.59 incl. VAT |
-| Complete schematic capture | IN PROGRESS | ESP32, MAX31855, BSS138 placed. Remaining: passives, connectors, LDO, auto-reset, wiring |
+| DigiKey orders shipped & received | DONE | #122880837 (37 items) + #123184654 (ICs). All roaster parts on hand. |
+| Mantech LCD + screw terminals received | DONE | #178252 (MD0074 LCD) + #210901 (DG127 terminals, headers) |
+| BSS138 from Mantech | ORDERED | 35M3468, R1.20 each — awaiting delivery |
+| Complete schematic capture | IN PROGRESS | 5 ICs placed, R1-R6 + C1 placed. Remaining: C2-C9, U4, Q3-Q4, J1-J4, SW1 (needs custom footprint), wiring |
+| Create TL3342 custom footprint | TODO | 4.80×2.80mm pad pattern, gull wing SMD, no built-in KiCad match |
 | Design full system PCB layout | TODO | KiCad: after schematic + ERC complete |
 | Order PCBs | TODO | JLCPCB, after KiCad design complete |
 | Port firmware to ESP32 | TODO | Pin reassignment, ESP32 Arduino core |

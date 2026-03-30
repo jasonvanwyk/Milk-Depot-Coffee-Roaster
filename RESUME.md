@@ -2,15 +2,15 @@
 
 ## Right Now
 **Phase:** Development — KiCad Schematic Capture (ESP32 Custom PCB)
-**Last (28-30 Mar 2026):** Scaffolded new KiCad 10 project from scratch. Archived old Nano schematic to `kicad/archive/v1-nano/`. Set up JLCPCB-compatible design rules (0.2mm clearance, 0.15mm min trace, 0.3mm min drill), Power/Default net classes, A3 schematic page, project-local symbol/footprint libraries. Validated KiCad built-in symbols against datasheets for: ESP32-WROOM-32E (pin-for-pin match, footprint override 32D→32E required), MAX31855KASA (pin-for-pin match), BSS138 (GSD pinout confirmed). Placed U1 (ESP32), U2+U3 (MAX31855), Q1+Q2 (BSS138) with BOM fields. Discovered DigiKey order placed via Fairfield project — screw terminals ordered as ED2600-ND (5.08mm, OSTTC020162) not Phoenix Contact 277-1247-ND. BSS138 NOT in DigiKey order — sourcing from Mantech (35M3468, R1.20 each). LCD connector ordered as JST PH 4-pin (455-1706-ND) not 2.54mm pin header.
-**Previous (23 Mar 2026):** Display decision — LCD replaces OLED. BSS138 level shifters added to plan. PCB strategy: breakout board first.
-**Next:** Continue schematic capture — place remaining symbols (screw terminals, LCD connector, passives, tactile switch, NCP1117 LDO, MMBT2222A auto-reset). Wire up the schematic. Run ERC.
-**Blocked:** BSS138 not ordered yet — add to Mantech order (35M3468 × 4-6)
+**Last (30 Mar 2026):** Full procurement audit — read ALL invoices across 5 suppliers (3× DigiKey, 3× Mantech, Communica, DIY Electronics, Micro Robotics). Discovered DigiKey #122017091 (first Fairfield order) was fully returned via credit memo. DigiKey #122880837 is the real unified order (37 line items) containing ALL roaster parts: NCP1117ST33T3G (SOT-223), MMBT2222A, 10nF/1µF/100nF/10µF 0805 caps, tactile switches (TL3342), JST PH 4-pin, screw terminals (OSTTC020162), ESP32, MAX31855. Built complete component grid with verified MPNs, manufacturers, supplier PNs. Downloaded all datasheets to `kicad/datasheets/`. Verified KiCad footprints against datasheets — TL3342 tactile switch needs custom footprint (4.80×2.80mm pad pattern, no built-in match). Screw terminal decision: using Degson DG127-5.08-02P (Mantech 15M0713) — footprint compatible with Phoenix 5.08mm. Started placing components with BOM fields (R1-R6, C1 in progress).
+**Previous (28-30 Mar 2026):** Scaffolded KiCad 10 project, placed U1/U2/U3/Q1/Q2 with BOM fields.
+**Next:** Finish placing remaining schematic symbols (C2-C9, U4, Q3-Q4, J1-J4, SW1). Create custom TL3342 footprint. Wire up schematic with net labels. Run ERC.
+**Blocked:** BSS138 on order from Mantech (35M3468) — not yet delivered
 
 ## Quick Context
 - Client: Quenton (Milk Depot) - coffee roaster temperature monitoring system
 - **REDESIGN in progress**: ESP32-WROOM-32E + genuine MAX31855KASA+ on custom PCB
-- **DigiKey cart nearly complete** — need screw terminals + BSS138 level shifters added
+- **DigiKey orders SHIPPED** — all roaster parts received (invoice #122880837 + #123184654)
 - **0805 for all passives** — confirmed, matches Fairfield order. Not 0603.
 - **Display**: Keyestudio 20×4 I2C LCD (MD0074, HD44780 + PCF8574 backpack, `LiquidCrystal_I2C` library) — replaces OLED
 - **Custom PCB uses bare ESP32-WROOM-32E-N4** module — needs full support circuitry (LDO, auto-reset, etc.), all covered by Fairfield order components
@@ -44,20 +44,23 @@
 - `kicad/milk-depot-coffee-roaster.kicad_pro` - Project settings with JLCPCB design rules
 - `kicad/milk-depot-coffee-roaster.kicad_pcb` - Empty PCB with 2-layer setup
 - `kicad/archive/v1-nano/` - Archived old Arduino Nano schematic
-- `kicad/datasheets/` - Downloaded component datasheets (ESP32, MAX31855, BSS138)
+- `kicad/datasheets/` - All component datasheets (ESP32, MAX31855, BSS138, NCP1117, MMBT2222A, TL3342, OSTTC020162, DG127, B4B-PH-K-S, caps)
 - `docs/WIRING.md` - Wiring guide (needs update for ESP32)
 
-## DigiKey Order Status
-**Unified order placed** via Fairfield project: `fairfield-water/docs/planning/internal/FD-PROC-010-digikey-unified-order.csv`
-Roaster-specific items in that order: ESP32-WROOM-32E-N4 (×12 shared), MAX31855KASA+ (×8), 10nF caps (×10), NCP1117 3.3V LDO (×10 shared), MMBT2222A (×20 shared), 1µF caps (×10 shared), JST PH 4-pin header (×10), screw terminals OSTTC020162/ED2600-ND (×10, 5.08mm pitch).
-**NOT in DigiKey order:** BSS138 — order from Mantech instead.
+## DigiKey Orders — SHIPPED & RECEIVED
+- **#122880837** (23 Mar) — unified order, 37 items. ALL roaster passives (0805), NCP1117, MMBT2222A, TL3342, JST PH, screw terminals, ESP32 ×3, MAX31855 ×3
+- **#123184654** (27 Mar) — IC top-up: MAX31855 ×6, ESP32 ×10 (shared w/ Fairfield)
+- **#122017091** (6 Mar) — FULLY RETURNED via credit memo 122017091-1 (18 Mar). Was 0603 prototype order.
 
-### Mantech Order (pending)
-| Item | Stock Code | Price (ex-VAT) |
-|------|-----------|------:|
-| KS5019 ESP32-WROOM-32 USB-C 38-pin | ME106299 | R238.20 |
-| MD0074 Keyestudio 20×4 I2C LCD | 15M8244 | R184.47 |
-| BSS138 N-MOSFET SOT-23 (×4-6) | 35M3468 | R1.20 ea |
-| **Subtotal (4× BSS138)** | | **R427.47** |
-| **VAT (15%)** | | **R64.12** |
-| **Total** | | **R491.59** |
+### Mantech Orders — RECEIVED
+- **#178252** (23 Mar) — MD0074 LCD ×1, JST PH crimp parts, solder paste, flux pen
+- **#210781** (23 Mar) — battery holders (Fairfield)
+- **#210901** (27 Mar) — DG127 screw terminals ×15, JST PH headers ×80, pin header strips ×15
+
+### Other Suppliers — RECEIVED
+- **Communica** (24 Mar) — CZM5-2E terminal blocks ×10, cable glands, PoE splitters
+- **Micro Robotics** (23 Mar) — JST PH 4-pin ×2, crimp tool, pin headers, antennas
+- **DIY Electronics** (23 Mar) — tools and wire only
+
+### Still Outstanding
+- **BSS138** — on order from Mantech (35M3468, R1.20 ea)
