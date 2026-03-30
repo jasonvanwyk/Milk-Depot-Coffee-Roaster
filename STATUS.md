@@ -1,6 +1,6 @@
 # Project Status - Milk Depot Coffee Roaster
 
-**Last Updated:** 2026-03-23
+**Last Updated:** 2026-03-30
 **Quote Ref:** PO P00041 (thermocouples)
 **Status:** Development
 **Payment Terms:** Invoice on delivery (GPA Trading)
@@ -9,7 +9,7 @@
 
 ## Current Phase: Development
 
-**REDESIGN IN PROGRESS.** First hardware build revealed knockoff MAX31855 module failure (smoke on power-up). Pivoting to ESP32-WROOM-32E + genuine MAX31855KASA+ ICs on custom PCB + 20×4 I2C LCD (Keyestudio MD0074, HD44780). BOM v2.0 complete with specific 0805 part numbers. DigiKey cart nearly complete — screw terminals + BSS138 level shifters still to add. LCD ordered from Mantech with ESP32 dev board (R486.07 incl. VAT). PCB strategy: MAX31855 breakout board first to validate thermocouples, then full system PCB.
+**SCHEMATIC CAPTURE IN PROGRESS.** New KiCad 10 project scaffolded with JLCPCB design rules. Old Nano schematic archived. ESP32 + MAX31855 + BSS138 symbols placed and validated against datasheets. DigiKey unified order placed via Fairfield project — all roaster parts included except BSS138 (sourcing from Mantech). Screw terminals ordered as OSTTC020162 (5.08mm) not Phoenix Contact. LCD connector ordered as JST PH 4-pin. Next: complete schematic wiring, then PCB layout.
 
 ---
 
@@ -52,6 +52,23 @@
 | Display switched to LCD | 2026-03-23 | Keyestudio MD0074 20×4 I2C LCD (Mantech 15M8244, R184.47 ex-VAT) |
 | BSS138 level shifters added | 2026-03-23 | BSS138CT-ND × 4, for 3.3V↔5V I2C on custom PCB |
 | PCB strategy decided | 2026-03-23 | MAX31855 breakout board first, then full system PCB |
+| DigiKey unified order placed | 2026-03-28 | Via Fairfield project (FD-PROC-010), roaster parts included |
+| KiCad 10 project scaffolded | 2026-03-28 | New project with JLCPCB design rules, old schematic archived |
+| Schematic symbols placed | 2026-03-30 | ESP32, 2× MAX31855, 2× BSS138 — validated against datasheets |
+| BSS138 sourced from Mantech | 2026-03-30 | Stock 35M3468, R1.20 each (ON Semi, SOT-23) |
+
+### Session Completed Items (28-30 Mar 2026)
+- [x] ~~Archived old KiCad schematic (Arduino Nano) to kicad/archive/v1-nano/~~
+- [x] ~~Scaffolded new KiCad 10 project with JLCPCB design rules, net classes, A3 page~~
+- [x] ~~Created project-local symbol and footprint libraries~~
+- [x] ~~Updated .gitignore for KiCad 10~~
+- [x] ~~Validated ESP32-WROOM-32E symbol pin-for-pin against datasheet (footprint override 32D→32E)~~
+- [x] ~~Validated MAX31855KASA symbol pin-for-pin against datasheet~~
+- [x] ~~Validated BSS138 pinout (GSD) against Fairchild datasheet~~
+- [x] ~~Placed U1 (ESP32), U2+U3 (MAX31855), Q1+Q2 (BSS138) with BOM fields~~
+- [x] ~~Discovered DigiKey order was placed via Fairfield unified order — roaster parts included~~
+- [x] ~~Identified BSS138 not in DigiKey order — found at Mantech (35M3468, R1.20 each)~~
+- [x] ~~Identified screw terminal part difference: ED2600-ND (5.08mm) ordered, not Phoenix Contact 277-1247-ND~~
 
 ### Session Completed Items (23 Mar 2026)
 - [x] ~~Switched display from OLED to 20×4 I2C LCD (Keyestudio MD0074) — HD44780, no driver issues, no burn-in~~
@@ -72,10 +89,10 @@
 
 | Task | Status | Notes |
 |------|--------|-------|
-| Add 2 items to DigiKey cart + place order | TODO | 277-1247-ND (screw terminals) + BSS138CT-ND (level shifters) |
-| Buy ESP32 + LCD from Mantech | TODO | KS5019 + MD0074, R486.07 incl. VAT |
-| Design MAX31855 breakout board | TODO | KiCad: SOIC-8 MAX31855 + 100nF + 10nF + screw terminal |
-| Design full system PCB | TODO | KiCad: bare ESP32 + 2× MAX31855 + LCD header + button + BSS138 level shifters |
+| DigiKey unified order placed | DONE | Via Fairfield project, all roaster parts included except BSS138 |
+| Buy BSS138 + ESP32 + LCD from Mantech | TODO | 35M3468 (BSS138) + KS5019 + MD0074, ~R491.59 incl. VAT |
+| Complete schematic capture | IN PROGRESS | ESP32, MAX31855, BSS138 placed. Remaining: passives, connectors, LDO, auto-reset, wiring |
+| Design full system PCB layout | TODO | KiCad: after schematic + ERC complete |
 | Order PCBs | TODO | JLCPCB, after KiCad design complete |
 | Port firmware to ESP32 | TODO | Pin reassignment, ESP32 Arduino core |
 | Hand-assemble PCBs | TODO | SOIC-8 MAX31855, passives, headers |

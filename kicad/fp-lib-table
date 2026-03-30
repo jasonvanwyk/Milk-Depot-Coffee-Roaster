@@ -1,0 +1,4 @@
+(fp_lib_table
+	(version 7)
+	(lib (name "milk-depot")(type "KiCad")(uri "${KIPRJMOD}/libs/milk-depot.pretty")(options "")(descr "Project-local footprints — custom or modified footprints for this board"))
+)

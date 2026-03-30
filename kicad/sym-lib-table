@@ -1,0 +1,4 @@
+(sym_lib_table
+	(version 7)
+	(lib (name "milk-depot")(type "KiCad")(uri "${KIPRJMOD}/libs/milk-depot.kicad_sym")(options "")(descr "Project-local symbols — MAX31855, ESP32-WROOM-32E, LCD connector, etc."))
+)

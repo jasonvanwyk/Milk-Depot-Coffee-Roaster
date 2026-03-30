@@ -1,11 +1,11 @@
 # Project Resume
 
 ## Right Now
-**Phase:** Development — Hardware Redesign (ESP32 + Custom PCB)
-**Last (23 Mar 2026):** Display decision — switched from OLED to 20×4 I2C LCD (Keyestudio MD0074 from Mantech, R184.47 ex-VAT). HD44780 + PCF8574 backpack — zero driver headaches, no burn-in, better readability near roaster. Library: `LiquidCrystal_I2C`. Removed Adafruit OLED from DigiKey cart. Added BSS138 level shifters (BSS138CT-ND × 4) for 3.3V↔5V I2C on custom PCB. Started KiCad PCB discussion — decided MAX31855 breakout board first (validate thermocouples before full system PCB).
-**Previous (20 Mar 2026):** BOM v2.0 rewrite, DigiKey cart cross-reference, OLED selection (now superseded by LCD).
-**Next:** Add screw terminals (277-1247-ND × 6) + BSS138 (BSS138CT-ND × 4) to DigiKey cart, place order. Buy Mantech order (ESP32 KS5019 + LCD MD0074). Design MAX31855 breakout board in KiCad.
-**Blocked:** Waiting on component orders (DigiKey + Mantech)
+**Phase:** Development — KiCad Schematic Capture (ESP32 Custom PCB)
+**Last (28-30 Mar 2026):** Scaffolded new KiCad 10 project from scratch. Archived old Nano schematic to `kicad/archive/v1-nano/`. Set up JLCPCB-compatible design rules (0.2mm clearance, 0.15mm min trace, 0.3mm min drill), Power/Default net classes, A3 schematic page, project-local symbol/footprint libraries. Validated KiCad built-in symbols against datasheets for: ESP32-WROOM-32E (pin-for-pin match, footprint override 32D→32E required), MAX31855KASA (pin-for-pin match), BSS138 (GSD pinout confirmed). Placed U1 (ESP32), U2+U3 (MAX31855), Q1+Q2 (BSS138) with BOM fields. Discovered DigiKey order placed via Fairfield project — screw terminals ordered as ED2600-ND (5.08mm, OSTTC020162) not Phoenix Contact 277-1247-ND. BSS138 NOT in DigiKey order — sourcing from Mantech (35M3468, R1.20 each). LCD connector ordered as JST PH 4-pin (455-1706-ND) not 2.54mm pin header.
+**Previous (23 Mar 2026):** Display decision — LCD replaces OLED. BSS138 level shifters added to plan. PCB strategy: breakout board first.
+**Next:** Continue schematic capture — place remaining symbols (screw terminals, LCD connector, passives, tactile switch, NCP1117 LDO, MMBT2222A auto-reset). Wire up the schematic. Run ERC.
+**Blocked:** BSS138 not ordered yet — add to Mantech order (35M3468 × 4-6)
 
 ## Quick Context
 - Client: Quenton (Milk Depot) - coffee roaster temperature monitoring system
@@ -40,22 +40,24 @@
 ## Key Files
 - `docs/BOM.md` - Bill of Materials v2.0 (updated 20 Mar — ESP32 redesign, specific part numbers)
 - `arduino-firmware/tc4_emulator/tc4_emulator.ino` - Production firmware (Nano version — needs ESP32 port)
-- `kicad/milk-depot-coffee-roaster.kicad_sch` - Circuit schematic (needs ESP32 redesign)
+- `kicad/milk-depot-coffee-roaster.kicad_sch` - New ESP32 schematic (in progress, symbols placed)
+- `kicad/milk-depot-coffee-roaster.kicad_pro` - Project settings with JLCPCB design rules
+- `kicad/milk-depot-coffee-roaster.kicad_pcb` - Empty PCB with 2-layer setup
+- `kicad/archive/v1-nano/` - Archived old Arduino Nano schematic
+- `kicad/datasheets/` - Downloaded component datasheets (ESP32, MAX31855, BSS138)
 - `docs/WIRING.md` - Wiring guide (needs update for ESP32)
 
 ## DigiKey Order Status
-**Cart file**: `~/Downloads/2026-03-20T095833.csv` (20 items, combined with Fairfield)
-**Still need to add:**
-- 277-1247-ND × 6 — 2-pin 5mm screw terminal (Phoenix Contact 1725656)
-- BSS138CT-ND × 4 — BSS138 N-MOSFET (SOT-23) for I2C level shifting
+**Unified order placed** via Fairfield project: `fairfield-water/docs/planning/internal/FD-PROC-010-digikey-unified-order.csv`
+Roaster-specific items in that order: ESP32-WROOM-32E-N4 (×12 shared), MAX31855KASA+ (×8), 10nF caps (×10), NCP1117 3.3V LDO (×10 shared), MMBT2222A (×20 shared), 1µF caps (×10 shared), JST PH 4-pin header (×10), screw terminals OSTTC020162/ED2600-ND (×10, 5.08mm pitch).
+**NOT in DigiKey order:** BSS138 — order from Mantech instead.
 
-**Removed:** ~~1528-1591-ND (Adafruit OLED)~~ — replaced by Mantech LCD
-
-### Mantech Order
+### Mantech Order (pending)
 | Item | Stock Code | Price (ex-VAT) |
 |------|-----------|------:|
 | KS5019 ESP32-WROOM-32 USB-C 38-pin | ME106299 | R238.20 |
 | MD0074 Keyestudio 20×4 I2C LCD | 15M8244 | R184.47 |
-| **Subtotal** | | **R422.67** |
-| **VAT (15%)** | | **R63.40** |
-| **Total** | | **R486.07** |
+| BSS138 N-MOSFET SOT-23 (×4-6) | 35M3468 | R1.20 ea |
+| **Subtotal (4× BSS138)** | | **R427.47** |
+| **VAT (15%)** | | **R64.12** |
+| **Total** | | **R491.59** |

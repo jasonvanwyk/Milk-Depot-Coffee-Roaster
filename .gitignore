@@ -32,9 +32,15 @@ venv.bak/
 
 # KiCad
 *.lck
+~*.lck
 *-backups/
 fp-info-cache
 _autosave-*
+*.kicad_prl
+.history/
+*.step
+*.wrl
+gerbers/
 
 # Arduino
 *.hex
