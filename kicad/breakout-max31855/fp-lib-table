@@ -1,0 +1,4 @@
+(fp_lib_table
+	(version 7)
+	(lib (name "milk-depot") (type "KiCad") (uri "${KIPRJMOD}/../libs/milk-depot.pretty") (options "") (descr "Shared Milk Depot custom footprints — TL3342, MAX31855KASA+, DG127, etc."))
+)
