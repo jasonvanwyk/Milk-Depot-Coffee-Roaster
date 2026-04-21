@@ -225,7 +225,7 @@
       "internal_id": "",
       "mfg": "",
       "mpn": "",
-      "sch_revision": "1.0-draft"
+      "sch_revision": ""
     },
     "layer_pairs": [],
     "layer_presets": [],
@@ -629,17 +629,17 @@
     "top_level_sheets": [
       {
         "filename": "breakout-max31855.kicad_sch",
-        "name": "breakout-max31855",
-        "uuid": "a79b3d90-fdf1-4f0e-8d44-433865ad7f39"
+        "name": "",
+        "uuid": "9ae6fe8c-eacf-4d89-a0c7-7b9159a68494"
       }
     ],
-    "used_designators": "",
+    "used_designators": "H1,J1-2,JP1,TP1,R1-2,D1,C1-5,#FLG1-2,FB1,#PWR1-3,U1",
     "variants": []
   },
   "sheets": [
     [
-      "a79b3d90-fdf1-4f0e-8d44-433865ad7f39",
-      "breakout-max31855"
+      "9ae6fe8c-eacf-4d89-a0c7-7b9159a68494",
+      ""
     ]
   ],
   "text_variables": {},

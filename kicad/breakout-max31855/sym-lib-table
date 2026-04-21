@@ -1,5 +1,0 @@
-(sym_lib_table
-	(version 7)
-	(lib (name "SparkFun_Thermocouple_Breakout-eagle-import") (type "KiCad") (uri "${KIPRJMOD}/SparkFun_Thermocouple_Breakout-eagle-import.kicad_sym") (options "") (descr "Auto-generated from Eagle import — symbols will be pruned as they are replaced with milk-depot equivalents during the planned forks"))
-	(lib (name "milk-depot") (type "KiCad") (uri "${KIPRJMOD}/../libs/milk-depot.kicad_sym") (options "") (descr "Shared Milk Depot custom symbols — MAX31855KASA+, ESP32-WROOM-32E, LCD connector, etc."))
-)
