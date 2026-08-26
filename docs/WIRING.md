@@ -301,7 +301,7 @@ The machine-generated wiring diagram is at:
 
 Generate from YAML source:
 ```bash
-cd ~/Projects/Milk-Depot-Coffee-Roaster
+cd ~/projects/Milk-Depot-Coffee-Roaster
 wireviz docs/wiring.yml
 ```
 

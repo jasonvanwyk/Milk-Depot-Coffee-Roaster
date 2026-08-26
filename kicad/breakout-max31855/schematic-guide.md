@@ -117,7 +117,7 @@ After drawing, run ERC (Eeschema → Inspect → Electrical Rules Checker). Targ
 Command-line ERC (fastest iteration):
 
 ```bash
-cd /home/jason/Projects/Milk-Depot-Coffee-Roaster/kicad/breakout-max31855
+cd /home/jason/projects/Milk-Depot-Coffee-Roaster/kicad/breakout-max31855
 kicad-cli sch erc --output erc.txt breakout-max31855.kicad_sch
 ```
 

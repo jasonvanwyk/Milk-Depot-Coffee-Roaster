@@ -1,7 +1,7 @@
 """
 OLED Bezel - Step 1: PCB outline rectangle
 Run from FreeCAD console:
-  exec(open('/home/jason/Projects/Milk-Depot-Coffee-Roaster/FreeCad/draw_bezel.py').read())
+  exec(open('/home/jason/projects/Milk-Depot-Coffee-Roaster/FreeCad/draw_bezel.py').read())
 """
 import FreeCAD as App
 import Part
