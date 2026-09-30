@@ -1,6 +1,6 @@
 # Project Status - Milk Depot Coffee Roaster
 
-**Last Updated:** 2026-03-30
+**Last Updated:** 2026-09-30
 **Quote Ref:** PO P00041 (thermocouples)
 **Status:** Development
 **Payment Terms:** Invoice on delivery (GPA Trading)
@@ -9,7 +9,7 @@
 
 ## Current Phase: Development
 
-**SCHEMATIC CAPTURE IN PROGRESS.** All procurement verified — DigiKey #122880837 (37-item unified order) shipped with all roaster parts. All datasheets downloaded and footprints verified. TL3342 tactile switch needs custom footprint. Placing components with BOM fields (R1-R6, C1 done). Next: finish placing, wire up, ERC.
+**DIRECTION RESET (30 September 2026).** Controller and display: LilyGO T-Display-S3. Thermocouple front end: one custom 4-channel board (3 fitted), each channel galvanically isolated, because the probes are grounded-junction. Everything in one custom 3D-printed enclosure. The Pi + HMI running Artisan is unchanged. The Nano/stripboard plan, the 20×4 LCD and the full-system ESP32 PCB are dropped. Isolation parts ordered and paid (DigiKey, 30 September 2026). Next: buy the T-Display-S3 and remaining parts, draw the 4-channel schematic. Design notes: `docs/2026-09-30-tc-board-design-notes.md`.
 
 ---
 
@@ -57,34 +57,16 @@
 | Schematic symbols placed | 2026-03-30 | ESP32, 2× MAX31855, 2× BSS138 — validated against datasheets |
 | BSS138 sourced from Mantech | 2026-03-30 | Stock 35M3468, R1.20 each (ON Semi, SOT-23) |
 
-### Session Completed Items (30 Mar 2026)
-- [x] ~~Full procurement audit: read ALL invoices across 5 suppliers (DigiKey ×3, Mantech ×3, Communica, DIY, Micro Robotics)~~
-- [x] ~~Corrected stale BOM: DigiKey #122017091 was fully returned, #122880837 is the real order (37 items)~~
-- [x] ~~Confirmed all roaster parts on hand: NCP1117 SOT-223, MMBT2222A, 10nF/1µF/100nF/10µF 0805, TL3342, JST PH 4-pin, OSTTC020162~~
-- [x] ~~Built complete component grid with MPNs, manufacturers, supplier PNs for all 20 schematic components~~
-- [x] ~~Downloaded all datasheets to kicad/datasheets/ (NCP1117, MMBT2222A, TL3342, OSTTC020162, DG127, B4B-PH-K-S, CL21B103, TMK212BJ105KD)~~
-- [x] ~~Verified all KiCad footprints against datasheets — TL3342 needs custom footprint (4.80×2.80mm pad pattern)~~
-- [x] ~~Screw terminal decision: using Degson DG127-5.08-02P (Mantech 15M0713), 5.08mm pitch compatible~~
-- [x] ~~Started placing components with BOM fields: R1-R6 (10K 0805), C1 (100nF 0805)~~
+### Session Completed Items (30 Sep 2026)
+- [x] ~~Reconciled this repo with the companion repo `~/tools/kicad-coffee-roaster/` (April sessions 1–5 were recorded only there)~~
+- [x] ~~Researched ESP32 boards with built-in display and the ESP32-S3 USB reset question — 4 reports in `docs/research/`~~
+- [x] ~~Decided on LilyGO T-Display-S3 as controller + display, in a custom 3D-printed enclosure~~
+- [x] ~~Decided on one 4-channel thermocouple board with per-channel isolation (shared island rejected: false short-to-GND faults with grounded probes)~~
+- [x] ~~Selected isolation parts and checked all nine datasheets against the DigiKey cart; added tantalum output capacitors for the NCP1117~~
+- [x] ~~DigiKey order placed and paid~~
+- [x] ~~Wrote `docs/2026-09-30-tc-board-design-notes.md`; archived older sessions to `docs/archive/`~~
 
-### Session Completed Items (28-30 Mar 2026)
-- [x] ~~Archived old KiCad schematic, scaffolded new KiCad 10 project with JLCPCB design rules~~
-- [x] ~~Validated and placed U1 (ESP32), U2+U3 (MAX31855), Q1+Q2 (BSS138) with BOM fields~~
-
-### Session Completed Items (23 Mar 2026)
-- [x] ~~Switched display from OLED to 20×4 I2C LCD (Keyestudio MD0074) — HD44780, no driver issues, no burn-in~~
-- [x] ~~Evaluated and rejected Adafruit OLED (unavailable/expensive), SSD1309 OLED, and Newhaven premium LCD~~
-- [x] ~~Added BSS138 N-MOSFET level shifters to BOM for 3.3V ESP32 ↔ 5V LCD I2C~~
-- [x] ~~Updated Mantech order: KS5019 ESP32 + MD0074 LCD = R486.07 incl. VAT~~
-- [x] ~~Decided PCB strategy: MAX31855 breakout board first to validate thermocouples with dev board~~
-
-### Session Completed Items (20 Mar 2026)
-- [x] ~~Rewrote docs/BOM.md v2.0 for ESP32 redesign with specific 0805 part numbers~~
-- [x] ~~Cross-referenced DigiKey cart CSV — all passives already in Fairfield combined order~~
-- [x] ~~Selected Adafruit 2719 OLED (SSD1305) over Waveshare SSD1309 — quality + standard header~~
-- [x] ~~Confirmed 0805 for all passives (not 0603) — matches Fairfield order~~
-- [x] ~~Identified only 2 items still needed in DigiKey cart: screw terminals + OLED~~
-- [x] ~~Updated DigiKey checklist with in-cart vs still-short items~~
+Older sessions: `docs/archive/SESSION-INDEX.md`.
 
 ### In Progress
 
@@ -92,16 +74,20 @@
 |------|--------|-------|
 | DigiKey orders shipped & received | DONE | #122880837 (37 items) + #123184654 (ICs). All roaster parts on hand. |
 | Mantech LCD + screw terminals received | DONE | #178252 (MD0074 LCD) + #210901 (DG127 terminals, headers) |
-| BSS138 from Mantech | ORDERED | 35M3468, R1.20 each — awaiting delivery |
-| Complete schematic capture | IN PROGRESS | 5 ICs placed, R1-R6 + C1 placed. Remaining: C2-C9, U4, Q3-Q4, J1-J4, SW1 (needs custom footprint), wiring |
-| Create TL3342 custom footprint | TODO | 4.80×2.80mm pad pattern, gull wing SMD, no built-in KiCad match |
-| Design full system PCB layout | TODO | KiCad: after schematic + ERC complete |
-| Order PCBs | TODO | JLCPCB, after KiCad design complete |
-| Port firmware to ESP32 | TODO | Pin reassignment, ESP32 Arduino core |
-| Hand-assemble PCBs | TODO | SOIC-8 MAX31855, passives, headers |
+| BSS138 from Mantech | NOT NEEDED | Dropped from design — digital isolators handle the voltage levels |
+| Full-system ESP32 schematic | ABANDONED | Replaced by T-Display-S3 + isolated breakouts |
+| Isolation parts order (DigiKey) | ORDERED + PAID | 30 Sep 2026. 9 lines, enough for 2 boards. Awaiting delivery |
+| Buy T-Display-S3 + remaining parts | TODO | T-Display-S3 (Micro Robotics R315.00 ex VAT, no stock 30 Sep 2026; else import), panel button, spare RFB-0505S, connector |
+| Bench-test T-Display-S3 USB with Artisan | TODO | Not a blocker; firmware fix and UART fallback known |
+| 4-channel board schematic | TODO | Reuse the 15-component single-channel drawing as the channel sheet ×4, add host sheet; wire; ERC |
+| PCB layout | TODO | Isolation slot and separate ground zone per channel; review before fab |
+| Order PCBs | TODO | JLCPCB |
+| Hand-assemble the board | TODO | SOIC-8 MAX31855, SOIC-16W isolators, 0805 passives |
+| Port firmware to ESP32-S3 | TODO | 3 channels, TFT pages, page button, TC4 protocol |
+| Design + print enclosure | TODO | T-Display-S3 window, panel button, 4-channel board, probe entries |
 | Clone repo to RPi | TODO | Old ~/artisan/ dir exists, needs proper clone |
 | Sensor calibration | TODO | Ice water + boiling water tests |
-| Mount probes in roaster | TODO | BT + ET positions |
+| Mount probes in roaster | TODO | BT, ET and FT positions |
 | First test roast | TODO | Full integration test |
 
 ---
@@ -120,7 +106,9 @@
 | **VAT (15%)** | | | **R849** | |
 | **Total incl. VAT** | | | **R6,509** | |
 
-### Redesign Components (Estimated)
+### Redesign Components (Estimated — March 2026 plan, superseded)
+
+DigiKey isolation parts order of 30 September 2026: placed and paid; order number and total not yet recorded here.
 
 | Item | Qty | Est. Cost | Source | Notes |
 |------|-----|-----------|--------|-------|
@@ -157,6 +145,12 @@
 18. **20×4 I2C LCD** — Keyestudio MD0074 (HD44780 + PCF8574) replaces OLED — no driver issues, no burn-in, better readability, cheaper
 19. **BSS138 level shifters** for 3.3V ESP32 ↔ 5V LCD I2C on custom PCB (direct connection OK for prototype)
 20. **MAX31855 breakout board first** — validate thermocouples with dev board before designing full system PCB
+21. **Per-breakout galvanic isolation (MD-TC-BRK v1.1)** — probes are grounded-junction; isolated DC-DC + digital isolator on each breakout (22 April 2026)
+22. **3 channels again** (BT, ET, FT) — one isolated breakout per probe (April 2026, supersedes decision 3)
+23. **LilyGO T-Display-S3** as controller + display — supersedes decisions 4, 11, 14, 18, 19 (30 September 2026)
+24. **Single custom 3D-printed enclosure** for T-Display-S3 + thermocouple board, designed and printed in-house (30 September 2026)
+25. **One 4-channel thermocouple board** (3 fitted) instead of three breakouts, each channel on its own isolated island — supersedes the separate-breakout part of decision 21 (30 September 2026)
+26. **Isolation parts:** ISO7731DWR isolator, Recom RFB-0505S DC-DC, SN74AHC125 MISO buffer, tantalum output capacitor on the NCP1117 (30 September 2026)
 
 ---
 
