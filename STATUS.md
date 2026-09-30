@@ -64,6 +64,7 @@
 - [x] ~~Decided on one 4-channel thermocouple board with per-channel isolation (shared island rejected: false short-to-GND faults with grounded probes)~~
 - [x] ~~Selected isolation parts and checked all nine datasheets against the DigiKey cart; added tantalum output capacitors for the NCP1117~~
 - [x] ~~DigiKey order placed and paid~~
+- [x] ~~T-Display-S3 ordered and paid (AliExpress, LilyGO Official Store, ref 3076608492140357, R373.98)~~
 - [x] ~~Wrote `docs/2026-09-30-tc-board-design-notes.md`; archived older sessions to `docs/archive/`~~
 
 Older sessions: `docs/archive/SESSION-INDEX.md`.
@@ -77,7 +78,8 @@ Older sessions: `docs/archive/SESSION-INDEX.md`.
 | BSS138 from Mantech | NOT NEEDED | Dropped from design — digital isolators handle the voltage levels |
 | Full-system ESP32 schematic | ABANDONED | Replaced by T-Display-S3 + isolated breakouts |
 | Isolation parts order (DigiKey) | ORDERED + PAID | 30 Sep 2026. 9 lines, enough for 2 boards. Awaiting delivery |
-| Buy T-Display-S3 + remaining parts | TODO | T-Display-S3 (Micro Robotics R315.00 ex VAT, no stock 30 Sep 2026; else import), panel button, spare RFB-0505S, connector |
+| T-Display-S3 order (AliExpress) | ORDERED + PAID | 30 Sep 2026. 1× non-touch, unsoldered pins, LilyGO Official Store, ref 3076608492140357, R373.98 incl. shipping. Awaiting delivery |
+| Buy remaining parts | TODO | Panel button, spare RFB-0505S, board-to-display connector; optional second T-Display-S3 |
 | Bench-test T-Display-S3 USB with Artisan | TODO | Not a blocker; firmware fix and UART fallback known |
 | 4-channel board schematic | TODO | Reuse the 15-component single-channel drawing as the channel sheet ×4, add host sheet; wire; ERC |
 | PCB layout | TODO | Isolation slot and separate ground zone per channel; review before fab |
@@ -109,6 +111,8 @@ Older sessions: `docs/archive/SESSION-INDEX.md`.
 ### Redesign Components (Estimated — March 2026 plan, superseded)
 
 DigiKey isolation parts order of 30 September 2026: placed and paid; order number and total not yet recorded here.
+
+LilyGO T-Display-S3 ×1, AliExpress ref 3076608492140357, 30 September 2026: R344.00 + R29.98 shipping = R373.98, paid by card.
 
 | Item | Qty | Est. Cost | Source | Notes |
 |------|-----|-----------|--------|-------|

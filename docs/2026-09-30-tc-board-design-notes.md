@@ -64,7 +64,7 @@ All nine datasheets are in `docs/parts-specs/` and were checked against the orde
 
 ## Still to buy
 
-- LilyGO T-Display-S3, non-touch (not stocked by DigiKey; Micro Robotics listed it at R315.00 ex VAT with no stock on 30 September 2026; otherwise import). Consider two, for a spare.
+- ~~LilyGO T-Display-S3, non-touch~~ — ordered 30 September 2026: 1× with unsoldered pins from the LilyGO Official Store on AliExpress, ref 3076608492140357, R373.98 including shipping. A second as a spare is optional (Micro Robotics lists it at R315.00 ex VAT, no stock on 30 September 2026).
 - Panel-mount push button for cycling display pages.
 - Spare RFB-0505S (the order has exactly eight).
 - Connector and cable between the board and the T-Display-S3, chosen at layout time.
