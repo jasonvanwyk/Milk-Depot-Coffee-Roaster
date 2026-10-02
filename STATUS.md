@@ -9,7 +9,7 @@
 
 ## Current Phase: Development
 
-**DIRECTION RESET (30 September 2026).** Controller and display: LilyGO T-Display-S3. Thermocouple front end: one custom 4-channel board (3 fitted), each channel galvanically isolated, because the probes are grounded-junction. Everything in one custom 3D-printed enclosure. The Pi + HMI running Artisan is unchanged. The Nano/stripboard plan, the 20×4 LCD and the full-system ESP32 PCB are dropped. Isolation parts ordered and paid (DigiKey, 30 September 2026). Next: buy the T-Display-S3 and remaining parts, draw the 4-channel schematic. Design notes: `docs/2026-09-30-tc-board-design-notes.md`.
+**DIRECTION RESET (30 September 2026).** Controller and display: LilyGO T-Display-S3. Thermocouple front end: one custom 4-channel board (3 fitted), each channel galvanically isolated, because the probes are grounded-junction. Everything in one custom 3D-printed enclosure. The Pi + HMI running Artisan is unchanged. The Nano/stripboard plan, the 20×4 LCD and the full-system ESP32 PCB are dropped. Isolation parts ordered and paid (DigiKey, 30 September 2026). T-Display-S3 and panel buttons ordered and paid (AliExpress, 30 September and 2 October 2026). Next: draw the 4-channel schematic. Design notes: `docs/2026-09-30-tc-board-design-notes.md`.
 
 ---
 
@@ -57,7 +57,7 @@
 | Schematic symbols placed | 2026-03-30 | ESP32, 2× MAX31855, 2× BSS138 — validated against datasheets |
 | BSS138 sourced from Mantech | 2026-03-30 | Stock 35M3468, R1.20 each (ON Semi, SOT-23) |
 
-### Session Completed Items (30 Sep 2026)
+### Session Completed Items (30 Sep – 2 Oct 2026)
 - [x] ~~Reconciled this repo with the companion repo `~/tools/kicad-coffee-roaster/` (April sessions 1–5 were recorded only there)~~
 - [x] ~~Researched ESP32 boards with built-in display and the ESP32-S3 USB reset question — 4 reports in `docs/research/`~~
 - [x] ~~Decided on LilyGO T-Display-S3 as controller + display, in a custom 3D-printed enclosure~~
@@ -65,6 +65,7 @@
 - [x] ~~Selected isolation parts and checked all nine datasheets against the DigiKey cart; added tantalum output capacitors for the NCP1117~~
 - [x] ~~DigiKey order placed and paid~~
 - [x] ~~T-Display-S3 ordered and paid (AliExpress, LilyGO Official Store, ref 3076608492140357, R373.98)~~
+- [x] ~~Panel buttons ordered and paid (AliExpress, 10× 16 mm momentary, ref 3076815630860357, R329.00); spare RFB-0505S bought~~
 - [x] ~~Wrote `docs/2026-09-30-tc-board-design-notes.md`; archived older sessions to `docs/archive/`~~
 
 Older sessions: `docs/archive/SESSION-INDEX.md`.

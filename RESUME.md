@@ -3,7 +3,7 @@
 ## Right Now
 **Phase:** Development — schematic for the 4-channel isolated thermocouple board, with LilyGO T-Display-S3 as controller + display
 
-**Last (30 Sep 2026):** Restarted after a five-month gap and reset the direction.
+**Last (30 Sep – 2 Oct 2026):** Restarted after a five-month gap, reset the direction, and ordered all main parts.
 - Reconciled this repo with `~/tools/kicad-coffee-roaster/`, where the April breakout sessions (grounded probes confirmed, isolation pivot) had been recorded but never copied here.
 - Researched ESP32 boards with a built-in display and the ESP32-S3 USB reset question — 4 reports in `docs/research/`.
 - **Decided:** LilyGO T-Display-S3 (non-touch) replaces the Nano/stripboard and the bare ESP32 + 20×4 LCD plans.
@@ -16,8 +16,8 @@
 - Wrote `docs/2026-09-30-tc-board-design-notes.md` — design rules, pinouts, order list, still-to-buy list.
 
 **Next:**
-1. All main parts are ordered. Still to choose at layout time: the board-to-display connector. Optional: a second T-Display-S3 as a spare.
-2. Draw the 4-channel schematic from the design notes: one channel sheet reused four times + a host sheet. Wire, ERC to zero. Open question put to Jason and not yet answered: does he draw it in KiCad from an updated guide (as in April), or does Claude generate the schematic file for him to review?
+1. **Start here next session:** draw the 4-channel schematic from the design notes — one channel sheet reused four times + a host sheet (include the 2-pin button connector). Wire, ERC to zero. First ask Jason the open question: does he draw it in KiCad from an updated guide (as in April), or does Claude generate the schematic file for him to review?
+2. Still to choose at layout time: the board-to-display connector. Optional: a second T-Display-S3 as a spare.
 3. When the T-Display-S3 arrives, bench-test USB serial with Artisan on the Pi (not a blocker — see the USB research report).
 4. PCB layout (isolation slots, two ground zones per channel), `/pcb-review-engineer`, order from JLCPCB.
 
