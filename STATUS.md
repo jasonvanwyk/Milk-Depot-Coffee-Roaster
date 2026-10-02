@@ -9,7 +9,7 @@
 
 ## Current Phase: Development
 
-**DIRECTION RESET (30 September 2026).** Controller and display: LilyGO T-Display-S3. Thermocouple front end: one custom 4-channel board (3 fitted), each channel galvanically isolated, because the probes are grounded-junction. Everything in one custom 3D-printed enclosure. The Pi + HMI running Artisan is unchanged. The Nano/stripboard plan, the 20×4 LCD and the full-system ESP32 PCB are dropped. Isolation parts ordered and paid (DigiKey, 30 September 2026). T-Display-S3 and panel buttons ordered and paid (AliExpress, 30 September and 2 October 2026). Next: draw the 4-channel schematic. Design notes: `docs/2026-09-30-tc-board-design-notes.md`.
+**DIRECTION RESET (30 September 2026).** Controller and display: LilyGO T-Display-S3. Thermocouple front end: one custom 4-channel board (3 fitted), each channel galvanically isolated, because the probes are grounded-junction. Everything in one custom 3D-printed enclosure. The Pi + HMI running Artisan is unchanged. The Nano/stripboard plan, the 20×4 LCD and the full-system ESP32 PCB are dropped. Isolation parts ordered and paid (DigiKey, 30 September 2026). T-Display-S3 and panel buttons ordered and paid (AliExpress, 30 September and 2 October 2026). Schematic started 2 October 2026 in `kicad/tc-board-4ch/` (channel sheet about three-quarters wired). Design notes: `docs/2026-09-30-tc-board-design-notes.md`.
 
 ---
 
@@ -57,16 +57,12 @@
 | Schematic symbols placed | 2026-03-30 | ESP32, 2× MAX31855, 2× BSS138 — validated against datasheets |
 | BSS138 sourced from Mantech | 2026-03-30 | Stock 35M3468, R1.20 each (ON Semi, SOT-23) |
 
-### Session Completed Items (30 Sep – 2 Oct 2026)
-- [x] ~~Reconciled this repo with the companion repo `~/tools/kicad-coffee-roaster/` (April sessions 1–5 were recorded only there)~~
-- [x] ~~Researched ESP32 boards with built-in display and the ESP32-S3 USB reset question — 4 reports in `docs/research/`~~
-- [x] ~~Decided on LilyGO T-Display-S3 as controller + display, in a custom 3D-printed enclosure~~
-- [x] ~~Decided on one 4-channel thermocouple board with per-channel isolation (shared island rejected: false short-to-GND faults with grounded probes)~~
-- [x] ~~Selected isolation parts and checked all nine datasheets against the DigiKey cart; added tantalum output capacitors for the NCP1117~~
-- [x] ~~DigiKey order placed and paid~~
-- [x] ~~T-Display-S3 ordered and paid (AliExpress, LilyGO Official Store, ref 3076608492140357, R373.98)~~
-- [x] ~~Panel buttons ordered and paid (AliExpress, 10× 16 mm momentary, ref 3076815630860357, R329.00); spare RFB-0505S bought~~
-- [x] ~~Wrote `docs/2026-09-30-tc-board-design-notes.md`; archived older sessions to `docs/archive/`~~
+### Session Completed Items (2 Oct 2026 — schematic session 1)
+- [x] ~~Confirmed KiCad 10.0.6 is the latest stable release~~
+- [x] ~~Created the starter project `kicad/tc-board-4ch/`: root sheet + channel sheet used four times, 82 parts placed with footprints and part numbers~~
+- [x] ~~Added custom symbols ISO7731DW and RFB-0505S to `kicad/libs/milk-depot.kicad_sym`~~
+- [x] ~~Channel sheet: island power, isolator and MAX31855 wired by Jason and checked against the netlist~~
+- [x] ~~Removed a `GND2` power symbol that joined the four island grounds; island nets are local labels only~~
 
 Older sessions: `docs/archive/SESSION-INDEX.md`.
 
@@ -84,7 +80,7 @@ Older sessions: `docs/archive/SESSION-INDEX.md`.
 | Spare RFB-0505S | BOUGHT | Supplier and quantity not recorded |
 | Buy remaining parts | TODO | Board-to-display connector (choose at layout); optional second T-Display-S3 |
 | Bench-test T-Display-S3 USB with Artisan | TODO | Not a blocker; firmware fix and UART fallback known |
-| 4-channel board schematic | TODO | Reuse the 15-component single-channel drawing as the channel sheet ×4, add host sheet; wire; ERC |
+| 4-channel board schematic | IN PROGRESS | `kicad/tc-board-4ch/`. Channel sheet: island power, isolator, MAX31855 done; probe input filter still to wire. Then root sheet, ERC to zero |
 | PCB layout | TODO | Isolation slot and separate ground zone per channel; review before fab |
 | Order PCBs | TODO | JLCPCB |
 | Hand-assemble the board | TODO | SOIC-8 MAX31855, SOIC-16W isolators, 0805 passives |

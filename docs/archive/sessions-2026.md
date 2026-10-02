@@ -1,5 +1,19 @@
 # Sessions 2026
 
+## 30 September – 2 October 2026 — direction reset to T-Display-S3 + 4-channel isolated board; all parts ordered
+
+**Last (30 Sep – 2 Oct 2026):** Restarted after a five-month gap, reset the direction, and ordered all main parts.
+- Reconciled this repo with `~/tools/kicad-coffee-roaster/`, where the April breakout sessions (grounded probes confirmed, isolation pivot) had been recorded but never copied here.
+- Researched ESP32 boards with a built-in display and the ESP32-S3 USB reset question — 4 reports in `docs/research/`.
+- **Decided:** LilyGO T-Display-S3 (non-touch) replaces the Nano/stripboard and the bare ESP32 + 20×4 LCD plans.
+- **Decided:** one 4-channel thermocouple board (fit 3: BT, ET, FT), each channel on its own isolated island, instead of three separate breakouts.
+- **Decided:** one custom 3D-printed enclosure for the T-Display-S3 and the board.
+- Chose the isolation parts, checked all nine datasheets against the cart, and **Jason ordered and paid for the DigiKey order**.
+- **Panel buttons ordered and paid (2 Oct 2026)**: 10× 16 mm flat-head metal push button, momentary, 1NO, no LED, pre-wired tails, DIANQI Electric Official Store on AliExpress, ref 3076815630860357, R329.00 total, estimated delivery 28 Oct 2026. Wires to a spare T-Display-S3 pin and GND via a 2-pin connector on the thermocouple board; firmware uses the internal pull-up.
+- **Spare RFB-0505S** bought by Jason (supplier and quantity not recorded).
+- **T-Display-S3 ordered and paid**: 1× non-touch, unsoldered pins, LilyGO Official Store on AliExpress, ref 3076608492140357, R373.98 incl. shipping. Seller has up to 12 days to ship.
+- Wrote `docs/2026-09-30-tc-board-design-notes.md` — design rules, pinouts, order list, still-to-buy list.
+
 ## 13–22 April 2026 — breakout sessions 1–5 (recorded in `~/tools/kicad-coffee-roaster/`)
 
 **Previous (21–22 Apr 2026, recorded in tool repo):** DMM test confirmed all 6 probes are grounded-junction. Pivoted breakout from v1.0 to v1.1 with per-breakout galvanic isolation (isolated DC-DC + digital isolator). Hand-drew 15 components of the breakout schematic with footprints and BOM fields; not yet wired.

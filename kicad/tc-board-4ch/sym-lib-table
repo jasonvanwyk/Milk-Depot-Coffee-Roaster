@@ -1,0 +1,4 @@
+(sym_lib_table
+	(version 7)
+	(lib (name "milk-depot")(type "KiCad")(uri "${KIPRJMOD}/../libs/milk-depot.kicad_sym")(options "")(descr "Project-local symbols - ISO7731DW, RFB-0505S"))
+)
