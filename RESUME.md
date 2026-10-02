@@ -10,16 +10,18 @@
 - **Decided:** one 4-channel thermocouple board (fit 3: BT, ET, FT), each channel on its own isolated island, instead of three separate breakouts.
 - **Decided:** one custom 3D-printed enclosure for the T-Display-S3 and the board.
 - Chose the isolation parts, checked all nine datasheets against the cart, and **Jason ordered and paid for the DigiKey order**.
+- **Panel buttons ordered and paid (2 Oct 2026)**: 10× 16 mm flat-head metal push button, momentary, 1NO, no LED, pre-wired tails, DIANQI Electric Official Store on AliExpress, ref 3076815630860357, R329.00 total, estimated delivery 28 Oct 2026. Wires to a spare T-Display-S3 pin and GND via a 2-pin connector on the thermocouple board; firmware uses the internal pull-up.
+- **Spare RFB-0505S** bought by Jason (supplier and quantity not recorded).
 - **T-Display-S3 ordered and paid**: 1× non-touch, unsoldered pins, LilyGO Official Store on AliExpress, ref 3076608492140357, R373.98 incl. shipping. Seller has up to 12 days to ship.
 - Wrote `docs/2026-09-30-tc-board-design-notes.md` — design rules, pinouts, order list, still-to-buy list.
 
 **Next:**
-1. Buy the remaining parts: panel-mount page button, spare RFB-0505S, board-to-display connector (and optionally a second T-Display-S3 as a spare). List in the design notes.
+1. All main parts are ordered. Still to choose at layout time: the board-to-display connector. Optional: a second T-Display-S3 as a spare.
 2. Draw the 4-channel schematic from the design notes: one channel sheet reused four times + a host sheet. Wire, ERC to zero. Open question put to Jason and not yet answered: does he draw it in KiCad from an updated guide (as in April), or does Claude generate the schematic file for him to review?
 3. When the T-Display-S3 arrives, bench-test USB serial with Artisan on the Pi (not a blocker — see the USB research report).
 4. PCB layout (isolation slots, two ground zones per channel), `/pcb-review-engineer`, order from JLCPCB.
 
-**Blocked:** Nothing. Waiting on DigiKey and AliExpress deliveries.
+**Blocked:** Nothing. Waiting on DigiKey and two AliExpress deliveries; the schematic does not depend on them.
 
 ## Quick Context
 - Client: Quenton (Milk Depot) — coffee roaster temperature monitoring
@@ -39,7 +41,7 @@
 1. ~~Probes delivered and confirmed grounded-junction~~ ✓
 2. ~~Choose controller + display~~ ✓ T-Display-S3
 3. ~~Order isolation parts~~ ✓ DigiKey, 30 Sep 2026
-4. ~~Order T-Display-S3~~ ✓ AliExpress, 30 Sep 2026 — remaining small parts still to buy
+4. ~~Order T-Display-S3 and panel buttons~~ ✓ AliExpress, 30 Sep and 2 Oct 2026
 5. 4-channel schematic, ERC clean
 6. PCB layout, review, order from JLCPCB
 7. Hand-assemble the board

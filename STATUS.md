@@ -1,6 +1,6 @@
 # Project Status - Milk Depot Coffee Roaster
 
-**Last Updated:** 2026-09-30
+**Last Updated:** 2026-10-02
 **Quote Ref:** PO P00041 (thermocouples)
 **Status:** Development
 **Payment Terms:** Invoice on delivery (GPA Trading)
@@ -79,7 +79,9 @@ Older sessions: `docs/archive/SESSION-INDEX.md`.
 | Full-system ESP32 schematic | ABANDONED | Replaced by T-Display-S3 + isolated breakouts |
 | Isolation parts order (DigiKey) | ORDERED + PAID | 30 Sep 2026. 9 lines, enough for 2 boards. Awaiting delivery |
 | T-Display-S3 order (AliExpress) | ORDERED + PAID | 30 Sep 2026. 1× non-touch, unsoldered pins, LilyGO Official Store, ref 3076608492140357, R373.98 incl. shipping. Awaiting delivery |
-| Buy remaining parts | TODO | Panel button, spare RFB-0505S, board-to-display connector; optional second T-Display-S3 |
+| Panel buttons order (AliExpress) | ORDERED + PAID | 2 Oct 2026. 10× 16 mm flat-head momentary 1NO, no LED, pre-wired, DIANQI Electric Official Store, ref 3076815630860357, R329.00. Estimated delivery 28 Oct 2026 |
+| Spare RFB-0505S | BOUGHT | Supplier and quantity not recorded |
+| Buy remaining parts | TODO | Board-to-display connector (choose at layout); optional second T-Display-S3 |
 | Bench-test T-Display-S3 USB with Artisan | TODO | Not a blocker; firmware fix and UART fallback known |
 | 4-channel board schematic | TODO | Reuse the 15-component single-channel drawing as the channel sheet ×4, add host sheet; wire; ERC |
 | PCB layout | TODO | Isolation slot and separate ground zone per channel; review before fab |
@@ -113,6 +115,8 @@ Older sessions: `docs/archive/SESSION-INDEX.md`.
 DigiKey isolation parts order of 30 September 2026: placed and paid; order number and total not yet recorded here.
 
 LilyGO T-Display-S3 ×1, AliExpress ref 3076608492140357, 30 September 2026: R344.00 + R29.98 shipping = R373.98, paid by card.
+
+Panel buttons ×10, AliExpress ref 3076815630860357, 2 October 2026: R110.00 goods, R329.00 total, paid by card.
 
 | Item | Qty | Est. Cost | Source | Notes |
 |------|-----|-----------|--------|-------|

@@ -65,8 +65,8 @@ All nine datasheets are in `docs/parts-specs/` and were checked against the orde
 ## Still to buy
 
 - ~~LilyGO T-Display-S3, non-touch~~ — ordered 30 September 2026: 1× with unsoldered pins from the LilyGO Official Store on AliExpress, ref 3076608492140357, R373.98 including shipping. A second as a spare is optional (Micro Robotics lists it at R315.00 ex VAT, no stock on 30 September 2026).
-- Panel-mount push button for cycling display pages.
-- Spare RFB-0505S (the order has exactly eight).
+- ~~Panel-mount push button for cycling display pages~~ — ordered 2 October 2026: 10× 16 mm flat-head metal, momentary, 1NO, no LED, pre-wired, AliExpress ref 3076815630860357. Needs a 16 mm panel hole. Wire to a spare T-Display-S3 pin and GND through a 2-pin connector on this board; internal pull-up in firmware.
+- ~~Spare RFB-0505S~~ — bought.
 - Connector and cable between the board and the T-Display-S3, chosen at layout time.
 - PCBs from JLCPCB once the layout is done.
 
