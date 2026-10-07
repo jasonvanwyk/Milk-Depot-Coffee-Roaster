@@ -6,6 +6,7 @@ needed. Current state lives in RESUME.md; the dashboard in STATUS.md.
 
 | Date | Headline | Archive |
 |------|----------|---------|
+| 2026-10-02 | Schematic session 1: tc-board-4ch starter project, channel sheet island power/isolator/MAX31855 wired | sessions-2026.md |
 | 2026-09-30 to 2026-10-02 | Direction reset: T-Display-S3 + one 4-channel isolated board; DigiKey and AliExpress orders placed | sessions-2026.md |
 | 2026-04-13 to 2026-04-22 | Breakout sessions 1–5: SparkFun fork, grounded probes confirmed, isolation pivot (v1.1) | sessions-2026.md |
 | 2026-03-30 | Full procurement audit across 5 suppliers; footprints verified; started placing components | sessions-2026.md |

@@ -1,5 +1,15 @@
 # Sessions 2026
 
+## 2 October 2026 — schematic session 1: starter project, channel sheet three-quarters wired
+
+**Last (2 Oct 2026, schematic session 1):** Started the schematic. Jason draws in KiCad; Claude prepared the starter project and checks each step read-only.
+- Confirmed KiCad 10.0.6 is the latest stable release.
+- Created `kicad/tc-board-4ch/` — root (host) sheet plus `channel.kicad_sch` used four times (CH1–CH4). 82 parts placed with footprints and part numbers; references numbered by channel (U101, U201, ...).
+- Added two custom symbols to `kicad/libs/milk-depot.kicad_sym`: ISO7731DW and RFB-0505S.
+- **Channel sheet wired and checked:** island power (RFB-0505S → NCP1117), isolator (both sides, both 10K pull-ups, EN pins flagged no-connect), MAX31855 (power, SCK, SO, CS).
+- Caught and fixed one mistake: a `GND2` power symbol on the island side joined all four island grounds. Island nets must be local labels only.
+- Starter choices still to confirm with Jason: chassis network (mounting hole, solder jumper, 1 MΩ, 10 nF 630V) left out; host connector is 10 pins (tenth = button line); the April test point dropped.
+
 ## 30 September – 2 October 2026 — direction reset to T-Display-S3 + 4-channel isolated board; all parts ordered
 
 **Last (30 Sep – 2 Oct 2026):** Restarted after a five-month gap, reset the direction, and ordered all main parts.
