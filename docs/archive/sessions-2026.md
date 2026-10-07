@@ -1,5 +1,14 @@
 # Sessions 2026
 
+## 7 October 2026 — schematic session 2: 4-channel board ERC-clean
+
+**Last (7 Oct 2026, schematic session 2):** Finished the schematic. Jason drew, Claude checked each step by exporting the netlist with `kicad-cli` and running ERC.
+- The PC shut down unexpectedly on 6 Oct; KiCad had the project open but nothing had been saved, so no work was lost (files matched the last commit).
+- **Channel sheet (`channel.kicad_sch`) finished:** probe input chain per line — J101 → TVS (SMAJ5.0CA, connector side) → ferrite → 1 nF to `GND_ISO` (chip side) → MAX31855 T+/T−, plus 10 nF C102 across T+/T−. No-connect on U101 pin 8.
+- **Root sheet (`tc-board-4ch.kicad_sch`) finished:** sheet pins SCK/CS/MISO on CH1–CH4 (Place Pins from Sheet), 10-pin host connector J1 (1 GND, 2 +5V, 3 +3V3, 4 SCK, 5 MISO, 6–9 CS1–CS4, 10 BTN), 5V entry caps C1/C2, SN74AHC125 (OE = CSn, A = MISOn, Y = shared MISO), U1 power + C3, button connector J2 (BTN, GND), PWR_FLAG on +5V/+3V3/GND.
+- **ERC: 0 violations on all five sheets.** Only intentional unconnected pins remain (MAX31855 pin 8, isolator EN/NC pins), all flagged.
+- Reverted KiCad save-noise on the superseded `kicad/breakout-max31855/` and `kicad/milk-depot-coffee-roaster.kicad_sch` files.
+
 ## 2 October 2026 — schematic session 1: starter project, channel sheet three-quarters wired
 
 **Last (2 Oct 2026, schematic session 1):** Started the schematic. Jason draws in KiCad; Claude prepared the starter project and checks each step read-only.

@@ -40,6 +40,7 @@ _autosave-*
 .history/
 *.step
 *.wrl
+!kicad/libs/milk-depot.3dshapes/*.wrl
 gerbers/
 
 # Arduino

@@ -15,7 +15,7 @@ All six probes are grounded-junction (DMM test, April 2026), so every probe tip 
 - 10K pull resistor on `MISO_ISO`: the MAX31855 SO pin is high-impedance when CS is high, so the isolator input must not float.
 - Input filter and protection per probe line: ferrite BLM21AG471SN1D in series on T+ and T−, 10 nF across T+/T−, 1 nF from each line to `GND_ISO`, SMAJ5.0CA from each line to `GND_ISO`. The TVS can leak up to 1.6 mA at 5V; it only sees millivolts here, but it is the first suspect if false faults appear at bring-up.
 - DG127-5.08-02P screw terminal. Pin 1 = T+, pin 2 = T−. K-type red wire is negative.
-- Chassis network (mounting hole, solder jumper, 10 nF 630V, 1 MΩ): the jumper must stay open with grounded probes — closing it ties T− to island ground permanently and gives a constant short-to-GND fault. In a printed plastic enclosure there is no chassis connection to make; review whether to keep this network at schematic time.
+- Chassis network (mounting hole, solder jumper, 10 nF 630V, 1 MΩ): **left out, decided 7 October 2026.** The probes are grounded-junction, so each island is already referenced to the roaster body through its probe; closing the jumper would put T− to island ground in parallel with that and give a constant short-to-GND fault, so the jumper could never be closed. The plastic enclosure has no chassis to bond to, and the ferrite / TVS / 1 nF input filters cover the noise role. Mounting holes are plain, unconnected. **Caveat for a future revision:** if insulated-junction probes are ever fitted, the islands float and a bleed network (1 MΩ + 10 nF 630 V from island ground to a chassis point) becomes worth having. The RC0805FR-071ML and C0805C103KBRACAUTO parts from the 30 September order are on hand for that.
 
 ## Host side (shared by all channels)
 
@@ -76,3 +76,19 @@ All nine datasheets are in `docs/parts-specs/` and were checked against the orde
 - NMA0505SC was named as a DC-DC candidate; it is a dual-output part.
 - Three breakouts sharing one MISO line would have clashed; the quad buffer fixes this.
 - 3 kV isolation was specified; the fitted DC-DC is 1 kV functional, which is sufficient for ground-loop and ignition-noise isolation (this is not a mains safety barrier).
+
+## Footprint check before layout (7 October 2026)
+
+Each provisional footprint was compared with the part drawing. Pad positions and drills are the pass/fail items; body outlines matter only for placement.
+
+| Ref | Part | Footprint | Result |
+|---|---|---|---|
+| PS101–PS401 | RFB-0505S (SIP7, pins 1/2/4/6) | `Converter_DCDC_TRACO_TMA-05xxS_12xxS_Single_THT` | **Pass.** Pads at 0 / 2.54 / 7.62 / 12.7 mm, 1.0 mm drill, exactly the RFB recommended footprint. Body outline 19.7 × 6.3 mm vs 19.6 × 6.0 mm, pin 1 2.2 mm from the end vs 2.0 mm. Keep. |
+| J2 | Button, JST PH 2-pin (B2B-PH-K-S) | `JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical` | **Pass.** 2.0 mm pitch, 0.75 mm drill for the 0.7 mm hole JST specifies. Keep. |
+| J1 | Host, 1×10 header | `PinHeader_1x10_P2.54mm_Vertical` | **Placeholder.** Correct for a plain header; replace once the board-to-display cable is chosen. |
+| J101–J401 | DG127-5.08-02P screw terminal | `PhoenixContact_MSTBA_2,5_2-G-5,08_1x02_P5.08mm_Horizontal` | **Pads pass, outline wrong.** 5.08 mm pitch and 1.4 mm drill match the DG127 drawing. The Phoenix body is drawn 12 mm deep (2 mm behind the pin row, 10 mm to the wire face); the DG127 is 8.1 mm deep (3.9 mm behind the pins, 4.2 mm to the wire face). Replaced by `milk-depot:Degson_DG127-5.08-02P_1x02_P5.08mm_Horizontal` (true 10.16 × 8.1 mm outline, pin row 3.9 mm from the back edge and 4.2 mm from the wire face, box 3D model in `kicad/libs/milk-depot.3dshapes/`). Assign it to J101 in `channel.kicad_sch`; the four instances follow. |
+| C108–C408 | TPSB106K016R0800 (B case) | `CP_EIA-3528-21_Kemet-B` | Pass. |
+| D101–D402 | SMAJ5.0CA-13-F | `D_SMA` | Pass. |
+| FB101–FB402 | BLM21AG471SN1D | `L_0805_2012Metric` | Pass (BLM21 is 0805). |
+
+Everything else is 0805, SOIC-8, SOIC-14, SOIC-16W or SOT-223 and matches the ordered MPNs.

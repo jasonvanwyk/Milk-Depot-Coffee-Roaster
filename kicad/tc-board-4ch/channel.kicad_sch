@@ -5146,7 +5146,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_Phoenix_MSTB:PhoenixContact_MSTBA_2,5_2-G-5,08_1x02_P5.08mm_Horizontal"
+		(property "Footprint" "milk-depot:Degson_DG127-5.08-02P_1x02_P5.08mm_Horizontal"
 			(at 273.05 120.65 0)
 			(hide yes)
 			(show_name no)
