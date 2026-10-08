@@ -60,11 +60,13 @@
 | Footprint check + chassis decision | 2026-10-07 | DG127 footprint added to `kicad/libs/milk-depot.pretty/`; chassis network left out (grounded probes) |
 | PCB placement, slots, holes | 2026-10-08 | 96 × 66 mm 2-layer, 82 parts placed by script, isolation DRC rules, 0 copper violations |
 | Ground zones | 2026-10-08 | Host GND + 4 GND_ISO islands, both layers, fills verified by SVG, 0 isolation violations |
+| Island routing | 2026-10-08 | All 4 islands routed in the GUI, 8 vias each, +5V_ISO 0.4 mm, 0 copper violations, unconnected 137 → 37 (host only) |
 
-### Session Completed Items (8 Oct 2026 — layout session 2)
-- [x] ~~Five ground zones drawn in the GUI: `GND` host strip + `/CH1–4/GND_ISO` islands, F.Cu + B.Cu, clearance 0.3, min width 0.25, thermal reliefs~~
-- [x] ~~Fills verified by refilled scratch copy + SVG export; 2 mm island-to-island gap, slots between host and islands~~
-- [x] ~~DRC: 0 clearance/isolation/edge/courtyard; 5 starved-thermal errors noted (isolator GND1 pins + C105), to clear during routing~~
+### Session Completed Items (8 Oct 2026 — layout session 3)
+- [x] ~~Channel 1 island routed pad by pad: SPI verticals, CS and 3V3 stubs under on B.Cu, regulator tab link, 0.4 mm +5V_ISO, TC filter chains with the terminal crossing~~
+- [x] ~~Channels 2–4 routed from the same order (verified +22 mm copies); every save DRC-checked and rendered from a scratch copy~~
+- [x] ~~Pre-defined track widths 0.4 / 0.25 added to Board Setup; +5V_ISO runs set to 0.4 mm via Edit Track & Via Properties~~
+- [x] ~~Host-side pad positions and the 37 remaining connections extracted for the bus plan~~
 
 Older sessions: `docs/archive/SESSION-INDEX.md`.
 
@@ -85,7 +87,8 @@ Older sessions: `docs/archive/SESSION-INDEX.md`.
 | Footprint check before layout | DONE | 7 Oct 2026. DG127 custom footprint; chassis network left out |
 | PCB placement, slots, holes | DONE | 8 Oct 2026. 96 × 66 mm, DRC clean on copper, silk tidy pending |
 | Ground zones | DONE | 8 Oct 2026. Host + 4 islands, both layers, fills verified; 5 starved-thermal errors to clear in routing |
-| PCB routing | NEXT | Channel 1 island, channels 2–4, host buses on B.Cu; silk tidy; review before fab |
+| Island routing | DONE | 8 Oct 2026. 4 islands, 32 vias, DRC clean on copper |
+| Host routing | NEXT | +5V, +3V3, SCK, MISO/CS through U1 buffer, BTN; B.Cu buses Y 55.5–60; clear 5 starved thermals; silk tidy; review before fab |
 | Order PCBs | TODO | JLCPCB |
 | Hand-assemble the board | TODO | SOIC-8 MAX31855, SOIC-16W isolators, 0805 passives |
 | Port firmware to ESP32-S3 | TODO | 3 channels, TFT pages, page button, TC4 protocol |

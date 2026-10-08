@@ -6,6 +6,7 @@ needed. Current state lives in RESUME.md; the dashboard in STATUS.md.
 
 | Date | Headline | Archive |
 |------|----------|---------|
+| 2026-10-08 | Layout session 2: five ground zones drawn, fills verified by SVG, DRC clean on copper, 5 starved thermals noted | sessions-2026.md |
 | 2026-10-08 | Layout session 1: board setup, isolation DRC rules, 82 parts placed by script, slots and holes, DRC clean on copper | sessions-2026.md |
 | 2026-10-07 | Pre-layout: footprints checked, DG127 footprint generated, chassis network dropped | sessions-2026.md |
 | 2026-10-07 | Schematic session 2: channel and root sheets finished, ERC 0 violations on all five sheets | sessions-2026.md |

@@ -1,16 +1,17 @@
 # Project Resume
 
 ## Right Now
-**Phase:** Development — 4-channel isolated thermocouple board: placement and ground zones done, DRC clean on copper; routing channel 1 is next. LilyGO T-Display-S3 is the controller + display.
+**Phase:** Development — 4-channel isolated thermocouple board: all four islands routed, DRC clean on copper; host-side routing is next. LilyGO T-Display-S3 is the controller + display.
 
-**Last (8 Oct 2026, layout session 2):** Ground zones drawn, filled and checked.
-- Jason drew five multi-layer zones (F.Cu + B.Cu, clearance 0.3, min width 0.25, thermal reliefs, remove islands Always): `GND` (50.5,50.5)–(145.5,65) and `/CHn/GND_ISO` (55+22k, 68)–(75+22k, 115.5). Grid 0.5 mm, corners clicked from the status bar.
-- Claude refilled a scratch copy with `kicad-cli pcb drc --refill-zones --save-board` and exported F.Cu/B.Cu SVGs: fills correct, 2 mm bare gap between islands, slots between host strip and islands, thermal reliefs on every ground pad.
-- DRC: 0 clearance / isolation / edge / courtyard. **5 `starved_thermal` errors** on host GND, F.Cu: isolator pin 2 (GND1) on U102/U202/U302/U402 and C105 pin 2 — decoupling cap sits tight above the pin so only one spoke fits. Expect the GND tie track to clear it; otherwise set those five pads to solid zone connection. 80 silk warnings deferred, 137 unconnected (nothing routed).
-- Fill polygons are saved in the board file after a final B + Ctrl+S; Claude still refills a scratch copy before checking.
+**Last (8 Oct 2026, layout session 3):** All four islands routed, DRC clean on copper.
+- Jason drew every island track in the GUI from Claude's pad-by-pad order; Claude checked each save with `kicad-cli pcb drc --refill-zones` on a scratch copy plus F.Cu/B.Cu renders. Channels 2–4 verified as exact +22 mm copies of channel 1 (pad positions compared by script), so the same order was reused.
+- Per island: SCK/CS/MISO straight verticals; CS pull-up stub 2 vias under SCK; +3V3 feed to R_02 2 vias under the three verticals; U_03 pin 2 → tab linked on B.Cu with 2 vias under the 0.4 mm +5V_ISO run (KiCad does list same-numbered pads as unconnected); T+/T− cross once above the terminal with 2 vias (J pin 1 is the right-hand diode net); each TVS pad 1 (GND) sits between ferrite and TVS pad 2 so the signal detours around the diode. 8 vias per island, 32 total.
+- Pre-defined track widths 0.4 and 0.25 added in Board Setup (`.kicad_pro`); existing +5V_ISO runs widened with Edit → Edit Track & Via Properties filtered by net.
+- Result: 0 clearance / isolation / edge / courtyard errors, no island pad unconnected, unconnected 137 → 37 (all host side). The 5 host starved-thermal errors remain for the host pass.
+- Host-side pad data gathered (J1 1×10 header at Y 52.5 X 84–106.86, U1 SN74AHC125 at (64, 54.7), C1/C2/C3, C_05 ×4, isolator host pads at Y 61.85, DC-DC +5V/GND at X 71.5+22k); bus plan not yet written.
 
 **Next:**
-1. **Start here: route channel 1 island** (Claude gives pad-to-pad order; plan: SCK/CS/MISO straight verticals, CS pull-up stub needs 2 vias across SCK, R102 3V3 feed needs 2 vias, one via for the T+/T− crossing at the terminal, +5V_ISO 0.4 mm). Then channels 2–4 the same, then host: verticals on F.Cu, ten horizontal buses on B.Cu lanes Y 55.5–60.0 (+5V, +3V3, SCK, MISO2–4, CS1–4), vias at SMD ends.
+1. **Start here: host-side routing.** Claude writes the order from the gathered pads: 37 connections — +5V (J1.2, C1, C2, PS_01 pin 1 ×4), +3V3 (J1.3, C3, U1.14, C_05 ×4, isolator pin 1 ×4), SCK (J1.4, isolator pin 3 ×4), MISO/MISO1–4/CS1–4 through U1 buffer to isolator pins 4/5 and J1.5–9, BTN (J1.10 → J2.1). Plan: short verticals on F.Cu, horizontal buses on B.Cu lanes Y 55.5–60.0, vias at the SMD ends; GND tie tracks to clear the 5 starved thermals (else set those pads to solid connection).
 2. Silk tidy, full DRC, `/pcb-review-engineer`, order from JLCPCB.
 3. When the T-Display-S3 arrives, bench-test USB serial with Artisan on the Pi (not a blocker).
 
@@ -33,7 +34,7 @@
 2. ~~Choose controller + display~~ ✓ T-Display-S3
 3. ~~Order isolation parts, T-Display-S3 and panel buttons~~ ✓
 4. ~~4-channel schematic, ERC clean~~ ✓ 7 Oct 2026
-5. PCB layout: ~~placement, slots, holes, ground zones~~ ✓ 8 Oct 2026 → routing **next**, review, order from JLCPCB
+5. PCB layout: ~~placement, slots, holes, ground zones, island routing~~ ✓ 8 Oct 2026 → host routing **next**, silk, review, order from JLCPCB
 6. Hand-assemble the board
 7. Port firmware to ESP32-S3: 3 channels, display pages, page button, TC4 protocol
 8. Design and print the enclosure
@@ -42,7 +43,7 @@
 11. Mount probes in roaster, first test roast with Artisan
 
 ## Key Files
-- `kicad/tc-board-4ch/tc-board-4ch.kicad_pcb` — the board, placed, zones in, unrouted; `.kicad_dru` — isolation DRC rules; `.kicad_pro` — net classes
+- `kicad/tc-board-4ch/tc-board-4ch.kicad_pcb` — the board, placed, zones in, islands routed, host unrouted; `.kicad_dru` — isolation DRC rules; `.kicad_pro` — net classes
 - `kicad/tc-board-4ch/tc-board-4ch.kicad_sch` + `channel.kicad_sch` — schematic, ERC clean
 - `kicad/libs/milk-depot.kicad_sym` — custom symbols; `milk-depot.pretty/` — DG127 footprint
 - `docs/2026-09-30-tc-board-design-notes.md` — design rules, pinouts, order, footprint check, chassis decision

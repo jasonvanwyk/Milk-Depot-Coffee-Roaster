@@ -1,5 +1,13 @@
 # Sessions 2026
 
+## 8 October 2026 — layout session 2: ground zones in, fills verified, DRC clean on copper
+
+**Last (8 Oct 2026, layout session 2):** Ground zones drawn, filled and checked.
+- Jason drew five multi-layer zones (F.Cu + B.Cu, clearance 0.3, min width 0.25, thermal reliefs, remove islands Always): `GND` (50.5,50.5)–(145.5,65) and `/CHn/GND_ISO` (55+22k, 68)–(75+22k, 115.5). Grid 0.5 mm, corners clicked from the status bar.
+- Claude refilled a scratch copy with `kicad-cli pcb drc --refill-zones --save-board` and exported F.Cu/B.Cu SVGs: fills correct, 2 mm bare gap between islands, slots between host strip and islands, thermal reliefs on every ground pad.
+- DRC: 0 clearance / isolation / edge / courtyard. **5 `starved_thermal` errors** on host GND, F.Cu: isolator pin 2 (GND1) on U102/U202/U302/U402 and C105 pin 2 — decoupling cap sits tight above the pin so only one spoke fits. Expect the GND tie track to clear it; otherwise set those five pads to solid zone connection. 80 silk warnings deferred, 137 unconnected (nothing routed).
+- Fill polygons are saved in the board file after a final B + Ctrl+S; Claude still refills a scratch copy before checking.
+
 ## 8 October 2026 — layout session 1: board set up, all parts placed, slots and holes in
 
 **Last (8 Oct 2026, layout session 1):** Board set up and every part placed in `kicad/tc-board-4ch/tc-board-4ch.kicad_pcb`.
