@@ -1,0 +1,31 @@
+(version 1)
+
+# Isolation gaps for the 4-channel thermocouple board.
+# Needs net classes ISO1..ISO4 assigned in Board Setup > Net Classes
+# (patterns /CH1/*, Net-(D1*, Net-(U1*  and so on per channel).
+# Host nets stay in Default.
+#
+# Copper of one island must sit at least 2 mm from copper of another
+# island or of the host side. 1 kV functional barrier; the physical slot
+# adds creepage on top of this. Unconnected pins (ISO7731 NC/EN) are
+# excluded: they sit inside their own side and have no class.
+
+(rule island_gap_1
+	(condition "A.hasNetclass('ISO1') && !B.hasNetclass('ISO1') && !(B.NetName == 'unconnected-*')")
+	(constraint clearance (min 2.0mm)))
+(rule island_gap_2
+	(condition "A.hasNetclass('ISO2') && !B.hasNetclass('ISO2') && !(B.NetName == 'unconnected-*')")
+	(constraint clearance (min 2.0mm)))
+(rule island_gap_3
+	(condition "A.hasNetclass('ISO3') && !B.hasNetclass('ISO3') && !(B.NetName == 'unconnected-*')")
+	(constraint clearance (min 2.0mm)))
+(rule island_gap_4
+	(condition "A.hasNetclass('ISO4') && !B.hasNetclass('ISO4') && !(B.NetName == 'unconnected-*')")
+	(constraint clearance (min 2.0mm)))
+
+# Fab floor: copper 0.5 mm back from every edge including the isolation
+# slots, and JLCPCB 2-layer minimums.
+(rule fab_floor
+	(constraint edge_clearance (min 0.5mm))
+	(constraint track_width (min 0.2mm))
+	(constraint hole_to_hole (min 0.5mm)))

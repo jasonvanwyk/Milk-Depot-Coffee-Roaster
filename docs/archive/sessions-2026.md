@@ -1,5 +1,12 @@
 # Sessions 2026
 
+## 7 October 2026 — pre-layout session: footprint check and chassis decision
+
+**Last (7 Oct 2026, pre-layout session):** Footprint check and the chassis-network decision, both recorded in `docs/2026-09-30-tc-board-design-notes.md`.
+- DC-DC on the Traco TMA footprint confirmed against the RFB-0505S drawing (pads 0/2.54/7.62/12.7 mm, 1.0 mm drill). JST PH button connector and 1×10 host header pass. Tantalum, TVS, ferrite footprints match ordered MPNs.
+- Screw terminals: Phoenix MSTBA outline was 12 mm deep vs the real DG127 8.1 mm. Claude generated `milk-depot:Degson_DG127-5.08-02P_1x02_P5.08mm_Horizontal` (true outline, box 3D model in `kicad/libs/milk-depot.3dshapes/`); Jason assigned it to J101 in KiCad, all four channels follow. ERC still 0 violations.
+- **Chassis network left out.** Grounded-junction probes already reference each island to the roaster body; the jumper could never be closed. Mounting holes are plain. Caveat recorded: insulated-junction probes in a future revision would want the 1 MΩ + 10 nF bleed network (parts on hand).
+
 ## 7 October 2026 — schematic session 2: 4-channel board ERC-clean
 
 **Last (7 Oct 2026, schematic session 2):** Finished the schematic. Jason drew, Claude checked each step by exporting the netlist with `kicad-cli` and running ERC.

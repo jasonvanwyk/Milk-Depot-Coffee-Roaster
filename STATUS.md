@@ -1,6 +1,6 @@
 # Project Status - Milk Depot Coffee Roaster
 
-**Last Updated:** 2026-10-07
+**Last Updated:** 2026-10-08
 **Quote Ref:** PO P00041 (thermocouples)
 **Status:** Development
 **Payment Terms:** Invoice on delivery (GPA Trading)
@@ -9,7 +9,7 @@
 
 ## Current Phase: Development
 
-**DIRECTION RESET (30 September 2026).** Controller and display: LilyGO T-Display-S3. Thermocouple front end: one custom 4-channel board (3 fitted), each channel galvanically isolated, because the probes are grounded-junction. Everything in one custom 3D-printed enclosure. The Pi + HMI running Artisan is unchanged. The Nano/stripboard plan, the 20×4 LCD and the full-system ESP32 PCB are dropped. Isolation parts ordered and paid (DigiKey, 30 September 2026). T-Display-S3 and panel buttons ordered and paid (AliExpress, 30 September and 2 October 2026). Schematic drawn 2–7 October 2026 in `kicad/tc-board-4ch/` and ERC-clean on 7 October 2026; footprints checked and chassis network dropped the same day; PCB layout is next. Design notes: `docs/2026-09-30-tc-board-design-notes.md`.
+**DIRECTION RESET (30 September 2026).** Controller and display: LilyGO T-Display-S3. Thermocouple front end: one custom 4-channel board (3 fitted), each channel galvanically isolated, because the probes are grounded-junction. Everything in one custom 3D-printed enclosure. The Pi + HMI running Artisan is unchanged. The Nano/stripboard plan, the 20×4 LCD and the full-system ESP32 PCB are dropped. Isolation parts ordered and paid (DigiKey, 30 September 2026). T-Display-S3 and panel buttons ordered and paid (AliExpress, 30 September and 2 October 2026). Schematic drawn 2–7 October 2026 in `kicad/tc-board-4ch/` and ERC-clean on 7 October 2026; footprints checked and chassis network dropped the same day. PCB layout started 8 October 2026: board setup, custom isolation DRC rules, all 82 parts placed, eight isolation slots and four mounting holes in, DRC clean on copper; ground zones and routing are next. Design notes: `docs/2026-09-30-tc-board-design-notes.md`.
 
 ---
 
@@ -58,11 +58,13 @@
 | BSS138 sourced from Mantech | 2026-03-30 | Stock 35M3468, R1.20 each (ON Semi, SOT-23) |
 | 4-channel board schematic | 2026-10-07 | `kicad/tc-board-4ch/`, root + channel sheet ×4, ERC 0 violations |
 | Footprint check + chassis decision | 2026-10-07 | DG127 footprint added to `kicad/libs/milk-depot.pretty/`; chassis network left out (grounded probes) |
+| PCB placement, slots, holes | 2026-10-08 | 96 × 66 mm 2-layer, 82 parts placed by script, isolation DRC rules, 0 copper violations |
 
-### Session Completed Items (7 Oct 2026 — pre-layout session)
-- [x] ~~Footprint check: RFB-0505S on Traco TMA footprint, JST PH button, 1×10 header, tantalum, TVS, ferrite all pass~~
-- [x] ~~Generated true-outline DG127 screw-terminal footprint + box 3D model in the project library; assigned to J101–J401, ERC still clean~~
-- [x] ~~Chassis network decided: left out, caveat for insulated probes recorded in design notes~~
+### Session Completed Items (8 Oct 2026 — layout session 1)
+- [x] ~~Board setup: stack-up, constraints, net classes ISO1–ISO4 with wildcard patterns, custom `.kicad_dru` isolation rules (2 mm island gap), syntax clean~~
+- [x] ~~Outline 96 × 66 mm; all 82 footprints placed by script (channel strip repeated at 22 mm pitch); DC-DC footprint offset and TVS/terminal courtyard touch fixed~~
+- [x] ~~Eight isolation slots (1.6 mm) and four M3 mounting holes placed via Create Array; DRC 0 clearance/courtyard/edge violations~~
+- [x] ~~J1 decided: keep 2.54 mm 1×10 header, Dupont ribbon to the T-Display-S3~~
 
 Older sessions: `docs/archive/SESSION-INDEX.md`.
 
@@ -78,10 +80,11 @@ Older sessions: `docs/archive/SESSION-INDEX.md`.
 | T-Display-S3 order (AliExpress) | ORDERED + PAID | 30 Sep 2026. 1× non-touch, unsoldered pins, LilyGO Official Store, ref 3076608492140357, R373.98 incl. shipping. Awaiting delivery |
 | Panel buttons order (AliExpress) | ORDERED + PAID | 2 Oct 2026. 10× 16 mm flat-head momentary 1NO, no LED, pre-wired, DIANQI Electric Official Store, ref 3076815630860357, R329.00. Estimated delivery 28 Oct 2026 |
 | Spare RFB-0505S | BOUGHT | Supplier and quantity not recorded |
-| Buy remaining parts | TODO | Board-to-display connector (choose at layout); optional second T-Display-S3 |
+| Buy remaining parts | TODO | Optional second T-Display-S3. Display cable: 10-way Dupont ribbon, no purchase needed |
 | Bench-test T-Display-S3 USB with Artisan | TODO | Not a blocker; firmware fix and UART fallback known |
 | Footprint check before layout | DONE | 7 Oct 2026. DG127 custom footprint; chassis network left out |
-| PCB layout | NEXT | Isolation slot and separate ground zone per channel; DG127 pin row 4.2 mm from edge; choose display cable, update J1; review before fab |
+| PCB placement, slots, holes | DONE | 8 Oct 2026. 96 × 66 mm, DRC clean on copper, silk tidy pending |
+| PCB routing | NEXT | Ground zones first (host + 4 islands, both layers), then channel 1 island, channels 2–4, host buses on B.Cu; silk tidy; review before fab |
 | Order PCBs | TODO | JLCPCB |
 | Hand-assemble the board | TODO | SOIC-8 MAX31855, SOIC-16W isolators, 0805 passives |
 | Port firmware to ESP32-S3 | TODO | 3 channels, TFT pages, page button, TC4 protocol |
