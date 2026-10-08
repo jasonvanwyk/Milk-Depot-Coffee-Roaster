@@ -1,5 +1,14 @@
 # Sessions 2026
 
+## 8 October 2026 — layout session 3: all four islands routed, DRC clean on copper
+
+**Last (8 Oct 2026, layout session 3):** All four islands routed, DRC clean on copper.
+- Jason drew every island track in the GUI from Claude's pad-by-pad order; Claude checked each save with `kicad-cli pcb drc --refill-zones` on a scratch copy plus F.Cu/B.Cu renders. Channels 2–4 verified as exact +22 mm copies of channel 1 (pad positions compared by script), so the same order was reused.
+- Per island: SCK/CS/MISO straight verticals; CS pull-up stub 2 vias under SCK; +3V3 feed to R_02 2 vias under the three verticals; U_03 pin 2 → tab linked on B.Cu with 2 vias under the 0.4 mm +5V_ISO run (KiCad does list same-numbered pads as unconnected); T+/T− cross once above the terminal with 2 vias (J pin 1 is the right-hand diode net); each TVS pad 1 (GND) sits between ferrite and TVS pad 2 so the signal detours around the diode. 8 vias per island, 32 total.
+- Pre-defined track widths 0.4 and 0.25 added in Board Setup (`.kicad_pro`); existing +5V_ISO runs widened with Edit → Edit Track & Via Properties filtered by net.
+- Result: 0 clearance / isolation / edge / courtyard errors, no island pad unconnected, unconnected 137 → 37 (all host side). The 5 host starved-thermal errors remain for the host pass.
+- Host-side pad data gathered (J1 1×10 header at Y 52.5 X 84–106.86, U1 SN74AHC125 at (64, 54.7), C1/C2/C3, C_05 ×4, isolator host pads at Y 61.85, DC-DC +5V/GND at X 71.5+22k); bus plan not yet written.
+
 ## 8 October 2026 — layout session 2: ground zones in, fills verified, DRC clean on copper
 
 **Last (8 Oct 2026, layout session 2):** Ground zones drawn, filled and checked.

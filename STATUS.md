@@ -9,7 +9,7 @@
 
 ## Current Phase: Development
 
-**DIRECTION RESET (30 September 2026).** Controller and display: LilyGO T-Display-S3. Thermocouple front end: one custom 4-channel board (3 fitted), each channel galvanically isolated, because the probes are grounded-junction. Everything in one custom 3D-printed enclosure. The Pi + HMI running Artisan is unchanged. The Nano/stripboard plan, the 20×4 LCD and the full-system ESP32 PCB are dropped. Isolation parts ordered and paid (DigiKey, 30 September 2026). T-Display-S3 and panel buttons ordered and paid (AliExpress, 30 September and 2 October 2026). Schematic drawn 2–7 October 2026 in `kicad/tc-board-4ch/` and ERC-clean on 7 October 2026; footprints checked and chassis network dropped the same day. PCB layout started 8 October 2026: board setup, custom isolation DRC rules, all 82 parts placed, eight isolation slots and four mounting holes in, five ground zones (host + 4 islands, both layers) filled, DRC clean on copper; routing is next. Design notes: `docs/2026-09-30-tc-board-design-notes.md`.
+**DIRECTION RESET (30 September 2026).** Controller and display: LilyGO T-Display-S3. Thermocouple front end: one custom 4-channel board (3 fitted), each channel galvanically isolated, because the probes are grounded-junction. Everything in one custom 3D-printed enclosure. The Pi + HMI running Artisan is unchanged. The Nano/stripboard plan, the 20×4 LCD and the full-system ESP32 PCB are dropped. Isolation parts ordered and paid (DigiKey, 30 September 2026). T-Display-S3 and panel buttons ordered and paid (AliExpress, 30 September and 2 October 2026). Schematic drawn 2–7 October 2026 in `kicad/tc-board-4ch/` and ERC-clean on 7 October 2026; footprints checked and chassis network dropped the same day. PCB layout started 8 October 2026: board setup, custom isolation DRC rules, all 82 parts placed, eight isolation slots and four mounting holes in, five ground zones (host + 4 islands, both layers) filled, DRC clean on copper; islands routed; host routing plan written and verified, to be applied. Design notes: `docs/2026-09-30-tc-board-design-notes.md`.
 
 ---
 
@@ -61,12 +61,13 @@
 | PCB placement, slots, holes | 2026-10-08 | 96 × 66 mm 2-layer, 82 parts placed by script, isolation DRC rules, 0 copper violations |
 | Ground zones | 2026-10-08 | Host GND + 4 GND_ISO islands, both layers, fills verified by SVG, 0 isolation violations |
 | Island routing | 2026-10-08 | All 4 islands routed in the GUI, 8 vias each, +5V_ISO 0.4 mm, 0 copper violations, unconnected 137 → 37 (host only) |
+| Host routing plan | 2026-10-08 | `kicad/tc-board-4ch/host-routing.py` + `docs/2026-10-08-host-routing-plan.md`; 5 part moves, 75 tracks, 37 vias; DRC-clean on scratch copy, 0 unconnected. Not yet applied to the real board |
 
-### Session Completed Items (8 Oct 2026 — layout session 3)
-- [x] ~~Channel 1 island routed pad by pad: SPI verticals, CS and 3V3 stubs under on B.Cu, regulator tab link, 0.4 mm +5V_ISO, TC filter chains with the terminal crossing~~
-- [x] ~~Channels 2–4 routed from the same order (verified +22 mm copies); every save DRC-checked and rendered from a scratch copy~~
-- [x] ~~Pre-defined track widths 0.4 / 0.25 added to Board Setup; +5V_ISO runs set to 0.4 mm via Edit Track & Via Properties~~
-- [x] ~~Host-side pad positions and the 37 remaining connections extracted for the bus plan~~
+### Session Completed Items (8 Oct 2026 — layout session 4)
+- [x] ~~Host-side pad table, lanes and constraints extracted by script from the board file~~
+- [x] ~~Host routing generator written: part moves (U1, C3, C1, C2, J2), 11 B.Cu lanes, F.Cu drops, GND ties; verified with kicad-cli DRC on a scratch copy — 0 copper errors, 0 unconnected~~
+- [x] ~~Per-net step list and move table documented in `docs/2026-10-08-host-routing-plan.md`~~
+- [ ] Apply the plan to the real board (GUI or script — Jason to choose)
 
 Older sessions: `docs/archive/SESSION-INDEX.md`.
 
@@ -88,7 +89,7 @@ Older sessions: `docs/archive/SESSION-INDEX.md`.
 | PCB placement, slots, holes | DONE | 8 Oct 2026. 96 × 66 mm, DRC clean on copper, silk tidy pending |
 | Ground zones | DONE | 8 Oct 2026. Host + 4 islands, both layers, fills verified; 5 starved-thermal errors to clear in routing |
 | Island routing | DONE | 8 Oct 2026. 4 islands, 32 vias, DRC clean on copper |
-| Host routing | NEXT | +5V, +3V3, SCK, MISO/CS through U1 buffer, BTN; B.Cu buses Y 55.5–60; clear 5 starved thermals; silk tidy; review before fab |
+| Host routing | PLANNED | Plan DRC-clean on scratch copy (8 Oct 2026); apply to real board next, then silk tidy and review before fab |
 | Order PCBs | TODO | JLCPCB |
 | Hand-assemble the board | TODO | SOIC-8 MAX31855, SOIC-16W isolators, 0805 passives |
 | Port firmware to ESP32-S3 | TODO | 3 channels, TFT pages, page button, TC4 protocol |
