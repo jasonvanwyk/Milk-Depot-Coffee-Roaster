@@ -11,7 +11,7 @@
 - Host-side pad data gathered (J1 1×10 header at Y 52.5 X 84–106.86, U1 SN74AHC125 at (64, 54.7), C1/C2/C3, C_05 ×4, isolator host pads at Y 61.85, DC-DC +5V/GND at X 71.5+22k); bus plan not yet written.
 
 **Next:**
-1. **Start here: host-side routing.** Claude writes the order from the gathered pads: 37 connections — +5V (J1.2, C1, C2, PS_01 pin 1 ×4), +3V3 (J1.3, C3, U1.14, C_05 ×4, isolator pin 1 ×4), SCK (J1.4, isolator pin 3 ×4), MISO/MISO1–4/CS1–4 through U1 buffer to isolator pins 4/5 and J1.5–9, BTN (J1.10 → J2.1). Plan: short verticals on F.Cu, horizontal buses on B.Cu lanes Y 55.5–60.0, vias at the SMD ends; GND tie tracks to clear the 5 starved thermals (else set those pads to solid connection).
+1. **Start here: host-side routing.** Claude writes the order from the gathered pads: 37 connections — +5V (J1.2, C1, C2, PS_01 pin 1 ×4), +3V3 (J1.3, C3, U1.14, C_05 ×4, isolator pin 1 ×4), SCK (J1.4, isolator pin 3 ×4), MISO/MISO1–4/CS1–4 through U1 buffer to isolator pins 4/5 and J1.5–9, BTN (J1.10 → J2.1). Plan: short verticals on F.Cu, horizontal buses on B.Cu lanes Y 55.5–60.0, vias at the SMD ends; GND tie tracks to clear the 5 starved thermals (else set those pads to solid connection). **Method:** write a scratchpad script that checks each bus lane and via position against the pad table and prints the order, then hand it to Jason one net at a time. Do not work the geometry out in reasoning — that stalled silently for 20 min at the end of session 3 and nothing survived.
 2. Silk tidy, full DRC, `/pcb-review-engineer`, order from JLCPCB.
 3. When the T-Display-S3 arrives, bench-test USB serial with Artisan on the Pi (not a blocker).
 
