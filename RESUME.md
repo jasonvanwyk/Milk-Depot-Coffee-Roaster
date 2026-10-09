@@ -1,18 +1,16 @@
 # Project Resume
 
 ## Right Now
-**Phase:** Development — 4-channel isolated thermocouple board: islands routed; host-side routing plan written and DRC-clean on a scratch copy, waiting to be applied to the real board. LilyGO T-Display-S3 is the controller + display.
+**Phase:** Development — 4-channel isolated thermocouple board: fully routed (islands + host), 0 unconnected, DRC and independent audits clean; silk tidy and review next. LilyGO T-Display-S3 is the controller + display.
 
-**Last (8 Oct 2026, layout session 4):** Host-side routing plan generated and verified, not yet applied.
-- Claude wrote `kicad/tc-board-4ch/host-routing.py`: it moves five parts, injects 75 tracks + 37 vias for all 37 remaining connections into a scratch copy, and runs `kicad-cli pcb drc --refill-zones`. Result: **0 clearance / shorting / starved-thermal errors, 0 unconnected** (was 37). Only silk + library warnings remain.
-- Five parts must move (U1 sat over C105 so its bottom-row drops had no exit; C1/C2 blocked the corridor to channel 2): U1 → (77.5, 54.7, 90), C3 → (71.7, 54.7, 90), C1 → (96.3, 62.5, -90), C2 → (118.5, 62.5, -90), J2 → (112, 52.5, 0).
-- Scheme: F.Cu verticals pad → via; eleven B.Cu lanes y 53.75–60.4 at 0.63 mm pitch, one net per lane (two lanes shared end-to-end). +5V reaches each DC-DC pin by a B.Cu stub, no via. GND: U_02.2 → C_05.2 tie per channel plus a stub under U1.7 clear all five starved thermals.
-- Full move table, lane table and per-net step list: `docs/2026-10-08-host-routing-plan.md`.
-- Session ended early to keep the context under 200k tokens; **Jason has not yet chosen how to apply the plan.**
-
+**Last (8 Oct 2026, layout session 5):** Host routing applied to the real board and verified beyond DRC.
+- Jason closed the PCB editor; Claude ran `host-routing.py` on the real board (backup in the scratchpad first), then saved refilled zones into the file. All 14 host nets match the plan to 1 µm.
+- DRC on the real board: **0 unconnected (was 37), 0 copper errors (5 starved thermals gone)**. 85 silk warnings + 4 harmless library-path warnings remain.
+- Thorough check beyond DRC: schematic netlist vs board = 276/276 pins agree; net classes = 40 island nets in exactly one ISO class, 34 Default; island rules proven to fire on both layers by planted tracks; zone fills recede 2.00 mm from foreign-class copper; measured gaps 2.0 mm island↔island, 3.0 mm island↔host; +5V/+3V3 at 0.25 mm are fine for <100 mA total.
+- **Found a kicad-cli DRC blind spot (KiCad 10.0.6):** a track lying inside or crossing a pad of another net reports nothing, with any flags. Written two independent audits that do catch it: `kicad/tc-board-4ch/geom-audit.py` (pad/track/via pairs, 0.2 mm same class, 2 mm across classes) and `zone-audit.py` (zone-fill boundary vs foreign-class items). Both validated with planted defects; both report 0 violations on the real board. Run as `python3 -I geom-audit.py tc-board-4ch.kicad_pcb tc-board-4ch.kicad_pro`.
 **Next:**
-1. **Start here: ask Jason which way to apply the host routing.** (a) He draws it in the GUI from the step list and Claude checks each save, or (b) Claude runs `host-routing.py` on the real board with KiCad closed (no `~*.lck` files) and a backup in the scratchpad — the output is exactly the file that passed DRC, so (b) is lower risk. Either way, finish with a DRC on the real board and F/B renders.
-2. Silk tidy (~85 silk warnings, more after the moves), full DRC, `/pcb-review-engineer`, order from JLCPCB.
+1. **Start here:** Jason opens the board, eyeballs the host strip, runs DRC in the GUI once (GUI engine may differ from kicad-cli on pad overlaps). Then silk tidy: 37 overlaps, 39 refs over copper (C_01/C_03/C_05, U_03, U1, J1), 9 silk items within 0.5 mm of slots (J_01 and PS_01 outlines, J2 label).
+2. `/pcb-review-engineer`, then order from JLCPCB. Re-run `geom-audit.py` + `zone-audit.py` after any copper edit.
 3. When the T-Display-S3 arrives, bench-test USB serial with Artisan on the Pi (not a blocker).
 
 **Blocked:** Nothing. DigiKey and two AliExpress deliveries still in transit (buttons due ~28 Oct 2026).
@@ -34,7 +32,7 @@
 2. ~~Choose controller + display~~ ✓ T-Display-S3
 3. ~~Order isolation parts, T-Display-S3 and panel buttons~~ ✓
 4. ~~4-channel schematic, ERC clean~~ ✓ 7 Oct 2026
-5. PCB layout: ~~placement, slots, holes, ground zones, island routing~~ ✓ 8 Oct 2026 → host routing **planned, apply next**, silk, review, order from JLCPCB
+5. PCB layout: ~~placement, slots, holes, ground zones, island routing, host routing~~ ✓ 8 Oct 2026 → silk tidy, review, order from JLCPCB
 6. Hand-assemble the board
 7. Port firmware to ESP32-S3: 3 channels, display pages, page button, TC4 protocol
 8. Design and print the enclosure
@@ -43,9 +41,10 @@
 11. Mount probes in roaster, first test roast with Artisan
 
 ## Key Files
-- `kicad/tc-board-4ch/tc-board-4ch.kicad_pcb` — the board, islands routed, host unrouted; `.kicad_dru` — isolation DRC rules; `.kicad_pro` — net classes
+- `kicad/tc-board-4ch/tc-board-4ch.kicad_pcb` — the board, fully routed, 0 unconnected; `.kicad_dru` — isolation DRC rules; `.kicad_pro` — net classes
 - `kicad/tc-board-4ch/host-routing.py` — host routing generator (moves + tracks + vias), run as `python3 -I host-routing.py in.kicad_pcb out.kicad_pcb`
-- `docs/2026-10-08-host-routing-plan.md` — move table, lane table, per-net step list
+- `docs/2026-10-08-host-routing-plan.md` — move table, lane table, per-net step list (applied 8 Oct 2026)
+- `kicad/tc-board-4ch/geom-audit.py`, `zone-audit.py` — independent clearance audits covering the kicad-cli pad-overlap blind spot; run after any copper edit
 - `kicad/tc-board-4ch/tc-board-4ch.kicad_sch` + `channel.kicad_sch` — schematic, ERC clean
 - `kicad/libs/milk-depot.kicad_sym` — custom symbols; `milk-depot.pretty/` — DG127 footprint
 - `docs/2026-09-30-tc-board-design-notes.md` — design rules, pinouts, order, footprint check, chassis decision

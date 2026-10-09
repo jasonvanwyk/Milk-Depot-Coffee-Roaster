@@ -1,5 +1,15 @@
 # Sessions 2026
 
+## 8 October 2026 — layout session 4: host routing plan generated and DRC-clean on a scratch copy
+
+**Last (8 Oct 2026, layout session 4):** Host-side routing plan generated and verified, not yet applied.
+- Claude wrote `kicad/tc-board-4ch/host-routing.py`: it moves five parts, injects 75 tracks + 37 vias for all 37 remaining connections into a scratch copy, and runs `kicad-cli pcb drc --refill-zones`. Result: **0 clearance / shorting / starved-thermal errors, 0 unconnected** (was 37). Only silk + library warnings remain.
+- Five parts must move (U1 sat over C105 so its bottom-row drops had no exit; C1/C2 blocked the corridor to channel 2): U1 → (77.5, 54.7, 90), C3 → (71.7, 54.7, 90), C1 → (96.3, 62.5, -90), C2 → (118.5, 62.5, -90), J2 → (112, 52.5, 0).
+- Scheme: F.Cu verticals pad → via; eleven B.Cu lanes y 53.75–60.4 at 0.63 mm pitch, one net per lane (two lanes shared end-to-end). +5V reaches each DC-DC pin by a B.Cu stub, no via. GND: U_02.2 → C_05.2 tie per channel plus a stub under U1.7 clear all five starved thermals.
+- Full move table, lane table and per-net step list: `docs/2026-10-08-host-routing-plan.md`.
+- Session ended early to keep the context under 200k tokens; **Jason has not yet chosen how to apply the plan.**
+
+
 ## 8 October 2026 — layout session 3: all four islands routed, DRC clean on copper
 
 **Last (8 Oct 2026, layout session 3):** All four islands routed, DRC clean on copper.

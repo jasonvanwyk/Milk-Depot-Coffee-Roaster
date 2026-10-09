@@ -1,6 +1,6 @@
 # Project Status - Milk Depot Coffee Roaster
 
-**Last Updated:** 2026-10-08
+**Last Updated:** 2026-10-09
 **Quote Ref:** PO P00041 (thermocouples)
 **Status:** Development
 **Payment Terms:** Invoice on delivery (GPA Trading)
@@ -9,7 +9,7 @@
 
 ## Current Phase: Development
 
-**DIRECTION RESET (30 September 2026).** Controller and display: LilyGO T-Display-S3. Thermocouple front end: one custom 4-channel board (3 fitted), each channel galvanically isolated, because the probes are grounded-junction. Everything in one custom 3D-printed enclosure. The Pi + HMI running Artisan is unchanged. The Nano/stripboard plan, the 20×4 LCD and the full-system ESP32 PCB are dropped. Isolation parts ordered and paid (DigiKey, 30 September 2026). T-Display-S3 and panel buttons ordered and paid (AliExpress, 30 September and 2 October 2026). Schematic drawn 2–7 October 2026 in `kicad/tc-board-4ch/` and ERC-clean on 7 October 2026; footprints checked and chassis network dropped the same day. PCB layout started 8 October 2026: board setup, custom isolation DRC rules, all 82 parts placed, eight isolation slots and four mounting holes in, five ground zones (host + 4 islands, both layers) filled, DRC clean on copper; islands routed; host routing plan written and verified, to be applied. Design notes: `docs/2026-09-30-tc-board-design-notes.md`.
+**DIRECTION RESET (30 September 2026).** Controller and display: LilyGO T-Display-S3. Thermocouple front end: one custom 4-channel board (3 fitted), each channel galvanically isolated, because the probes are grounded-junction. Everything in one custom 3D-printed enclosure. The Pi + HMI running Artisan is unchanged. The Nano/stripboard plan, the 20×4 LCD and the full-system ESP32 PCB are dropped. Isolation parts ordered and paid (DigiKey, 30 September 2026). T-Display-S3 and panel buttons ordered and paid (AliExpress, 30 September and 2 October 2026). Schematic drawn 2–7 October 2026 in `kicad/tc-board-4ch/` and ERC-clean on 7 October 2026; footprints checked and chassis network dropped the same day. PCB layout started 8 October 2026: board setup, custom isolation DRC rules, all 82 parts placed, eight isolation slots and four mounting holes in, five ground zones (host + 4 islands, both layers) filled, DRC clean on copper; islands and host fully routed (0 unconnected), DRC and two independent clearance audits clean; silk tidy and review next. Design notes: `docs/2026-09-30-tc-board-design-notes.md`.
 
 ---
 
@@ -61,13 +61,16 @@
 | PCB placement, slots, holes | 2026-10-08 | 96 × 66 mm 2-layer, 82 parts placed by script, isolation DRC rules, 0 copper violations |
 | Ground zones | 2026-10-08 | Host GND + 4 GND_ISO islands, both layers, fills verified by SVG, 0 isolation violations |
 | Island routing | 2026-10-08 | All 4 islands routed in the GUI, 8 vias each, +5V_ISO 0.4 mm, 0 copper violations, unconnected 137 → 37 (host only) |
-| Host routing plan | 2026-10-08 | `kicad/tc-board-4ch/host-routing.py` + `docs/2026-10-08-host-routing-plan.md`; 5 part moves, 75 tracks, 37 vias; DRC-clean on scratch copy, 0 unconnected. Not yet applied to the real board |
+| Host routing plan | 2026-10-08 | `kicad/tc-board-4ch/host-routing.py` + `docs/2026-10-08-host-routing-plan.md`; 5 part moves, 75 tracks, 37 vias; DRC-clean on scratch copy |
+| Host routing applied + verified | 2026-10-08 | Script applied to the real board: 0 unconnected, 0 copper errors. Netlist 276/276, net classes clean, isolation rules proven by planted tracks, gaps 2.0/3.0 mm measured, `geom-audit.py` + `zone-audit.py` 0 violations |
 
-### Session Completed Items (8 Oct 2026 — layout session 4)
-- [x] ~~Host-side pad table, lanes and constraints extracted by script from the board file~~
-- [x] ~~Host routing generator written: part moves (U1, C3, C1, C2, J2), 11 B.Cu lanes, F.Cu drops, GND ties; verified with kicad-cli DRC on a scratch copy — 0 copper errors, 0 unconnected~~
-- [x] ~~Per-net step list and move table documented in `docs/2026-10-08-host-routing-plan.md`~~
-- [ ] Apply the plan to the real board (GUI or script — Jason to choose)
+### Session Completed Items (8 Oct 2026 — layout session 5)
+- [x] ~~Host routing applied to the real board by script (editor closed, backup taken), refilled zones saved~~
+- [x] ~~DRC on the real board: 0 unconnected, 0 copper errors; only silk + library-path warnings~~
+- [x] ~~Thorough verification: netlist parity, net classes, isolation-rule probes, zone recess, measured gaps, trace current~~
+- [x] ~~kicad-cli pad-overlap blind spot found and covered by `geom-audit.py` + `zone-audit.py` (validated with planted defects)~~
+- [ ] GUI DRC run, silk tidy (85 warnings)
+- [ ] `/pcb-review-engineer`, JLCPCB order
 
 Older sessions: `docs/archive/SESSION-INDEX.md`.
 

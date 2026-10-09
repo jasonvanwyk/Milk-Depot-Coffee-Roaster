@@ -6,6 +6,7 @@ needed. Current state lives in RESUME.md; the dashboard in STATUS.md.
 
 | Date | Headline | Archive |
 |------|----------|---------|
+| 2026-10-08 | Layout session 4: host routing generator written, 5 part moves + 75 tracks + 37 vias, DRC-clean on a scratch copy, not yet applied | sessions-2026.md |
 | 2026-10-08 | Layout session 3: all four islands routed in the GUI, 32 vias, DRC clean on copper, unconnected 137 → 37 | sessions-2026.md |
 | 2026-10-08 | Layout session 2: five ground zones drawn, fills verified by SVG, DRC clean on copper, 5 starved thermals noted | sessions-2026.md |
 | 2026-10-08 | Layout session 1: board setup, isolation DRC rules, 82 parts placed by script, slots and holes, DRC clean on copper | sessions-2026.md |
