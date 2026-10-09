@@ -68,7 +68,7 @@
 - [x] ~~Host routing applied to the real board by script (editor closed, backup taken), refilled zones saved~~
 - [x] ~~DRC on the real board: 0 unconnected, 0 copper errors; only silk + library-path warnings~~
 - [x] ~~Thorough verification: netlist parity, net classes, isolation-rule probes, zone recess, measured gaps, trace current~~
-- [x] ~~kicad-cli pad-overlap blind spot found and covered by `geom-audit.py` + `zone-audit.py` (validated with planted defects)~~
+- [x] ~~Suspected kicad-cli pad-overlap blind spot disproved (KiCad re-nets planted tracks); `geom-audit.py` + `zone-audit.py` kept as independent second opinion~~
 - [ ] GUI DRC run, silk tidy (85 warnings)
 - [ ] `/pcb-review-engineer`, JLCPCB order
 

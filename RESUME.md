@@ -7,9 +7,10 @@
 - Jason closed the PCB editor; Claude ran `host-routing.py` on the real board (backup in the scratchpad first), then saved refilled zones into the file. All 14 host nets match the plan to 1 µm.
 - DRC on the real board: **0 unconnected (was 37), 0 copper errors (5 starved thermals gone)**. 85 silk warnings + 4 harmless library-path warnings remain.
 - Thorough check beyond DRC: schematic netlist vs board = 276/276 pins agree; net classes = 40 island nets in exactly one ISO class, 34 Default; island rules proven to fire on both layers by planted tracks; zone fills recede 2.00 mm from foreign-class copper; measured gaps 2.0 mm island↔island, 3.0 mm island↔host; +5V/+3V3 at 0.25 mm are fine for <100 mA total.
-- **Found a kicad-cli DRC blind spot (KiCad 10.0.6):** a track lying inside or crossing a pad of another net reports nothing, with any flags. Written two independent audits that do catch it: `kicad/tc-board-4ch/geom-audit.py` (pad/track/via pairs, 0.2 mm same class, 2 mm across classes) and `zone-audit.py` (zone-fill boundary vs foreign-class items). Both validated with planted defects; both report 0 violations on the real board. Run as `python3 -I geom-audit.py tc-board-4ch.kicad_pcb tc-board-4ch.kicad_pro`.
+- **Suspected a kicad-cli DRC blind spot, then disproved it (9 Oct):** a planted track inside a foreign pad raised nothing only because KiCad re-nets a floating track from the pad it touches on load. A real drawn short (track from J1 pin 4 into pin 5) is caught: shorting_items + solder_mask_bridge + tracks_crossing. Kept `kicad/tc-board-4ch/geom-audit.py` and `zone-audit.py` as an independent second opinion (both 0 violations; validated with planted defects). Run as `python3 -I geom-audit.py tc-board-4ch.kicad_pcb tc-board-4ch.kicad_pro`.
+- KiCad 10.0.7 (7 Oct 2026) fixes two zone-fill short bugs; Arch still ships 10.0.6. Refill zones + DRC again when it lands.
 **Next:**
-1. **Start here:** Jason opens the board, eyeballs the host strip, runs DRC in the GUI once (GUI engine may differ from kicad-cli on pad overlaps). Then silk tidy: 37 overlaps, 39 refs over copper (C_01/C_03/C_05, U_03, U1, J1), 9 silk items within 0.5 mm of slots (J_01 and PS_01 outlines, J2 label).
+1. **Start here:** Jason opens the board, eyeballs the host strip, runs DRC in the GUI once. Then silk tidy: 37 overlaps, 39 refs over copper (C_01/C_03/C_05, U_03, U1, J1), 9 silk items within 0.5 mm of slots (J_01 and PS_01 outlines, J2 label).
 2. `/pcb-review-engineer`, then order from JLCPCB. Re-run `geom-audit.py` + `zone-audit.py` after any copper edit.
 3. When the T-Display-S3 arrives, bench-test USB serial with Artisan on the Pi (not a blocker).
 
@@ -44,7 +45,7 @@
 - `kicad/tc-board-4ch/tc-board-4ch.kicad_pcb` — the board, fully routed, 0 unconnected; `.kicad_dru` — isolation DRC rules; `.kicad_pro` — net classes
 - `kicad/tc-board-4ch/host-routing.py` — host routing generator (moves + tracks + vias), run as `python3 -I host-routing.py in.kicad_pcb out.kicad_pcb`
 - `docs/2026-10-08-host-routing-plan.md` — move table, lane table, per-net step list (applied 8 Oct 2026)
-- `kicad/tc-board-4ch/geom-audit.py`, `zone-audit.py` — independent clearance audits covering the kicad-cli pad-overlap blind spot; run after any copper edit
+- `kicad/tc-board-4ch/geom-audit.py`, `zone-audit.py` — independent clearance audits, second opinion to DRC; run after any copper edit
 - `kicad/tc-board-4ch/tc-board-4ch.kicad_sch` + `channel.kicad_sch` — schematic, ERC clean
 - `kicad/libs/milk-depot.kicad_sym` — custom symbols; `milk-depot.pretty/` — DG127 footprint
 - `docs/2026-09-30-tc-board-design-notes.md` — design rules, pinouts, order, footprint check, chassis decision
