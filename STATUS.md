@@ -64,11 +64,10 @@
 | Host routing plan | 2026-10-08 | `kicad/tc-board-4ch/host-routing.py` + `docs/2026-10-08-host-routing-plan.md`; 5 part moves, 75 tracks, 37 vias; DRC-clean on scratch copy |
 | Host routing applied + verified | 2026-10-08 | Script applied to the real board: 0 unconnected, 0 copper errors. Netlist 276/276, net classes clean, isolation rules proven by planted tracks, gaps 2.0/3.0 mm measured, `geom-audit.py` + `zone-audit.py` 0 violations |
 
-### Session Completed Items (8 Oct 2026 — layout session 5)
-- [x] ~~Host routing applied to the real board by script (editor closed, backup taken), refilled zones saved~~
-- [x] ~~DRC on the real board: 0 unconnected, 0 copper errors; only silk + library-path warnings~~
-- [x] ~~Thorough verification: netlist parity, net classes, isolation-rule probes, zone recess, measured gaps, trace current~~
-- [x] ~~Suspected kicad-cli pad-overlap blind spot disproved (KiCad re-nets planted tracks); `geom-audit.py` + `zone-audit.py` kept as independent second opinion~~
+### Session Completed Items (9 Oct 2026 — hot plate)
+- [x] ~~Hot plate research: requirements, SA sourcing, reflow process (`docs/research/2026-10-09-hot-plate-*.md`)~~
+- [x] ~~UYUE 946C 200 mm hot plate ordered from AliExpress, ref 3076880346740357, due 22 Oct 2026~~
+- [ ] Leaded Sn63/Pb37 paste, stencil with JLCPCB order, board thermometer
 - [ ] GUI DRC run, silk tidy (85 warnings)
 - [ ] `/pcb-review-engineer`, JLCPCB order
 

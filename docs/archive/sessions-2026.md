@@ -1,5 +1,14 @@
 # Sessions 2026
 
+## 8 October 2026 — layout session 5: host routing applied to the real board, verified beyond DRC
+
+**Last (8 Oct 2026, layout session 5):** Host routing applied to the real board and verified beyond DRC.
+- Jason closed the PCB editor; Claude ran `host-routing.py` on the real board (backup in the scratchpad first), then saved refilled zones into the file. All 14 host nets match the plan to 1 µm.
+- DRC on the real board: **0 unconnected (was 37), 0 copper errors (5 starved thermals gone)**. 85 silk warnings + 4 harmless library-path warnings remain.
+- Thorough check beyond DRC: schematic netlist vs board = 276/276 pins agree; net classes = 40 island nets in exactly one ISO class, 34 Default; island rules proven to fire on both layers by planted tracks; zone fills recede 2.00 mm from foreign-class copper; measured gaps 2.0 mm island↔island, 3.0 mm island↔host; +5V/+3V3 at 0.25 mm are fine for <100 mA total.
+- **Suspected a kicad-cli DRC blind spot, then disproved it (9 Oct):** a planted track inside a foreign pad raised nothing only because KiCad re-nets a floating track from the pad it touches on load. A real drawn short (track from J1 pin 4 into pin 5) is caught: shorting_items + solder_mask_bridge + tracks_crossing. Kept `kicad/tc-board-4ch/geom-audit.py` and `zone-audit.py` as an independent second opinion (both 0 violations; validated with planted defects). Run as `python3 -I geom-audit.py tc-board-4ch.kicad_pcb tc-board-4ch.kicad_pro`.
+- KiCad 10.0.7 (7 Oct 2026) fixes two zone-fill short bugs; Arch still ships 10.0.6. Refill zones + DRC again when it lands.
+
 ## 8 October 2026 — layout session 4: host routing plan generated and DRC-clean on a scratch copy
 
 **Last (8 Oct 2026, layout session 4):** Host-side routing plan generated and verified, not yet applied.
