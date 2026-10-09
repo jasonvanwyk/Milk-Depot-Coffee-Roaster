@@ -14,7 +14,7 @@
 2. `/pcb-review-engineer`, then order from JLCPCB. Re-run `geom-audit.py` + `zone-audit.py` after any copper edit.
 3. When the T-Display-S3 arrives, bench-test USB serial with Artisan on the Pi (not a blocker).
 
-**Blocked:** Nothing. DigiKey and two AliExpress deliveries still in transit (buttons due ~28 Oct 2026).
+**Blocked:** Nothing. DigiKey and three AliExpress deliveries still in transit (hot plate due ~22 Oct, buttons due ~28 Oct 2026).
 
 ## Quick Context
 - Client: Quenton (Milk Depot) — coffee roaster temperature monitoring
@@ -24,7 +24,7 @@
 - **How Claude checks:** copy board to scratchpad, `kicad-cli pcb drc --refill-zones --save-board --severity-all` and `kicad-cli pcb export svg` on the saved board; parse pad positions from the `.kicad_pcb`. Never edit the board while KiCad has it open; bulk edits only with the editor closed and a backup in the scratchpad. **For routing: generate geometry by script and let DRC judge it — never work clearances out in reasoning.**
 - **T-Display-S3:** 1.9" IPS, 6 clean spare pins + 5V pin, native USB. Glance display with pages cycled by a panel button.
 - **USB plan:** firmware in TinyUSB CDC mode with `enableReboot(false)`; fallback is UART0 through a USB-serial adapter.
-- **Orders in transit (all paid):** DigiKey isolation parts (30 Sep 2026); T-Display-S3, AliExpress ref 3076608492140357; panel buttons, AliExpress ref 3076815630860357, estimated 28 Oct 2026.
+- **Orders in transit (all paid):** DigiKey isolation parts (30 Sep 2026); T-Display-S3, AliExpress ref 3076608492140357; panel buttons, AliExpress ref 3076815630860357, estimated 28 Oct 2026; UYUE 946C hot plate (200 mm, 220 V), AliExpress ref 3076880346740357, R2,556.99, ordered 9 Oct 2026, estimated 22 Oct 2026. Use leaded Sn63/Pb37 paste + JLCPCB stencil (see `docs/research/2026-10-09-hot-plate-reflow-process.md`).
 - **No longer in the design:** Arduino Nano + stripboard, MD0074 20×4 LCD, BSS138 level shifters, full-system ESP32 PCB, `kicad/breakout-max31855/`.
 - RPi 4 via SSH at 10.0.10.102 (user: jason, key-based auth)
 

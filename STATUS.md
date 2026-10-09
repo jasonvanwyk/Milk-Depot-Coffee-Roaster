@@ -85,6 +85,7 @@ Older sessions: `docs/archive/SESSION-INDEX.md`.
 | Isolation parts order (DigiKey) | ORDERED + PAID | 30 Sep 2026. 9 lines, enough for 2 boards. Awaiting delivery |
 | T-Display-S3 order (AliExpress) | ORDERED + PAID | 30 Sep 2026. 1× non-touch, unsoldered pins, LilyGO Official Store, ref 3076608492140357, R373.98 incl. shipping. Awaiting delivery |
 | Panel buttons order (AliExpress) | ORDERED + PAID | 2 Oct 2026. 10× 16 mm flat-head momentary 1NO, no LED, pre-wired, DIANQI Electric Official Store, ref 3076815630860357, R329.00. Estimated delivery 28 Oct 2026 |
+| Hot plate order (AliExpress) | ORDERED + PAID | 9 Oct 2026. UYUE 946C 200×200 mm, 600 W, 220 V EU plug, Caius Store, ref 3076880346740357, R2,556.99 incl. R2,000.99 shipping (VAT/duties may follow on import). Estimated delivery 22 Oct 2026. Research: `docs/research/2026-10-09-hot-plate-*.md` |
 | Spare RFB-0505S | BOUGHT | Supplier and quantity not recorded |
 | Buy remaining parts | TODO | Optional second T-Display-S3. Display cable: 10-way Dupont ribbon, no purchase needed |
 | Bench-test T-Display-S3 USB with Artisan | TODO | Not a blocker; firmware fix and UART fallback known |
