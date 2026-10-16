@@ -14,6 +14,7 @@ This folder contains all correspondence related to the Milk Depot Coffee Roaster
 | 2026-01-23 | Email | Quote response + acceptance | Sam Hattingh (GPA Trading) | Gmail thread |
 | 2026-02-02 | Email | PO P00041 - Thermocouple order | Sam Hattingh (GPA Trading) | Gmail thread |
 | 2026-02-09 | Email | Invoice + banking details reminder | Sam Hattingh (GPA Trading) | Gmail thread |
+| 2026-10-15-16 | Email | UPS customs clearance for hot plate B600R573SVF — R362.25 paid, importer docs sent | UPS SCS South Africa (codpayments@ups.com) | [2026-10-15-16_email.md](2026-10-15-16_email.md) |
 
 ---
 
