@@ -82,8 +82,8 @@ Older sessions: `docs/archive/SESSION-INDEX.md`.
 | BSS138 from Mantech | NOT NEEDED | Dropped from design — digital isolators handle the voltage levels |
 | Full-system ESP32 schematic | ABANDONED | Replaced by T-Display-S3 + isolated breakouts |
 | Isolation parts order (DigiKey) | ORDERED + PAID | 30 Sep 2026. 9 lines, enough for 2 boards. Awaiting delivery |
-| T-Display-S3 order (AliExpress) | ORDERED + PAID | 30 Sep 2026. 1× non-touch, unsoldered pins, LilyGO Official Store, ref 3076608492140357, R373.98 incl. shipping. Awaiting delivery |
-| Panel buttons order (AliExpress) | ORDERED + PAID | 2 Oct 2026. 10× 16 mm flat-head momentary 1NO, no LED, pre-wired, DIANQI Electric Official Store, ref 3076815630860357, R329.00. Estimated delivery 28 Oct 2026 |
+| T-Display-S3 order (AliExpress) | RECEIVED | 30 Sep 2026. 1× non-touch, unsoldered pins, LilyGO Official Store, ref 3076608492140357, R373.98 incl. shipping. **Received 15 Oct 2026** (Speedaf ZA000445686R, customs R202.95). Landed cost R576.93 |
+| Panel buttons order (AliExpress) | RECEIVED | 2 Oct 2026. 10× 16 mm flat-head momentary 1NO, no LED, pre-wired, DIANQI Electric Official Store, ref 3076815630860357, R329.00. **Received 15 Oct 2026** (Speedaf ZA000449691R, customs R109.45). Landed cost R438.45 (R43.85 each) |
 | Hot plate order (AliExpress) | ORDERED + PAID | 9 Oct 2026. UYUE 946C 200×200 mm, 600 W, 220 V EU plug, Caius Store, ref 3076880346740357, R2,556.99 incl. R2,000.99 shipping. **Customs (UPS B600R573SVF): R362.25 paid 15 Oct 2026 via PayGate (customs VAT R27.60 + UPS fees R334.65); importer docs sent 16 Oct 2026** — see `correspondence/2026-10-15-16_email.md`. Landed cost to compute = R2,556.99 + R362.25 + any further UPS invoice; Odoo bill 6019 held in draft until then. Estimated delivery 22 Oct 2026. Research: `docs/research/2026-10-09-hot-plate-*.md` |
 | Spare RFB-0505S | BOUGHT | Supplier and quantity not recorded |
 | Buy remaining parts | TODO | Optional second T-Display-S3. Display cable: 10-way Dupont ribbon, no purchase needed |

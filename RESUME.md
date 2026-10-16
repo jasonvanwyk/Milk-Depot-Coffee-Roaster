@@ -13,7 +13,7 @@
 2. `/pcb-review-engineer`, then order from JLCPCB. Re-run `geom-audit.py` + `zone-audit.py` after any copper edit.
 3. When the T-Display-S3 arrives, bench-test USB serial with Artisan on the Pi (not a blocker).
 
-**Blocked:** Nothing. DigiKey and three AliExpress deliveries still in transit (hot plate due ~22 Oct, buttons due ~28 Oct 2026).
+**Blocked:** Nothing. T-Display-S3 and panel buttons arrived 15 Oct 2026; hot plate still in transit (UPS, due ~22 Oct).
 
 ## Quick Context
 - Client: Quenton (Milk Depot) — coffee roaster temperature monitoring
