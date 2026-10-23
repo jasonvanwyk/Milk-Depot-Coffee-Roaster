@@ -9,6 +9,7 @@
 - Reflow oven considered and rejected for 2–5 single-sided boards; T-962 would need firmware + insulation mods.
 - Follow-ups: leaded Sn63/Pb37 paste syringe (SA stock unverified — Communica or DigiKey ZA), add unframed stainless stencil to the JLCPCB order, K-type or IR thermometer for board temp.
 **Next:**
+- **PRIORITY (Jason, 23 Oct 2026): finish the thermocouple board and get the JLCPCB order out this week.** Silk tidy → final review (/pcb-review-engineer) → Gerbers + BOM/CPL → order. Calendar: Wed 28 Oct 10:00–13:00, overflow Fri 30 Oct 09:00–12:00.
 1. **Start here:** Jason opens the board, eyeballs the host strip, runs DRC in the GUI once. Then silk tidy: 37 overlaps, 39 refs over copper (C_01/C_03/C_05, U_03, U1, J1), 9 silk items within 0.5 mm of slots (J_01 and PS_01 outlines, J2 label).
 2. `/pcb-review-engineer`, then order from JLCPCB. Re-run `geom-audit.py` + `zone-audit.py` after any copper edit.
 3. When the T-Display-S3 arrives, bench-test USB serial with Artisan on the Pi (not a blocker).
